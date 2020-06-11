@@ -15,3 +15,39 @@
 'use strict';
 
 // Код возьмите из предыдущего домашнего задания
+const numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели?', '');
+
+const personalMovieDB = {
+    count: numberOfFilms,
+    movies: {},
+    actors: {},
+    genres: [],
+    private : false
+};
+ 
+let i= 0;
+while (i< 2) {
+    const a = prompt('Один из последних просмотренных фильмов?', ''),
+          b = prompt('На сколько оцените его?', '');
+    // ( условие) ? выполнить этот код : выполнить этот код вместо первого
+    (a != null && b != null && a != "" && b != "" && a.length < 50) ? 
+    ( personalMovieDB.movies[a] = b,
+    console.log("Done Ok Super") ) : 
+    ( console.log("Error = null & empty & >50") ,
+    i-- ); // внутри while 
+           // каждое выражение заканчмвается  ';'
+    i++;      
+    } //  без ";""
+
+
+(personalMovieDB.count < 10) ? 
+        console.log("Просмотрено довольно мало фильмов") :
+        ( personalMovieDB.count >= 10 && personalMovieDB.count < 30) ? 
+        console.log("Вы классический зритель") : (personalMovieDB.count >= 30) ? 
+        console.log("Вы киноман"): console.log("Произошла ошибка");
+    
+console.log(personalMovieDB);
+
+
+
+
