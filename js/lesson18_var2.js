@@ -15,11 +15,9 @@ P.S. Функции вызывать не обязательно*/
 
 // Код возьмите из предыдущего домашнего задания
 let numberOfFilms;
-function start() {
-    while (numberOfFilms == '' || numberOfFilms == null || isNaN(numberOfFilms) ) {
-        numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели?', '');
-    }
-}
+let start = () => 
+    numberOfFilms == '' || numberOfFilms == null || isNaN(numberOfFilms) ? start() : numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели?', '') ;
+
 start();
 // 
 const personalMovieDB = {
