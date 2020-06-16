@@ -1,30 +1,72 @@
 "use strict";
-
-function first(a) {
-    //что-то сделать
+//------------------------------------------------------------------------------------
+function first(){
+  // Как будто бы запрос к API
+  setTimeout( function(){
+    console.log(1);
+  }, 500 );
+}
+function second(){
+  console.log(2);
+}
+first();
+second();
+// на выходе : 2
+//           : 1 
+// изменим первую функцию ------------------------------------------------------------
+function firstnew(callback){
+  // Как будто бы запрос к API
+  setTimeout( function(){
+      console.log(1);
+      callback();
+  }, 500 );
+  }
+function second(){
+  console.log(2);
+}
+firstnew(second);
+// рабочий код!!!
+// 1   
+// 2
+      
+// Еще один вариант с передачей параметров ---------------------------------------------
+function first(x) {
     setTimeout(function() { 
-        console.log(a); 
-        b = a + b;
-        console.log(b);
+        console.log(x); 
     }, 500);
 } 
 
-function second(b) {
-    console.log(b);
+function second(y) {
+    console.log(y);
 }
-let a = 10, b = 20;
-/* first(a);
-second(b); */
+
+first(1);
+second(2); 
+
+// на выходе : 2
+//           : 1  
+// Для корректнго вывода  ---------------------------------------------------------------
+// Сначала - First => 1
+// Затем -  Second => 2
+// изменяем функцию first(x) на first(x, y, callback)
+function first(x, y, callback) {
+  setTimeout(function() {
+    console.log(x); 
+    callback(y);
+  }, 500);
+}
+// second(y) остается без изменений
+function second(y) {
+  console.log(y);
+}
 //
-function pravilny_vizov(argumentos, callback) {
-    argumentos;
-    callback();
-}
-
-pravilny_vizov(first(a), function() {
-    second(b);
-});
-
+// вызов программы
+first(1, 2, second);
+// на выходе : 1
+//           : 2 
+//------------------------------------------------------------------------------------
+// Еще вариант с различным расположением функции callback в теле первой пргораммы:
+// Вариант который бы сработал и без данных усложнений
 function learnJs(lang, callback) {
     console.log(`Я учу: ${lang}`);
     callback();
@@ -32,12 +74,13 @@ function learnJs(lang, callback) {
 learnJs('JavaScript', function() {
     console.log('Я прошел данный урок!');
 });
-
+// ------------------------------------------------------------------------------------
+// усложним за счет задержки в функции setTimeout()
 setTimeout(function() { 
     callback();
     }, 500);
-
-// -------------    
+// ------------------------------------------------------------------------------------
+// новая версия 
 function learnJs(lang, callback) {
     setTimeout(function() { 
         console.log(`Я  по прежнему учу: ${lang}`);
@@ -56,102 +99,47 @@ learnJs('JavaScript', function() {
 Я  по прежнему учу: JavaScript
 Я прошел данный урок! */
 
-
-
-
-
-
-
-
-
-
-
-//
-// определяем нашу функцию с аргументом callback
+//------------------------------------------------------------------------------------
+// 3 уровня выполнения функции callback 
+// определяем нашу функцию с аргументами и  callback
 function some_function(arg1, arg2, callback) {
-    let summa = arg1 + arg2;
-    console.log('О чем это? 1'); 
-    console.log(`arg1 = ${arg1} arg2 = ${arg2} сумма = ${summa}`);
-    console.log('----'); 
+    arg1++;
+    console.log(`arg1 = ${arg1}`);
+    callback(arg1);
     setTimeout(function() { 
-
-        console.log('О чем это?'); 
-        let summa = arg1 + arg2 + 1000;
-        console.log(`arg1 = ${arg1} arg2 = ${arg2} сумма = ${summa}`);
-        //var my_number = Math.ceil(Math.random() * (arg1 - arg2) + arg2);
-        callback(my_number);
+        arg2--;
+        console.log(`arg2 = ${arg2}`);
+        callback(arg2);
         }, 1000);
     // переменная, генерирующая случайное число в интервале между arg1 и arg2
     var my_number = Math.ceil(Math.random() * (arg1 - arg2) + arg2);
-    var my_number2 = arg1 + arg2 + 2000;
-    var summa2 = summa;
     // теперь всё готово и  мы вызываем callback, куда передаём наш результат
+    console.log(`my_number = ${my_number}`);
     callback(my_number);
 }
 // вызываем функцию
-some_function(5, 15, function (num) {
+some_function(1, 5, function (num) {
     // эта анонимная функция выполнится после вызова callback-функции
     console.log("callback called! " + num);
-});
+  });
 
-// WebDev с нуля. Канал Алекса Лущенко
-// True JS 24. Callback функции
-// https://github.com/luschenko/TrueJS/blob/master/%2324/js/script.js
-
-function first(y){
-    console.log('First');
-    console.log(a1);
-    console.log(a1+b1);
-    y();
-    setTimeout(function() { 
-        console.log('О чем это?'); 
-        b1 = a1 + b1;
-        console.log(b1);
-    }, 500);
-    console.log('2 First');
-    console.log(1000);
-    console.log(b1);
- }
-
-function second(a,b){
-    console.log('Second');
-    console.log(2);
-    console.log(a);
-    a--;
-    b++;
-    console.log(a);
-    console.log(b);
-}
-
-let a1 = -10, b1 = 15;
-first(function() {
-    second(a1, b1);
-});
-
-    
-//second(4,7);
-
+// На выходе имеем:
+/*  arg1 = 2
+    callback called! 2
+    my_number = 4
+    callback called! 4
+    arg2 = 4
+    callback called! 4 */
+// --------------------------------------------------------------------------
+// Ниже перевод статьи Брэндона Морелли JavaScript: What the heck is a Callback?
+// https://ru.hexlet.io/blog/posts/javascript-what-the-heck-is-a-callback
+// Мы на Хекслете 
+  function doHomework(subject, callback) {
+    console.log(`Starting my ${subject} homework.`);
+    callback();
+  }
+  function consolelogFinished(){
+    console.log('Finished my homework');
+  }
+  doHomework('math', consolelogFinished);
 //
-// 
-function second2(arg1, arg2, callback) {
-    setTimeout(function() { 
-        console.log('-TimeOut------*---'); 
-        arg1++;
-        arg2 = arg2 + 1000;
-        let s2 = arg1 + arg2;
-        callback(s2);
-                            }, 1000);
-    console.log('----/11/---------/***/---'); 
-    var my_number = arg1 + arg2 ;
-    callback(my_number);
-}
-
-second2(5, 15, function (num) {
-    console.log('=second top ===============*======='); 
-    console.log("callback called! " + num);
-    console.log('=second end ===*====*=======*====='); 
-    setTimeout(function() { 
-        console.log('-6645456TimeOut------*---'); 
-         }, 1000);
-});
-
