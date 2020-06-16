@@ -243,4 +243,9 @@ string.toUpperCase() */
 let a = "GIuyg  io8h oh nio 8ho  u";
 let c = a.toUpperCase();
 console.log('a = ', a, '\n', 'c  = ', c, '\n','a to Upp=', a.toUpperCase(), '\n', 'c to Low=', c.toLowerCase());
-console.log(a.length, c.length);
+// =>
+/* a =  GIuyg  io8h oh nio 8ho  u 
+ c  =  GIUYG  IO8H OH NIO 8HO  U 
+ a to Upp= GIUYG  IO8H OH NIO 8HO  U 
+ c to Low= giuyg  io8h oh nio 8ho  u
+25 25 */
