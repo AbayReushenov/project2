@@ -17,6 +17,9 @@ const soldat = {
     },
 };
 
+soldat.sayPrivet(); // ==> Привет!
+
+
 const jonh = {
     health: 100
 };
