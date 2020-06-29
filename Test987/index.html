@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The "submit" event on forms in JavaScript</title>
+</head>
+<body>
+    <header>
+        <h1>'submit'</h1>
+    </header>
+    <div>
+        <form id="myForm" class="form">
+            <label for="username">Username</label>
+            <input type="text"  name="username" id="username" placeholder="Username">
+            <label for="password">Password</label>
+            <input type="password"  name="password" id="password" placeholder="password">
+            <button type="submit">Login</button>
+        </form>
+    </div>  
+    <br>
+    <hr>
+    <div class="promo__interactive">
+        <div> 
+            <form id="myForm22" class="form22">
+            <div class="promo__interactive-title">ПРОСМОТРЕННЫЕ ФИЛЬМЫ</div>
+            <ul class="promo__interactive-list">
+                <li class="promo__interactive-item">ЛОГАН
+                    <div class="delete"></div>
+                </li>
+                <li class="promo__interactive-item">ЛИГА СПРАВЕДЛИВОСТИ
+                    <div class="delete"></div>
+                </li>
+                <li class="promo__interactive-item">ЛА-ЛА ЛЭНД
+                    <div class="delete"></div>
+                </li>
+                <li class="promo__interactive-item">ОДЕРЖИМОСТЬ
+                    <div class="delete"></div>
+                </li>
+                <li class="promo__interactive-item">СКОТТ ПИЛИГРИМ ПРОТИВ...
+                    <div class="delete">
+                    <button>Удалить?</button>
+                     </div>
+                </li>
+                </ul>
+            </form>        
+        </div>
+        <div>
+            <form class="add">
+                <div class="promo__interactive-title">ДОБАВИТЬ НОВЫЙ ФИЛЬМ</div>
+                <span>Введите название фильма</span>
+                <input class="adding__input" type="text" placeholder="Что уже посмотрено...?">
+                <span>Сделать его любимым?</span>
+                <input type="checkbox">
+                <span class="yes">Да!</span>
+                <button>Подтвердить</button>
+            </form>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container">
+        <div class="left">
+            <h1 class="text-center">'onclick'</h1>
+
+            <h3 onclick="console.log(`html - onclick`)">1. Click here: html - onclick</h3>
+
+            <h3 onclick="helloFunction()">2. Click here: html - onclick: "helloFunction()"</h3>            
+
+            <h3 id="h3">3. Click here: js onclick #h3</h3>
+
+            <h3 id="h4">4. Click here: js onclick = function; #h4</h3>
+
+            <h3 id="h5">5. Click here: js onclick = 1 событие #h5</h3>  
+
+            <h3 id="h6">6. Click here: js onclick = 2 события #h6</h3>                
+
+        <h1 class="text-center">'Click'</h1>
+    
+            <h3 id="h7">1. Click here: "click", #h7</h3>
+   
+            <h3 id="h8">1. Click here: "click", 1 событие #h8</h3>
+
+            <h3 id="h9">1. Click here: 'click' 2 события, #h9</h3>            
+       </div>
+    </div>
+
+    <script src="js/script.js"></script> 
+</body>
+</html>
