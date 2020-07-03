@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date functions</title>
+</head>
+<body>
+    <div class="date">
+        <h3>Date</h3>
+        <h3>
+            Для создания нового объекта Date нужно вызвать конструктор new Date() с одним из следующих аргументов: <br>
+
+new Date() <br>
+Без аргументов – создать объект Date с текущими датой и временем:</h3>
+<div id="jscript">
+    let now = new Date(); <br>
+    alert( now ); <br>
+    // показывает текущие дату и время
+</div>
+<div class="classdata" id="iddata">
+    <h3>new Date(milliseconds) <br>
+        Создать объект Date с временем, равным количеству миллисекунд (тысячная доля секунды), прошедших с 1 января 1970 года UTC+0.</h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3>// 0 соответствует 01.01.1970 UTC+0 <br>
+        let Jan01_1970 = new Date(0);<br>
+        alert( Jan01_1970 );<br>
+        <br>
+        // теперь добавим 24 часа и получим 02.01.1970 UTC+0<br>
+        let Jan02_1970 = new Date(24 * 3600 * 1000);<br>
+        alert( Jan02_1970 );<br></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3>Целое число, представляющее собой количество миллисекунд, прошедших с начала 1970 года, называется таймстамп (англ. timestamp). <br>
+        Это – легковесное численное представление даты. Из таймстампа всегда можно получить дату с помощью new Date(timestamp) и преобразовать существующий объект Date в таймстамп, используя метод date.getTime() (см. ниже). <br>
+         <br>
+        Датам до 1 января 1970 будут соответствовать отрицательные таймстампы, например <br></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3></h3>
+</div>
+<div class="classdata" id="iddata">
+    <h3></h3>
+</div>
+        
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
