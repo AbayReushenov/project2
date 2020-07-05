@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", () => {
    
     // Timer
 
-    const deadline = '2020-07-05';
+    const deadline = '2020-08-05';
     const t = Date.parse(deadline);
 
     function getTimeRemining(endtime) {
@@ -103,4 +103,48 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
     setClock('.timer', deadline);
+
+    // Modal
+
+    const modalTrigger = document.querySelectorAll('[data-modal'),
+          modal = document.querySelector('.modal'),
+          modalCloseBtn = document.querySelector('[data-close]');
+
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', () => { 
+            modal.classList.add('show');
+            modal.classList.remove('hide');
+            //    modal.classList.toggle('show');
+          // как 2-й вариант
+            document.body.style.overflow = 'hidden'; 
+            //фиксируем экран от прокрутки
+        });
+    });
+
+    function closeModal() {
+        modal.classList.add('hide');
+        modal.classList.remove('show');
+        //    modal.classList.toggle('show');
+         // как 2-й вариант 
+        document.body.style.overflow = '';
+        // разблокируем экран от прокрутки
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal); 
+    // closeModal не вызывается а передается!
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+            // здесь функция вызывается         
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Escape' && modal.classList.contains('show')) {
+            // в Google искать event.code для конкретной клавиши
+            closeModal();
+        }
+    });
+//----------
 });
