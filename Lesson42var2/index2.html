@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   	<title>JavaScript2</title>
+   	<link rel="stylesheet" href="style2.css">
+  </head>
+<body>
+
+<p>In this example, the child element (#content) inside the first div is bigger than div's height and width 
+(the child is 800x2500 while its parent is 250x400), so we have added a scrollbar.</p>
+
+<p>Click the button to get the clientHeight, offsetHeight, clientWidth and offsetWidth of div.</p>
+
+<button onclick="myFunction()">Try it</button>
+
+<p>Notice how the scrollbar in the first div "steals" some of div's right and bottom padding, which results in a lower return value for clientHeight and clientWidth in that div, compared to the other one. The offsetHeight and offsetWidth is not affected by this.</p>
+
+<div id="myDIV">
+  <div id="content"></div>
+</div>
+
+<div id="myDIV2">
+  <div id="content2"></div>
+</div>
+
+<script src="script2.js"></script>
+
+</body>
+</html>
