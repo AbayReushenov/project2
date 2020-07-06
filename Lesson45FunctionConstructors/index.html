@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 45 Function Constuctors</title>
+</head>
+<body>
+    
+    <h1 class="main__header-title">Конструкторы, создание объектов через &quot;new&quot;</h1></div></header><div class="content"><article class="formatted" itemscope itemtype="http://schema.org/TechArticle"><meta itemprop="name" content="Конструкторы, создание объектов через &quot;new&quot;"><div itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="email" content="iliakan@gmail.com"><meta itemprop="name" content="Ilya Kantor"></div><div itemprop="articleBody"><p>Обычный синтаксис <code>{...}</code> позволяет создать только один объект. Но зачастую нам нужно создать множество однотипных объектов, таких как пользователи, элементы меню и т.д.</p>
+        <p>Это можно сделать при помощи функции-конструктора и оператора <code>&quot;new&quot;</code>.</p>
+        <h2><a class="main__anchor" name="funktsiya-konstruktor" href="#funktsiya-konstruktor">Функция-конструктор</a></h2><p>Функции-конструкторы являются обычными функциями. Но есть два соглашения:</p>
+        <ol>
+        <li>Имя функции-конструктора должно начинаться с большой буквы.</li>
+        <li>Функция-конструктор должна вызываться при помощи оператора <code>&quot;new&quot;</code>.</li>
+        </ol>
+        <p>Например:</p>
+        <div data-trusted="1" class="code-example" data-highlight="[{&quot;start&quot;:5,&quot;end&quot;:5}]">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function User(name) {
+          this.name = name;
+          this.isAdmin = false;
+        }
+        
+        let user = new User(&quot;Вася&quot;);
+        
+        alert(user.name); // Вася
+        alert(user.isAdmin); // false</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Когда функция вызывается как <code>new User(...)</code>, происходит следующее:</p>
+        <ol>
+        <li>Создаётся новый пустой объект, и он присваивается <code>this</code>.</li>
+        <li>Выполняется код функции. Обычно он модифицирует <code>this</code>, добавляет туда новые свойства.</li>
+        <li>Возвращается значение <code>this</code>.</li>
+        </ol>
+        <p>Другими словами, вызов <code>new User(...)</code> делает примерно вот что:</p>
+        <div data-trusted="1" class="code-example" data-highlight="[{&quot;start&quot;:7,&quot;end&quot;:7},{&quot;start&quot;:1,&quot;end&quot;:1}]">
+              <div class="codebox code-example__codebox">
+                
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function User(name) {
+          // this = {};  (неявно)
+        
+          // добавляет свойства к this
+          this.name = name;
+          this.isAdmin = false;
+        
+          // return this;  (неявно)
+        }</code></pre>
+                </div>
+              </div>
+              
+              </div><p>То есть, результат вызова <code>new User(&quot;Вася&quot;)</code> – это тот же объект, что и:</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>let user = {
+          name: &quot;Вася&quot;,
+          isAdmin: false
+        };</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Теперь, когда нам необходимо будет создать других пользователей, мы можем использовать <code>new User(&quot;Маша&quot;)</code>,
+        <code>new User(&quot;Даша&quot;)</code> и т.д. Данная конструкция гораздо удобнее и читабельнее, чем каждый раз создавать литерал объекта. Это и является основной целью конструкторов – удобное повторное создание однотипных объектов.</p>
+        <p>Ещё раз заметим: технически любая функция может быть использована как конструктор. То есть, каждая функция может быть вызвана при помощи оператора <code>new</code>, и выполнится алгоритм, указанный выше в примере. Заглавная буква в названии функции является всеобщим соглашением по именованию, она как бы подсказывает разработчику, что данная функция является функцией-конструктором, и её нужно вызывать через <code>new</code>.</p>
+        <div class="important important_smart">
+                    <div class="important__header"><span class="important__type">new function() { … }</span></div>
+                    <div class="important__content"><p>Если в нашем коде большое количество строк, создающих один сложный объект, мы можем обернуть их в функцию-конструктор следующим образом:</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>let user = new function() {
+          this.name = &quot;Вася&quot;;
+          this.isAdmin = false;
+        
+          // ...другой код для создания пользователя
+          // возможна любая сложная логика и выражения
+          // локальные переменные и т. д.
+        };</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Такой конструктор не может быть вызван дважды, так как он нигде не сохраняется, просто создаётся и тут же вызывается. Таким образом, такой метод создания позволяет инкапсулировать код, который создаёт отдельный объект, но без возможности его повторного использования.</p>
+        </div></div>
+        <h2><a class="main__anchor" name="proverka-na-vyzov-v-rezhime-konstruktora-new-target" href="#proverka-na-vyzov-v-rezhime-konstruktora-new-target">Проверка на вызов в режиме конструктора: new.target</a></h2><div class="important important_smart">
+                    <div class="important__header"><span class="important__type">Продвинутая возможность</span></div>
+                    <div class="important__content"><p>Данный метод используется очень редко. Вы можете пропустить эту секцию, если не хотите углубляться в детали языка.</p>
+        </div></div>
+        <p>Используя специальное свойство <code>new.target</code> внутри функции, мы можем проверить, вызвана ли функция при помощи оператора <code>new</code> или без него.</p>
+        <p>В случае, если функция вызвана при помощи <code>new</code>, то в <code>new.target</code> будет сама функция, в противном случае <code>undefined</code>.</p>
+        <div data-trusted="1" class="code-example" data-highlight="[{&quot;start&quot;:8,&quot;end&quot;:8},{&quot;start&quot;:5,&quot;end&quot;:5}]">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function User() {
+          alert(new.target);
+        }
+        
+        // без &quot;new&quot;:
+        User(); // undefined
+        
+        // с &quot;new&quot;:
+        new User(); // function User { ... }</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Это можно использовать, чтобы отличить обычный вызов от вызова «в режиме конструктора». В частности, вот так можно сделать, чтобы функцию можно было вызывать как с, так и без <code>new</code>:</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function User(name) {
+          if (!new.target) { // в случае, если вы вызвали без оператора new
+            return new User(name); // ...добавим оператор new за вас
+          }
+        
+          this.name = name;
+        }
+        
+        let vasya = User(&quot;Вася&quot;); // переадресовывает вызовы на new User
+        alert(vasya.name); // Вася</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Такой подход иногда используется в библиотеках для создания более гибкого синтаксиса, который позволяет разработчикам вызывать функции при помощи оператора <code>new</code> или без него.</p>
+        <p>Впрочем, это не очень хорошая практика, так как отсутствие <code>new</code> может ввести разработчика в заблуждение. С оператором <code>new</code> мы точно знаем, что в итоге будет создан новый объект.</p>
+        <h2><a class="main__anchor" name="vozvrat-znacheniya-iz-konstruktora-return" href="#vozvrat-znacheniya-iz-konstruktora-return">Возврат значения из конструктора return</a></h2><p>Обычно конструкторы ничего не возвращают явно. Их задача – записать все необходимое в <code>this</code>, который в итоге станет результатом.</p>
+        <p>Но если <code>return</code> всё же есть, то применяется простое правило:</p>
+        <ul>
+        <li>При вызове <code>return</code> с объектом, будет возвращён объект, а не <code>this</code>.</li>
+        <li>При вызове <code>return</code> с примитивным значением, примитивное значение будет отброшено.</li>
+        </ul>
+        <p>Другими словами, <code>return</code> с объектом возвращает объект, в любом другом случае конструктор вернёт <code>this</code>.</p>
+        <p>В примере ниже <code>return</code> возвращает объект вместо <code>this</code>:</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function BigUser() {
+        
+          this.name = &quot;Вася&quot;;
+        
+          return { name: &quot;Godzilla&quot; };  // &lt;-- возвращает этот объект
+        }
+        
+        alert( new BigUser().name );  // Godzilla, получили этот объект</code></pre>
+                </div>
+              </div>
+              
+              </div><p>А вот пример с пустым <code>return</code> (или мы могли бы поставить примитив после <code>return</code>, неважно)</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function SmallUser() {
+        
+          this.name = &quot;Вася&quot;;
+        
+          return; // &lt;-- возвращает this
+        }
+        
+        alert( new SmallUser().name );  // Вася</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Обычно у конструкторов отсутствует <code>return</code>. В данном блоке мы упомянули особое поведение с возвращаемыми объектами, чтобы не оставлять пробелов в изучении языка.</p>
+        <div class="important important_smart">
+                    <div class="important__header"><span class="important__type">Отсутствие скобок</span></div>
+                    <div class="important__content"><p>Кстати, мы можем не ставить скобки после <code>new</code>, если вызов конструктора идёт без аргументов.</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>let user = new User; // &lt;-- без скобок
+        // то же, что и
+        let user = new User();</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Пропуск скобок считается плохой практикой, но синтаксис языка такое позволяет.</p>
+        </div></div>
+        <h2><a class="main__anchor" name="sozdanie-metodov-v-konstruktore" href="#sozdanie-metodov-v-konstruktore">Создание методов в конструкторе</a></h2><p>Использование конструкторов для создания объектов даёт большую гибкость. Можно передавать конструктору параметры, определяющие, как создавать объект, и что в него записывать.</p>
+        <p>В <code>this</code> мы можем добавлять не только свойства, но и методы.</p>
+        <p>Например, в примере ниже, <code>new User(name)</code> создаёт объект с данным именем <code>name</code> и методом <code>sayHi</code>:</p>
+        <div data-trusted="1" class="code-example" data-highlight="[{&quot;start&quot;:8,&quot;end&quot;:10}]">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function User(name) {
+          this.name = name;
+        
+          this.sayHi = function() {
+            alert( &quot;Меня зовут: &quot; + this.name );
+          };
+        }
+        
+        let vasya = new User(&quot;Вася&quot;);
+        
+        vasya.sayHi(); // Меня зовут: Вася
+        
+        /*
+        vasya = {
+           name: &quot;Вася&quot;,
+           sayHi: function() { ... }
+        }
+        */</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Для создания сложных объектов есть и более «продвинутый» синтаксис – <a href="/classes">классы</a>, которые мы разберём позже.</p>
+        <h2><a class="main__anchor" name="itogo" href="#itogo">Итого</a></h2><ul>
+        <li>Функции-конструкторы или просто конструкторы являются обычными функциями, именовать которые следует с заглавной буквы.</li>
+        <li>Конструкторы следует вызывать при помощи оператора <code>new</code>. Такой вызов создаёт пустой <code>this</code> в начале выполнения и возвращает заполненный в конце.</li>
+        </ul>
+        <p>Мы можем использовать конструкторы для создания множества похожих объектов.</p>
+        <p>JavaScript предоставляет функции-конструкторы для множества встроенных объектов языка: например, <code>Date</code>, <code>Set</code> и других, которые нам ещё предстоит изучить.</p>
+        <div class="important important_smart">
+                    <div class="important__header"><span class="important__type">Объекты, мы к ним ещё вернёмся!</span></div>
+                    <div class="important__content"><p>В этой главе мы рассмотрели базовые принципы объектов и конструкторов. Данная информация необходима нам для дальнейшего изучения типов данных и функций. Как только мы с ними разберёмся, мы вернёмся к объектам для более детального изучения в
+        главах <a href="/prototypes">Прототипы, наследование</a> и <a href="/classes">Классы</a>.</p>
+        </div></div>
+        </div></article><div class="tasks formatted"><h2 class="tasks__title" id="tasks"><a class="tasks__title-anchor main__anchor main__anchor main__anchor_noicon" href="#tasks">Задачи</a></h2><div class="task tasks__task"><div class="task__header"><div class="task__title-wrap"><h3 class="task__title"><a class="main__anchor" href="#dve-funktsii-odin-obekt" name="dve-funktsii-odin-obekt">Две функции - один объект</a></h3><a class="task__open-link" href="/task/two-functions-one-object" target="_blank"></a></div><div class="task__header-note"><span class="task__importance" title="Насколько эта задача важна для освоения материала, от 1 до 5">важность: 2</span></div><div class="task__content"><p>Возможно ли создать функции <code>A</code> и <code>B</code> в примере ниже, где объекты равны <code>new A()==new B()</code>?</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function A() { ... }
+        function B() { ... }
+        
+        let a = new A;
+        let b = new B;
+        
+        alert( a == b ); // true</code></pre>
+                </div>
+              </div>
+              
+              </div><p>Если да – приведите пример вашего кода.</p>
+        <button class="task__solution" type="button">решение</button><div class="task__answer"><div class="task__answer-content"><p>Да, возможно.</p>
+        <p>Если функция возвращает объект, то вместо <code>this</code> будет возвращён этот объект.</p>
+        <p>Например, они могут вернуть один и тот же объект <code>obj</code>, определённый снаружи:</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>let obj = {};
+        
+        function A() { return obj; }
+        function B() { return obj; }
+        
+        alert( new A() == new B() ); // true</code></pre>
+                </div>
+              </div>
+              
+              </div></div><button class="close-button task__answer-close" type="button" title="закрыть"></button></div></div></div></div><div class="task tasks__task"><div class="task__header"><div class="task__title-wrap"><h3 class="task__title"><a class="main__anchor" href="#sozdanie-kalkulyatora-pri-pomoschi-konstruktora" name="sozdanie-kalkulyatora-pri-pomoschi-konstruktora">Создание калькулятора при помощи конструктора</a></h3><a class="task__open-link" href="/task/calculator-constructor" target="_blank"></a></div><div class="task__header-note"><span class="task__importance" title="Насколько эта задача важна для освоения материала, от 1 до 5">важность: 5</span></div><div class="task__content"><p>Создайте функцию-конструктор <code>Calculator</code>, который создаёт объекты с тремя методами:</p>
+        <ul>
+        <li><code>read()</code> запрашивает два значения при помощи <code>prompt</code> и сохраняет их значение в свойствах объекта.</li>
+        <li><code>sum()</code> возвращает сумму введённых свойств.</li>
+        <li><code>mul()</code> возвращает произведение введённых свойств.</li>
+        </ul>
+        <p>Например:</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>let calculator = new Calculator();
+        calculator.read();
+        
+        alert( &quot;Sum=&quot; + calculator.sum() );
+        alert( &quot;Mul=&quot; + calculator.mul() );</code></pre>
+                </div>
+              </div>
+              
+              </div><p><a href="#" onclick="event.preventDefault(); runDemo(this)">Запустить демо</a></p><p><a href="https://plnkr.co/edit/37ttQ6dAaKUpycA0?p=preview" target="_blank" data-plunk-id="37ttQ6dAaKUpycA0">Открыть песочницу с тестами для задачи.</a></p><button class="task__solution" type="button">решение</button><div class="task__answer"><div class="task__answer-content"><div data-trusted="1" class="code-example" data-demo="1">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function Calculator() {
+        
+          this.read = function() {
+            this.a = +prompt('a?', 0);
+            this.b = +prompt('b?', 0);
+          };
+        
+          this.sum = function() {
+            return this.a + this.b;
+          };
+        
+          this.mul = function() {
+            return this.a * this.b;
+          };
+        }
+        
+        let calculator = new Calculator();
+        calculator.read();
+        
+        alert( &quot;Sum=&quot; + calculator.sum() );
+        alert( &quot;Mul=&quot; + calculator.mul() );</code></pre>
+                </div>
+              </div>
+              
+              </div><p><a href="https://plnkr.co/edit/Uq57xdTu0D2KCZc0?p=preview" target="_blank" data-plunk-id="Uq57xdTu0D2KCZc0">Открыть решение с тестами в песочнице.</a></p></div><button class="close-button task__answer-close" type="button" title="закрыть"></button></div></div></div></div><div class="task tasks__task"><div class="task__header"><div class="task__title-wrap"><h3 class="task__title"><a class="main__anchor" href="#sozdayom-accumulator" name="sozdayom-accumulator">Создаём Accumulator</a></h3><a class="task__open-link" href="/task/accumulator" target="_blank"></a></div><div class="task__header-note"><span class="task__importance" title="Насколько эта задача важна для освоения материала, от 1 до 5">важность: 5</span></div><div class="task__content"><p>Напишите функцию-конструктор <code>Accumulator(startingValue)</code>.</p>
+        <p>Объект, который она создаёт, должен уметь следующее:</p>
+        <ul>
+        <li>Хранить «текущее значение» в свойстве <code>value</code>. Начальное значение устанавливается в аргументе конструктора <code>startingValue</code>.</li>
+        <li>Метод <code>read()</code> использует <code>prompt</code> для получения числа и прибавляет его к свойству <code>value</code>.</li>
+        </ul>
+        <p>Таким образом, свойство <code>value</code> является текущей суммой всего, что ввёл пользователь при вызовах метода <code>read()</code>, с учётом начального значения <code>startingValue</code>.</p>
+        <p>Ниже вы можете посмотреть работу кода:</p>
+        <div data-trusted="1" class="code-example">
+              <div class="codebox code-example__codebox">
+                
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>let accumulator = new Accumulator(1); // начальное значение 1
+        
+        accumulator.read(); // прибавит ввод prompt к текущему значению
+        accumulator.read(); // прибавит ввод prompt к текущему значению
+        
+        alert(accumulator.value); // выведет сумму этих значений</code></pre>
+                </div>
+              </div>
+              
+              </div><p><a href="#" onclick="event.preventDefault(); runDemo(this)">Запустить демо</a></p><p><a href="https://plnkr.co/edit/bLTAo1oy8DV0Pp1q?p=preview" target="_blank" data-plunk-id="bLTAo1oy8DV0Pp1q">Открыть песочницу с тестами для задачи.</a></p><button class="task__solution" type="button">решение</button><div class="task__answer"><div class="task__answer-content"><div data-trusted="1" class="code-example" data-demo="1">
+              <div class="codebox code-example__codebox">
+                
+                <div class="toolbar codebox__toolbar">
+                  <div class="toolbar__tool">
+                    <a href="#" title="выполнить" data-action="run" class="toolbar__button toolbar__button_run"></a>
+                  </div>
+                  <div class="toolbar__tool">
+                    <a href="#" title="открыть в песочнице" target="_blank" data-action="edit" class="toolbar__button toolbar__button_edit"></a>
+                  </div>
+                </div>
+                <div class="codebox__code" data-code="1">
+                  <pre class="line-numbers language-javascript"><code>function Accumulator(startingValue) {
+          this.value = startingValue;
+        
+          this.read = function() {
+            this.value += +prompt('Сколько нужно добавить?', 0);
+          };
+        
+        }
+        
+        let accumulator = new Accumulator(1);
+        accumulator.read();
+        accumulator.read();
+        alert(accumulator.value);</code></pre>
+                </div>
+              </div>
+              
+              </div>
+
+
+<script src="script.js"></script>
+</body>
+</html>
