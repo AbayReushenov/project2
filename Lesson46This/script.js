@@ -195,3 +195,109 @@ btn2.addEventListener('click', (e) => {
     e.target.style.backgroundColor = 'black';
     console.log(e.target);
  } );
+
+ //----------
+ // Дополнительные материалы с Хабра
+ // Обращение к this из функции, которая была объявлена за пределами объекта,
+ // а потом назначена в качестве его метода
+ var dog = {
+    breed: 'Beagles',
+    lovesToChase: 'rabbits'
+  };
+  
+  function chase() {
+    console.log(this.breed + ' loves chasing ' + this.lovesToChase + '.'); 
+  }
+  
+  dog.foo = chase;
+  dog.foo(); // в консоль попадёт Beagles loves chasing rabbits.
+  
+  // chase(); //так эту функцию лучше не вызывать
+
+// This и вложенные объекты
+  var obj1 = {
+    hello: function() {
+      console.log('Hello world');
+      return this;
+    },
+    obj2: {
+        breed: 'dog',
+        speak: function(){
+              console.log('woof!');
+              return this;
+          }
+      }
+  };
+   
+
+  console.log(obj1);
+  console.log(obj1.hello());  // выводит 'Hello world' и возвращает obj1
+  console.log(obj1.obj2);
+  console.log(obj1.obj2.speak());  // выводит 'woof!' и возвращает obj2
+
+
+
+  //Ключевое слово new и this
+  // Ключевое слово this находит применение в функциях-конструкторах
+  
+  var City = function(city, state) {
+    this.city = city || "Phoenix";
+    this.state = state || "AZ";
+    this.sentence = function() {
+      console.log(`I live in ${this.city}, ${this.state}.`);
+    };
+  };
+  
+  var phoenix = new City(); // используем параметры по умолчанию
+  console.log(phoenix); // выводит в консоль строковое представление объекта
+  phoenix.sentence(); // выводит I live in Phoenix, AZ.
+  
+  var spokane = new City('Spokane', 'WA');
+  console.log(spokane); // выводит сам объект
+  spokane.sentence(); // выводит I live in Spokane, WA.
+
+  // -------
+  function Dog(breed, name, friends){
+    this.breed = breed;
+    this.name = name;
+    this.friends = friends;	
+    this.intro = function() {
+        console.log(`Hi, my name is ${this.name} and I’m a ${this.breed}`);
+        return this;
+    }; 
+}
+  // Создадим новый экземпляр объекта типа Dog
+var chester = new Dog('beagle', 'Chester', ['Gracie', 'Josey', 'Barkley']);
+chester.intro();        // выводит Hi, my name is Chester and I'm a beagle
+console.log(chester);   // выводит Dog {breed: "beagle", name: "Chester", friends: Array(3), intro: ƒ}
+
+
+// О важности ключевого слова new
+// При вызове функции-конструктора с использованием ключевого слова new 
+// Функция-конструктор
+var Friend = function(name, password, interests, job){
+    this.fullName = name;
+    this.password = password;
+    this.interests = interests;
+    this.job = job;
+  };
+  
+function sayHello(){
+     // раскомментируйте следующую строчку, чтобы узнать, на что указывает this
+     // console.log(this); 
+    return `Hi, my name is ${this.fullName} and I'm a ${this.job}. Let's be friends!`;
+  }
+  
+  // Мы можем создать один или несколько экземпляров объекта типа Friend, используя ключевое слово new
+  var john = new Friend('John Smith', 'badpassword', ['hiking', 'biking', 'skiing'], 'teacher'); 
+  
+  console.log(john); 
+  
+  // Назначим функцию ключу greeting объекта john
+  john.greeting = sayHello; 
+  
+  // Вызовем новый метод объекта
+  console.log( john.greeting() ); 
+  
+  // Помните о том, что sayHello() не стоит вызывать как обычную функцию
+  // console.log( sayHello() ) ; // ошибка!
