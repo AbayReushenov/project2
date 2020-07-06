@@ -110,25 +110,29 @@ window.addEventListener("DOMContentLoaded", () => {
           modal = document.querySelector('.modal'),
           modalCloseBtn = document.querySelector('[data-close]');
 
-    modalTrigger.forEach(btn => {
-        btn.addEventListener('click', () => { 
-            modal.classList.add('show');
-            modal.classList.remove('hide');
-            //    modal.classList.toggle('show');
-          // как 2-й вариант
-            document.body.style.overflow = 'hidden'; 
-            //фиксируем экран от прокрутки
-        });
-    });
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        //    modal.classList.toggle('show');
+        // как 2-й вариант
+        document.body.style.overflow = 'hidden'; 
+        //фиксируем экран от прокрутки
+        clearInterval(modalTimerId);
+        //if user have been opened the modal window, then modalTimerId is cleaned
+    }
 
     function closeModal() {
         modal.classList.add('hide');
         modal.classList.remove('show');
         //    modal.classList.toggle('show');
-         // как 2-й вариант 
+            // как 2-й вариант 
         document.body.style.overflow = '';
         // разблокируем экран от прокрутки
-    }
+        }
+    
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    });
 
     modalCloseBtn.addEventListener('click', closeModal); 
     // closeModal не вызывается а передается!
@@ -147,4 +151,26 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     });
 //----------
+// Lesson 44 
+    const modalTimerId = setTimeout(openModal, 5000 );
+    //throw 3 sec will come in "modal window
+    // it's start code!
+
+    function showModalByScroll() {
+        if(window.pageYOffset + document.documentElement.clientHeight >=  document.documentElement.scrollHeight) 
+        // your scrolling at the moment PLUS window height MORE OR EQUIAL the max scroll height
+        {
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll); 
+            //  window.addEventListener('scroll', showModalByScroll); =>> удаляется
+            // после первого использовангия
+        }
+
+    }
+
+    window.addEventListener('scroll', showModalByScroll); 
+    //  }, {once: true}); - ркагирует только пролистывание мышкой,
+    // если один раз пролистнули то собятие отменяется
+
+
 });
