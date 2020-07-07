@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Lesson 47 Classes</title>
+</head>
+<body>
+    <div>
+        <div class="head">
+            <H1>Classes</H1>
+            <p>Первый способ определения класса&nbsp;— <strong>class declaration (</strong><em>объявление&nbsp;класса</em><strong>)</strong>. Для этого необходимо воспользоваться ключевым словом <code>class</code> и указать имя класса (в примере&nbsp;— «Rectangle»).</p>
+        </div>
+        <div>
+            <pre class="brush: js"><code>class Rectangle {
+                constructor(height, width) {
+                  this.height = height;
+                  this.width = width;
+                }
+                
+                get area() {
+                  return this.calcArea();
+                }
+              
+                calcArea() {
+                  return this.height * this.width;
+                }
+              }
+              
+              const square = new Rectangle(10, 10);
+              
+              console.log(square.area); // 100</code></pre>
+        </div>
+    </div>
+
+    <div class="head">
+        <p>Второй способ определения класса&nbsp;— <strong>class expression (</strong><em>выражение класса</em><strong>)</strong>. Можно создавать&nbsp;именованные и безымянные выражения. В первом случае имя выражения класса находится в локальной области видимости класса и может быть получено через свойства самого класса, а не его экземпляра.</p>
+        <div>
+            <pre class="brush: js"><code>// безымянный
+                var Rectangle = class {
+                  constructor(height, width) {
+                    this.height = height;
+                    this.width = width;
+                  }
+                };
+                console.log(Rectagle.name);
+                // отобразится: "Rectangle" 
+                
+                // именованный
+                var Rectangle = class Rectangle2 {
+                  constructor(height, width) {
+                    this.height = height;
+                    this.width = width;
+                  }
+                };  
+                console.log(Rectangle.name);
+                // отобразится: "Rectangle2" </code>
+                </pre>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
