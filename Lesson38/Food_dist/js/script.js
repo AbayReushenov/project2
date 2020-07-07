@@ -152,7 +152,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 //----------
 // Lesson 44 - \/ Lesson 48 не забудь раскоментировать \/
-    // const modalTimerId = setTimeout(openModal, 5000 );
+    const modalTimerId = setTimeout(openModal, 5000 );
 
     //throw 3 sec will come in "modal window
     // it's start code!
