@@ -97,3 +97,4 @@ console.log(vnukRectangle.calcArea());
   };  
   console.log(MyNameIsClassName.name);
   // отобразится: "ClassHaveTheName" 
+

@@ -151,8 +151,9 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     });
 //----------
-// Lesson 44 
-    const modalTimerId = setTimeout(openModal, 5000 );
+// Lesson 44 - \/ Lesson 48 не забудь раскоментировать \/
+    // const modalTimerId = setTimeout(openModal, 5000 );
+
     //throw 3 sec will come in "modal window
     // it's start code!
 
@@ -172,5 +173,77 @@ window.addEventListener("DOMContentLoaded", () => {
     //  }, {once: true}); - ркагирует только пролистывание мышкой,
     // если один раз пролистнули то собятие отменяется
 
+// Lesson 48
+// Используем классы для карточек
+    class MenuCard {
+        constructor(src, alt, title, descr, price, parensSelrctor ) {
+            this.src = src;
+            this.alt = alt;
+            this.title = title;
+            this.descr = descr;
+            this.price = price;
+            this.parent = document.querySelector(parensSelrctor);
+            this.transfer = 27;
+            this.changeToUAH();
+        }
+
+        // методы
+        // метод на будущее
+        changeToUAH() {
+            this.price = this.price * this.transfer;
+        }
+
+        render() {
+            // метод для верстки
+            const element = document.createElement('div');
+            element.innerHTML = `
+            <div class="menu__item">
+                <img src=${this.src} alt=${this.alt}>
+                <h3 class="menu__item-subtitle">${this.title}</h3>
+                    <div class="menu__item-descr">${this.descr}</div>
+                    <div class="menu__item-divider"></div>
+                    <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+            </div>
+            `;
+            this.parent.append(element); // метод append()помещает новый элемент 
+            // в структуру DOM
+        }
+    }
+    
+    // const div = new MenuCard();
+    // div.render();
+    // можно короче
+    new MenuCard(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        9,
+        '.menu .container'
+    ).render();  // одноразовае использование
+
+    new MenuCard(
+        "img/tabs/elite.jpg",
+        "elite",
+        'Меню “Премиум”',
+        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        14,
+        '.menu .container'
+    ).render();  // одноразовае использование
+
+    new MenuCard(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Постное"',
+        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ',
+        21,
+        '.menu .container'
+    ).render();  // одноразовае использование
+
+
 
 });
+
+
