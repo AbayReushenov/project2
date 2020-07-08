@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON trics</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <button class="classb01">
+        <p>JSON.stringify</p>
+        btn.addEventListener('click', () => console.log(JSON.stringify(persone)));
+    </button>
+    <button id="idnomer102">
+        <p>JSON.parse</p>
+btn2.addEventListener('click', () => console.log(JSON.parse(JSON.stringify(persone))));
+</button>
+
+    <button data-atr="3">
+        <p>Clone.parents</p>
+
+btn3.addEventListener('click', () => console.log(clone.parents));
+
+    </button>
+    <button data-atr="4">
+        <p>Persona.parets</p>
+        btn4.addEventListener('click', () => console.log(persone.parents));
+    
+    </button>
+    <div class="class101">
+        <p>const clone = JSON.parse(JSON.stringify(persone));</p>
+    </div>
+   
+    <script src="script.js"></script>
+</body>
+</html>
