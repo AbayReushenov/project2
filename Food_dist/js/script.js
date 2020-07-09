@@ -252,8 +252,60 @@ window.addEventListener("DOMContentLoaded", () => {
        
     ).render();  // одноразовае использование
 
+    // Forms Lesson 53
+
+    const formy = document.querySelectorAll('form');
+
+    const mess = {
+        loading: 'Загрузка',
+        success: 'Спасибо! Мы с Вами скоро свяжемся.',
+        failure: 'Что-то пошло не так ...',
+    };
+
+    formy.forEach(inem => {
+        postData(inem);
+    });
+
+    function postData(forma) {
+        forma.addEventListener("submit", (e) => {
+           e.preventDefault(); // в AJAX обязательно
+
+            const statusnyimessage = document.createElement('div');
+            statusnyimessage.classList.add('status');
+            statusnyimessage.textContent = mess.loading;
+            forma.append(statusnyimessage);
+
+           const r = new XMLHttpRequest(); // we create request as const
+           r.open('POST', 'server.php'); 
+           
+         //  r.setRequestHeader('Content-type', 'multipart/form-data');
+         // для json BackEnda \/
+         r.setRequestHeader('Content-type', 'application/json');
+           const formData = new FormData(forma);
+           const object = {};
+           formData.forEach( function(value, key) {
+               object[key] = value;
+            });
+
+            const json = JSON.stringify(object);
 
 
+           r.send(json);
+
+           r.addEventListener('load', () => {
+               if (r.status === 200) {
+                   console.log(r.response);
+                   statusnyimessage.textContent = mess.success;
+                   forma.reset();
+                   setTimeout( ()   => {
+                       statusnyimessage.remove();
+                   }, 2000);
+                } else {
+                    statusnyimessage.textContent = mess.failure;
+                }
+           });
+        });
+    }
 });
 
 
