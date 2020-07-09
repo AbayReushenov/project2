@@ -275,13 +275,12 @@ window.addEventListener("DOMContentLoaded", () => {
             statusnyimessage.textContent = mess.loading;
             forma.append(statusnyimessage);
 
-           const r = new XMLHttpRequest(); 
+           const r = new XMLHttpRequest(); // we create request as const
            r.open('POST', 'server.php'); 
            
-        //  r.setRequestHeader('Content-type', 'multipart/form-data'); 
-        // не нужно ставить для нашей формы:   r.send(forma);
-        // для json BackEnda \/
-           r.setRequestHeader('Content-type', 'application/json');
+         //  r.setRequestHeader('Content-type', 'multipart/form-data');
+         // для json BackEnda \/
+         r.setRequestHeader('Content-type', 'application/json');
            const formData = new FormData(forma);
            const object = {};
            formData.forEach( function(value, key) {
@@ -290,8 +289,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
             const json = JSON.stringify(object);
 
+
            r.send(json);
-      
 
            r.addEventListener('load', () => {
                if (r.status === 200) {
