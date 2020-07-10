@@ -4,16 +4,26 @@ window.addEventListener("DOMContentLoaded", () => {
         tabsContent = document.querySelectorAll(".tabcontent"), // контент к табам
         tabsParent = document.querySelector(".tabheader__items"); //родитель табов, для делегирования
 
+        //задача №1 
+        // СКРЫТЬ ненужные табы
         function hideTabContent() {
+            // обращаемся к контенту
+            // и перебираем его запрещая вывод на экран
             tabsContent.forEach(item => {
-                 item.classList.add("hide");
+                // item.style.display = 'none';
+                item.classList.add("hide");
                 item.classList.remove("show", 'fade');
             });
+
+            // скрываем сами табы, которые не нужны
             tabs.forEach(item => {
                 item.classList.remove('tabheader__item_active');
+                // удален класс активности 'tabheader__item_active'
             });
         }
+
     // функция для показа табов
+
         function showTabContent(i = 0) {
             // tabsContent[i].style.display = 'block';
             tabsContent[i].classList.add('show', 'fade');
@@ -25,10 +35,11 @@ window.addEventListener("DOMContentLoaded", () => {
         showTabContent(); // i = 0 по умолчанию, function showTabContent(i = 0) 
 
     tabsParent.addEventListener('click', (event) => {
+            
         const target = event.target;
 
-        if (target && target.classList.contains('tabheader__item')) {
-            tabs.forEach((item, i) => {
+         if (target && target.classList.contains('tabheader__item')) {
+             tabs.forEach((item, i) => {
                 if (target == item) {
                     hideTabContent();
                     showTabContent(i);
@@ -36,7 +47,9 @@ window.addEventListener("DOMContentLoaded", () => {
              });
          }
     });
+   
     // Timer
+
     const deadline = '2020-08-05';
     const t = Date.parse(deadline);
 
@@ -62,7 +75,7 @@ window.addEventListener("DOMContentLoaded", () => {
             return `0${num}`;
         } else { 
             return num;
-        }
+            }
     }
 
     function setClock(selector, endtime)   {         
@@ -94,31 +107,40 @@ window.addEventListener("DOMContentLoaded", () => {
     // Modal
 
     const modalTrigger = document.querySelectorAll('[data-modal'),
-          modal = document.querySelector('.modal');
-// modalCloseBtn = document.querySelector('[data-close]');
+          modal = document.querySelector('.modal'),
+          modalCloseBtn = document.querySelector('[data-close]');
 
     function openModal() {
         modal.classList.add('show');
         modal.classList.remove('hide');
+        //    modal.classList.toggle('show');
+        // как 2-й вариант
         document.body.style.overflow = 'hidden'; 
+        //фиксируем экран от прокрутки
         clearInterval(modalTimerId);
-     }
+        //if user have been opened the modal window, then modalTimerId is cleaned
+    }
 
     function closeModal() {
         modal.classList.add('hide');
         modal.classList.remove('show');
+        //    modal.classList.toggle('show');
+            // как 2-й вариант 
         document.body.style.overflow = '';
+        // разблокируем экран от прокрутки
         }
     
     modalTrigger.forEach(btn => {
         btn.addEventListener('click', openModal);
     });
 
-// modalCloseBtn.addEventListener('click', closeModal); 
- 
+    modalCloseBtn.addEventListener('click', closeModal); 
+    // closeModal не вызывается а передается!
+
     modal.addEventListener('click', (e) => {
-        if (e.target === modal || e.target.getAttribute('data-close') == '') {
+        if (e.target === modal) {
             closeModal();
+            // здесь функция вызывается         
         }
     });
 
@@ -128,21 +150,31 @@ window.addEventListener("DOMContentLoaded", () => {
             closeModal();
         }
     });
-
+//----------
 // Lesson 44 - \/ Lesson 48 не забудь раскоментировать \/
-    const modalTimerId = setTimeout(openModal, 50000 );
+    const modalTimerId = setTimeout(openModal, 5000 );
+
+    //throw 3 sec will come in "modal window
+    // it's start code!
 
     function showModalByScroll() {
         if(window.pageYOffset + document.documentElement.clientHeight >=  document.documentElement.scrollHeight) 
+        // your scrolling at the moment PLUS window height MORE OR EQUIAL the max scroll height
         {
             openModal();
             window.removeEventListener('scroll', showModalByScroll); 
+            //  window.addEventListener('scroll', showModalByScroll); =>> удаляется
+            // после первого использовангия
         }
+
     }
 
     window.addEventListener('scroll', showModalByScroll); 
+    //  }, {once: true}); - ркагирует только пролистывание мышкой,
+    // если один раз пролистнули то собятие отменяется
 
 // Lesson 48, Lesson 49
+// Используем классы для карточек
     class MenuCard {
         constructor(src, alt, title, descr, price, parensSelrctor, ...classes ) {
             this.src = src;
@@ -156,12 +188,14 @@ window.addEventListener("DOMContentLoaded", () => {
             this.changeToUAH();
         }
 
-// методы
+        // методы
+        // метод на будущее
         changeToUAH() {
             this.price = this.price * this.transfer;
         }
 
         render() {
+            // метод для верстки
             const element = document.createElement('div');
             if (this.classes.length === 0) {
                 this.element = 'menu__item';
@@ -178,10 +212,14 @@ window.addEventListener("DOMContentLoaded", () => {
                     <div class="menu__item-cost">Цена:</div>
                     <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                     `;
-            this.parent.append(element); 
+            this.parent.append(element); // метод append()помещает новый элемент 
+            // в структуру DOM
         }
     }
-
+    
+    // const div = new MenuCard();
+    // div.render();
+    // можно короче
     new MenuCard(
         "img/tabs/vegy.jpg",
         "vegy",
@@ -189,6 +227,8 @@ window.addEventListener("DOMContentLoaded", () => {
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         9,
         '.menu .container',
+        // 'menu__item',
+        // "big",
     ).render();  // одноразовае использование
 
     new MenuCard(
@@ -217,7 +257,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const formy = document.querySelectorAll('form');
 
     const mess = {
-        loading: 'img/form/spinner.svg',
+        loading: 'Загрузка',
         success: 'Спасибо! Мы с Вами скоро свяжемся.',
         failure: 'Что-то пошло не так ...',
     };
@@ -230,134 +270,42 @@ window.addEventListener("DOMContentLoaded", () => {
         forma.addEventListener("submit", (e) => {
            e.preventDefault(); // в AJAX обязательно
 
-            // const statusnyimessage = document.createElement('div');
-            // statusnyimessage.classList.add('status');
-            // statusnyimessage.textContent = mess.loading;
-            const statusnyimessage = document.createElement('img');
-            statusnyimessage.src = mess.loading;
-            statusnyimessage.style.cssText = `
-                display: block;
-                margin: 0 auto; 
-            `;
-//           forma.append(statusnyimessage);
-            forma.insertAdjacentElement('afterend', statusnyimessage);
-// targetElement.insertAdjacentElement(position, element);
-// Параметры
-// position
-// DOMString - определяет позицию добавляемого элемента относительно элемента, вызвавшего метод. Должно соответствовать одному из следующих значений (чувствительно к регистру):
-// 'beforebegin': до самого element (до открывающего тега).
-// 'afterbegin': сразу после открывающего тега  element (перед первым потомком).
-// 'beforeend': сразу перед закрывающим тегом element (после последнего потомка).
-// 'afterend': после element (после закрывающего тега).
-// element
-// Элемент, добавляемый в DOM-дерево.
-// Возвращаемое значение
-// Метод возвращает добавляемый элемент, либо null, если добавление элемента завершилось ошибкой.
+            const statusnyimessage = document.createElement('div');
+            statusnyimessage.classList.add('status');
+            statusnyimessage.textContent = mess.loading;
+            forma.append(statusnyimessage);
 
            const r = new XMLHttpRequest(); 
            r.open('POST', 'server.php'); 
-
+           
+        //  r.setRequestHeader('Content-type', 'multipart/form-data'); 
+        // не нужно ставить для нашей формы:   r.send(forma);
+        // для json BackEnda \/
            r.setRequestHeader('Content-type', 'application/json');
            const formData = new FormData(forma);
-
            const object = {};
            formData.forEach( function(value, key) {
                object[key] = value;
             });
-           const json = JSON.stringify(object);
+
+            const json = JSON.stringify(object);
 
            r.send(json);
       
+
            r.addEventListener('load', () => {
                if (r.status === 200) {
                    console.log(r.response);
-                   // new function
-                   showThanksModalSpecial(mess.success)
-                  // statusnyimessage.textContent = mess.success;
+                   statusnyimessage.textContent = mess.success;
                    forma.reset();
-                //    setTimeout( ()   => {
-                //        statusnyimessage.remove();
-                //    }, 2000);
-                statusnyimessage.remove();
-                //for spinner /|\
+                   setTimeout( ()   => {
+                       statusnyimessage.remove();
+                   }, 2000);
                 } else {
-                    showThanksModalSpecial(mess.failure);
-                    // new function  
-                    // statusnyimessage.textContent = mess.failure;
+                    statusnyimessage.textContent = mess.failure;
                 }
            });
         });
-    }
-    
-    // Lesson 54 Отправка форм
-    // Коррекция общения с клиентом после отправки формы
-    // Добавление див, спинов etc
-
-    function showThanksModalSpecial(mess) {
-        // получаем div : modal__dialog, он ОДИН
-/*         <div class="modal__dialog">
-            <div class="modal__content">
-            <form action="#">
-                <div data-close="" class="modal__close">×</div>
-                <div class="modal__title">Мы свяжемся с вами как можно быстрее!</div>
-                <input required="" placeholder="Ваше имя" name="name" type="text" class="modal__input">
-                <input required="" placeholder="Ваш номер телефона" name="phone" type="phone" class="modal__input">
-                <button class="btn btn_dark btn_min">Перезвонить мне</button>
-            </form>
-        </div>
-    </div> */
-    const previousDivDialog = document.querySelector('.modal__dialog');
-    //  add classv .hide for hiding and then showing the div.
-    // css options have been added yet
-    previousDivDialog.classList.add('hide');
-    // теперь можно открыть данный информационный блок уже прописанными 
-    // фунциями
-    openModal();
-/*     function openModal() {
-        modal.classList.add('show');
-        modal.classList.remove('hide');
-        document.body.style.overflow = 'hidden'; 
-        clearInterval(modalTimerId);
-     } */
-     //div modal is parent for div  modal__dialog, and so
-     // we will see only empty box, as I understand
-     // And by then we hve to and we can to create new content to add here
-     const thanksModalDiv = document.createElement('div');
-     // add to it some the same behavio
-     thanksModalDiv.classList.add('modal__dialog');
-     // and fill in by new content
-     thanksModalDiv.innerHTML = `
-     <div class="modal__content">
-         <div  class="modal__close" data-close>×</div>
-         <div class="modal__title">${mess}</div>
-     </div>
-     `;
-     // to close [х] div is dynamic var,
-     // and we have to change previous code to activate the button 'close'
-     // we will use 'delegirovanie' events
-    /* modal.addEventListener('click', (e) => {
-    if (e.target === modal || e.target.getAttribute('data-close') == '')
-        {
-         closeModal();
-        }
-    }); */
-
-     //upload the 'div' in our  parent 'div'  by append. method
-     document.querySelector('.modal').append(thanksModalDiv);
-
-     // after some time we have to return the first modal options
-     // and here are
-     setTimeout(() => {
-         thanksModalDiv.remove(); // clearning
-         previousDivDialog.classList.add('show'); // and fixing
-         previousDivDialog.classList.remove('hide'); // turn off our visibilities
-         closeModal(); // everything well done, close box "modal"
-     }, 4000);
-
-
-
-
-
     }
 });
 
