@@ -66,6 +66,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     function setClock(selector, endtime)   {         
+        // const timer = document.querySelector('.timer'),  // <div class="timer">
         const timer = document.querySelector(selector),
             days = timer.querySelector('#days'),
             hours = timer.querySelector('#hours'),
@@ -94,12 +95,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const modalTrigger = document.querySelectorAll('[data-modal'),
           modal = document.querySelector('.modal');
+// modalCloseBtn = document.querySelector('[data-close]');
+
     function openModal() {
         modal.classList.add('show');
         modal.classList.remove('hide');
         document.body.style.overflow = 'hidden'; 
         clearInterval(modalTimerId);
-        }
+     }
 
     function closeModal() {
         modal.classList.add('hide');
@@ -111,6 +114,8 @@ window.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener('click', openModal);
     });
 
+// modalCloseBtn.addEventListener('click', closeModal); 
+ 
     modal.addEventListener('click', (e) => {
         if (e.target === modal || e.target.getAttribute('data-close') == '') {
             closeModal();
@@ -208,6 +213,7 @@ window.addEventListener("DOMContentLoaded", () => {
     ).render();  // одноразовае использование
 
     // Forms Lesson 53
+
     const formy = document.querySelectorAll('form');
 
     const mess = {
@@ -222,100 +228,137 @@ window.addEventListener("DOMContentLoaded", () => {
 
     function postData(forma) {
         forma.addEventListener("submit", (e) => {
-            e.preventDefault(); // в AJAX обязательно
+           e.preventDefault(); // в AJAX обязательно
 
+            // const statusnyimessage = document.createElement('div');
+            // statusnyimessage.classList.add('status');
+            // statusnyimessage.textContent = mess.loading;
             const statusnyimessage = document.createElement('img');
             statusnyimessage.src = mess.loading;
             statusnyimessage.style.cssText = `
                 display: block;
                 margin: 0 auto; 
             `;
+//           forma.append(statusnyimessage);
             forma.insertAdjacentElement('afterend', statusnyimessage);
+// targetElement.insertAdjacentElement(position, element);
+// Параметры
+// position
+// DOMString - определяет позицию добавляемого элемента относительно элемента, вызвавшего метод. Должно соответствовать одному из следующих значений (чувствительно к регистру):
+// 'beforebegin': до самого element (до открывающего тега).
+// 'afterbegin': сразу после открывающего тега  element (перед первым потомком).
+// 'beforeend': сразу перед закрывающим тегом element (после последнего потомка).
+// 'afterend': после element (после закрывающего тега).
+// element
+// Элемент, добавляемый в DOM-дерево.
+// Возвращаемое значение
+// Метод возвращает добавляемый элемент, либо null, если добавление элемента завершилось ошибкой.
 
-            const formData = new FormData(forma);
-// for JSON added code
-            const object = {};
-            formData.forEach( function(value, key) {
-                object[key] = value;
+           const r = new XMLHttpRequest(); 
+           r.open('POST', 'server.php'); 
+
+           r.setRequestHeader('Content-type', 'application/json');
+           const formData = new FormData(forma);
+
+           const object = {};
+           formData.forEach( function(value, key) {
+               object[key] = value;
             });
-           // const json = JSON.stringify(object);
+           const json = JSON.stringify(object);
 
-            // rewrite code with fetch API
-            fetch('server.php', {
-                method: 'POST',
-                // 'for json the headers is needed'
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            })
-            .then(data => data.text())
-            .then(data => {
-                console.log(data);
-                showThanksModalSpecial(mess.success);
+           r.send(json);
+      
+           r.addEventListener('load', () => {
+               if (r.status === 200) {
+                   console.log(r.response);
+                   // new function
+                   showThanksModalSpecial(mess.success)
+                  // statusnyimessage.textContent = mess.success;
+                   forma.reset();
+                //    setTimeout( ()   => {
+                //        statusnyimessage.remove();
+                //    }, 2000);
                 statusnyimessage.remove();
-            })
-            .catch(() => {
-                showThanksModalSpecial(mess.failure);
-            })
-            .finally(() => forma.reset());
-            });
+                //for spinner /|\
+                } else {
+                    showThanksModalSpecial(mess.failure);
+                    // new function  
+                    // statusnyimessage.textContent = mess.failure;
+                }
+           });
+        });
     }
     
     // Lesson 54 Отправка форм
+    // Коррекция общения с клиентом после отправки формы
+    // Добавление див, спинов etc
 
     function showThanksModalSpecial(mess) {
-        const previousDivDialog = document.querySelector('.modal__dialog');
-        previousDivDialog.classList.add('hide');
-        openModal();
-        const thanksModalDiv = document.createElement('div');
-        thanksModalDiv.classList.add('modal__dialog');
-        thanksModalDiv.innerHTML = `
-                <div class="modal__content">
-                    <div  class="modal__close" data-close>×</div>
-                    <div class="modal__title">${mess}</div>
-                </div>
-                `;
-     
+        // получаем div : modal__dialog, он ОДИН
+/*         <div class="modal__dialog">
+            <div class="modal__content">
+            <form action="#">
+                <div data-close="" class="modal__close">×</div>
+                <div class="modal__title">Мы свяжемся с вами как можно быстрее!</div>
+                <input required="" placeholder="Ваше имя" name="name" type="text" class="modal__input">
+                <input required="" placeholder="Ваш номер телефона" name="phone" type="phone" class="modal__input">
+                <button class="btn btn_dark btn_min">Перезвонить мне</button>
+            </form>
+        </div>
+    </div> */
+    const previousDivDialog = document.querySelector('.modal__dialog');
+    //  add classv .hide for hiding and then showing the div.
+    // css options have been added yet
+    previousDivDialog.classList.add('hide');
+    // теперь можно открыть данный информационный блок уже прописанными 
+    // фунциями
+    openModal();
+/*     function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden'; 
+        clearInterval(modalTimerId);
+     } */
+     //div modal is parent for div  modal__dialog, and so
+     // we will see only empty box, as I understand
+     // And by then we hve to and we can to create new content to add here
+     const thanksModalDiv = document.createElement('div');
+     // add to it some the same behavio
+     thanksModalDiv.classList.add('modal__dialog');
+     // and fill in by new content
+     thanksModalDiv.innerHTML = `
+     <div class="modal__content">
+         <div  class="modal__close" data-close>×</div>
+         <div class="modal__title">${mess}</div>
+     </div>
+     `;
+     // to close [х] div is dynamic var,
+     // and we have to change previous code to activate the button 'close'
+     // we will use 'delegirovanie' events
+    /* modal.addEventListener('click', (e) => {
+    if (e.target === modal || e.target.getAttribute('data-close') == '')
+        {
+         closeModal();
+        }
+    }); */
+
+     //upload the 'div' in our  parent 'div'  by append. method
      document.querySelector('.modal').append(thanksModalDiv);
 
+     // after some time we have to return the first modal options
+     // and here are
      setTimeout(() => {
          thanksModalDiv.remove(); // clearning
          previousDivDialog.classList.add('show'); // and fixing
-         previousDivDialog.classList.remove('hide'); 
+         previousDivDialog.classList.remove('hide'); // turn off our visibilities
          closeModal(); // everything well done, close box "modal"
      }, 4000);
+
+
+
+
+
     }
-
-    //FETCH API
-    // JSONPlaceholder
-    //https://jsonplaceholder.typicode.com/
-    //Fake Online REST API for Testing and Prototyping
-    // var 1 - GET
-    // fetch('https://jsonplaceholder.typicode.com/todos/1')
-    //     .then(response => response.json())
-    //     .then(json => console.log(json));
-
-    // var 2 - POST
-    // fetch('https://jsonplaceholder.typicode.com/posts', {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //         name: "Abay",
-    //         email: "abay.reushenov@gmail.com",
-    //         age: 53,
-    //         adress: "Apt. 82, bld. 2, house 13, ul. 8-ya Tekstilshikov, Moscow, Russia",
-    //         indexPost: 109129,
-    //     }),
-    //     // without headers it's not working
-    //     headers: {
-    //         'Content-type': 'application/json'
-    //     }
-    // })
-    // .then(response => response.json())
-    // .then(json => console.log(json));
-
-
-        
 });
 
 

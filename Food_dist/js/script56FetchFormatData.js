@@ -233,21 +233,15 @@ window.addEventListener("DOMContentLoaded", () => {
             forma.insertAdjacentElement('afterend', statusnyimessage);
 
             const formData = new FormData(forma);
-// for JSON added code
-            const object = {};
-            formData.forEach( function(value, key) {
-                object[key] = value;
-            });
-           // const json = JSON.stringify(object);
 
             // rewrite code with fetch API
             fetch('server.php', {
                 method: 'POST',
-                // 'for json the headers is needed'
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
+                // 'for form-data the headers isn't need'
+                // headers: {
+                //     'Content-type': 'application/json'
+                // },
+                body: formData
             })
             .then(data => data.text())
             .then(data => {
