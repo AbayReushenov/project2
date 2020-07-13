@@ -1,5 +1,3 @@
-// const { resolve } = require("path");
-
 window.addEventListener("DOMContentLoaded", () => {
     //tabs
     const tabs = document.querySelectorAll(".tabheader__item"), // табы
@@ -289,81 +287,35 @@ window.addEventListener("DOMContentLoaded", () => {
      }, 4000);
     }
 
-    // Проверка: Установлен ли NODE JS
-    // iMac-Abay:Food_dist reushenov$ node -v
-    // v12.18.0
-    //
-    //Update:
-    //brew update
-    //brew upgrade node
-    //OR:
-    //npm install -g n
-    //sudo n latest
-    //or:
-    //nvm install node --reinstall-packages-from=node
-    //
-    //npm install -g npm
-    // +: npm install json-server --save-dev ==>> Local
-    // - : sudo npm install json-server -g ==>> Global
-    //
-    // для установки npm при скачивании проекта в другом месте набрать $ npm i
+    //FETCH API
+    // JSONPlaceholder
+    //https://jsonplaceholder.typicode.com/
+    //Fake Online REST API for Testing and Prototyping
+    // var 1 - GET
+    // fetch('https://jsonplaceholder.typicode.com/todos/1')
+    //     .then(response => response.json())
+    //     .then(json => console.log(json));
 
-//     fetch('db.json')
-//     .then(danniy => {
-//         return danniy.json();
-//     })
-//     .then(nashOtvet => {
-//         return console.log(nashOtvet);
-//     });
+    // var 2 - POST
+    // fetch('https://jsonplaceholder.typicode.com/posts', {
+    //     method: "POST",
+    //     body: JSON.stringify({
+    //         name: "Abay",
+    //         email: "abay.reushenov@gmail.com",
+    //         age: 53,
+    //         adress: "Apt. 82, bld. 2, house 13, ul. 8-ya Tekstilshikov, Moscow, Russia",
+    //         indexPost: 109129,
+    //     }),
+    //     // without headers it's not working
+    //     headers: {
+    //         'Content-type': 'application/json'
+    //     }
+    // })
+    // .then(response => response.json())
+    // .then(json => console.log(json));
 
-//  //или
-//  fetch('db.json')
-//     .then(dataDB => dataDB.json())
-//     .then(data => console.log(data));
 
-    // поменяем вместо названия файла будет 
-    // имя хоста
-fetch(' http://localhost:3000/menu')
-    .then(dataDB => dataDB.json())
-    .then(data => console.log(data));  
- // получаем массив с данными в отлие от верхгенго примера       
+        
 });
 
-// Start JSON Server
 
-// json-server --watch db.json
-
-// в терминале:
-// npm install -g json-server
-// json-server --watch db.json
-//  or:
-//  json-server db.json
-
-// json-server [options] <source>
-
-// Options:
-//   --config, -c       Path to config file           [default: "json-server.json"]
-//   --port, -p         Set port                                    [default: 3000]
-//   --host, -H         Set host                             [default: "localhost"]
-//   --watch, -w        Watch file(s)                                     [boolean]
-//   --routes, -r       Path to routes file
-//   --middlewares, -m  Paths to middleware files                           [array]
-//   --static, -s       Set static files directory
-//   --read-only, --ro  Allow only GET requests                           [boolean]
-//   --no-cors, --nc    Disable Cross-Origin Resource Sharing             [boolean]
-//   --no-gzip, --ng    Disable GZIP Content-Encoding                     [boolean]
-//   --snapshots, -S    Set snapshots directory                      [default: "."]
-//   --delay, -d        Add delay to responses (ms)
-//   --id, -i           Set database id property (e.g. _id)         [default: "id"]
-//   --foreignKeySuffix, --fks  Set foreign key suffix, (e.g. _id as in post_id)
-//                                                                  [default: "Id"]
-//   --quiet, -q        Suppress log messages from output                 [boolean]
-//   --help, -h         Show help                                         [boolean]
-//   --version, -v      Show version number                               [boolean]
-
-// Examples:
-//   json-server db.json
-//   json-server file.js
-//   json-server http://example.com/db.json
-
-// https://github.com/typicode/json-server
