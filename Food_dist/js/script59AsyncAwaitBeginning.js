@@ -1,3 +1,5 @@
+// const { resolve } = require("path");
+
 window.addEventListener("DOMContentLoaded", () => {
     //tabs
     const tabs = document.querySelectorAll(".tabheader__item"), // табы
@@ -166,65 +168,46 @@ window.addEventListener("DOMContentLoaded", () => {
             }
             element.innerHTML = `
                     <img src=${this.src} alt=${this.alt}>
-                    <h3 class="menu__item-subtitle">${this.title}</h3>
+                   <h3 class="menu__item-subtitle">${this.title}</h3>
                     <div class="menu__item-descr">${this.descr}</div>
                     <div class="menu__item-divider"></div>
                     <div class="menu__item-price">
-                        <div class="menu__item-cost">Цена:</div>
-                        <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-                    </div>
-                `;
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                    `;
             this.parent.append(element); 
         }
     }
 
-    // getResourse будет отвечать за получение данных для карточек
-    const getResourse = async (url) => {
-        const result = await fetch(url);
-        if (!result.ok) {
-            throw new Error(`Couldn't fetch ${url}, status: ${result.status}`);
-        }
- 
-        return await result.json();
-    };
+    new MenuCard(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        9,
+        '.menu .container',
+    ).render();  // одноразовае использование
 
-    // 1-й метод
-    getResourse("http://localhost:3000/menu")
-        .then(data => {
-            data.forEach(({img, altimg, title, descr, price}) => {
-                new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-            });
-        });
+    new MenuCard(
+        "img/tabs/elite.jpg",
+        "elite",
+        'Меню “Премиум”',
+        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        14,
+        '.menu .container',
+        'menu__item'
+    ).render();  // одноразовае использование
 
-    // 2- й метод
-    // getResourse("http://localhost:3000/menu")
-    //     .then(data => vreateCarda(data));
-
-    // function vreateCarda(data) {
-    //     data.forEach(({img, altimg, title, descr, price}) => {
-    //         const ememert = document.createElement('div');
-
-    //         price *= 27;
-
-    //         ememert.classList.add('menu__item');
-
-    //         ememert.innerHTML = `
-    //             <img src=${img} alt=${altimg}>
-    //             <h3 class="menu__item-subtitle">${title}</h3>
-    //             <div class="menu__item-descr">${descr}</div>
-    //             <div class="menu__item-divider"></div>
-    //             <div class="menu__item-price">
-    //             <div class="menu__item-cost">Цена:</div>
-    //             <div class="menu__item-total"><span>${price}</span> грн/день</div>
-    //             </div>
-    //         `;
-
-    //         document.querySelector('.menu .container').append(ememert);
-    //     });
-    // }
-
-
-
+    new MenuCard(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Постное"',
+        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ',
+        21,
+        '.menu .container',
+        'menu__item',
+       
+    ).render();  // одноразовае использование
 
     // Forms Lesson 53
     const formy = document.querySelectorAll('form');
@@ -236,24 +219,10 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     formy.forEach(inem => {
-        bindPostData(inem);
+        postData(inem);
     });
 
-    // postData будет отвечать за posting данных
-    const postData = async (url, data) => {
-        const result = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: data
-        });
-
-        return await result.json();
-    };
-
-    // данная функция будетотвечать за привязку данных
-    function bindPostData(forma) {
+    function postData(forma) {
         forma.addEventListener("submit", (e) => {
             e.preventDefault(); // в AJAX обязательно
 
@@ -266,10 +235,23 @@ window.addEventListener("DOMContentLoaded", () => {
             forma.insertAdjacentElement('afterend', statusnyimessage);
 
             const formData = new FormData(forma);
+// for JSON added code
+            const object = {};
+            formData.forEach( function(value, key) {
+                object[key] = value;
+            });
+           // const json = JSON.stringify(object);
 
-            const json = JSON.stringify(Object.fromEntries(formData.entries()));
-
-            postData('http://localhost:3000/requests', json )
+            // rewrite code with fetch API
+            fetch('server.php', {
+                method: 'POST',
+                // 'for json the headers is needed'
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(object)
+            })
+            .then(data => data.text())
             .then(data => {
                 console.log(data);
                 showThanksModalSpecial(mess.success);
@@ -307,9 +289,81 @@ window.addEventListener("DOMContentLoaded", () => {
      }, 4000);
     }
 
-// fetch(' http://localhost:3000/menu')
+    // Проверка: Установлен ли NODE JS
+    // iMac-Abay:Food_dist reushenov$ node -v
+    // v12.18.0
+    //
+    //Update:
+    //brew update
+    //brew upgrade node
+    //OR:
+    //npm install -g n
+    //sudo n latest
+    //or:
+    //nvm install node --reinstall-packages-from=node
+    //
+    //npm install -g npm
+    // +: npm install json-server --save-dev ==>> Local
+    // - : sudo npm install json-server -g ==>> Global
+    //
+    // для установки npm при скачивании проекта в другом месте набрать $ npm i
+
+//     fetch('db.json')
+//     .then(danniy => {
+//         return danniy.json();
+//     })
+//     .then(nashOtvet => {
+//         return console.log(nashOtvet);
+//     });
+
+//  //или
+//  fetch('db.json')
 //     .then(dataDB => dataDB.json())
-//     .then(data => console.log(data));         
+//     .then(data => console.log(data));
 
-
+    // поменяем вместо названия файла будет 
+    // имя хоста
+fetch(' http://localhost:3000/menu')
+    .then(dataDB => dataDB.json())
+    .then(data => console.log(data));  
+ // получаем массив с данными в отлие от верхгенго примера       
 });
+
+// Start JSON Server
+
+// json-server --watch db.json
+
+// в терминале:
+// npm install -g json-server
+// json-server --watch db.json
+//  or:
+//  json-server db.json
+
+// json-server [options] <source>
+
+// Options:
+//   --config, -c       Path to config file           [default: "json-server.json"]
+//   --port, -p         Set port                                    [default: 3000]
+//   --host, -H         Set host                             [default: "localhost"]
+//   --watch, -w        Watch file(s)                                     [boolean]
+//   --routes, -r       Path to routes file
+//   --middlewares, -m  Paths to middleware files                           [array]
+//   --static, -s       Set static files directory
+//   --read-only, --ro  Allow only GET requests                           [boolean]
+//   --no-cors, --nc    Disable Cross-Origin Resource Sharing             [boolean]
+//   --no-gzip, --ng    Disable GZIP Content-Encoding                     [boolean]
+//   --snapshots, -S    Set snapshots directory                      [default: "."]
+//   --delay, -d        Add delay to responses (ms)
+//   --id, -i           Set database id property (e.g. _id)         [default: "id"]
+//   --foreignKeySuffix, --fks  Set foreign key suffix, (e.g. _id as in post_id)
+//                                                                  [default: "Id"]
+//   --quiet, -q        Suppress log messages from output                 [boolean]
+//   --help, -h         Show help                                         [boolean]
+//   --version, -v      Show version number                               [boolean]
+
+// Examples:
+//   json-server db.json
+//   json-server file.js
+//   json-server http://example.com/db.json
+
+// https://github.com/typicode/json-server
