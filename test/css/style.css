@@ -1,0 +1,25 @@
+img{
+    height:200px;
+    width: 220px;
+    box-shadow:5px 5px 2px #555;
+    margin:10px;
+}
+
+div.outdiv {
+    overflow: hidden;
+    margin: 10px 10px 10px 10px;
+    width: auto;
+    padding: 35px;
+    background-color: #e9eed7;
+    border: 3px solid #03353b;
+  }
+  div.midle {
+    width: 1000%;
+  }
+  
+  div.menu__item {
+    float: left;
+    width: 250px;
+    height: auto;
+    border: 3px ;
+  }

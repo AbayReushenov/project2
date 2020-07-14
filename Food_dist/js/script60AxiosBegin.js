@@ -179,30 +179,22 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // getResourse будет отвечать за получение данных для карточек
-// const getResourse = async (url) => {
-//     const result = await fetch(url);
-//     if (!result.ok) {
-//         throw new Error(`Couldn't fetch ${url}, status: ${result.status}`);
-//     }
+    const getResourse = async (url) => {
+        const result = await fetch(url);
+        if (!result.ok) {
+            throw new Error(`Couldn't fetch ${url}, status: ${result.status}`);
+        }
+ 
+        return await result.json();
+    };
 
-//     return await result.json();
-// };
-
-// Make a request for a user with a given ID
-axios.get('http://localhost:3000/menu')
-      .then(response => {
-            response.data.forEach(({img, altimg, title, descr, price}) => {
+    // 1-й метод
+    getResourse("http://localhost:3000/menu")
+        .then(data => {
+            data.forEach(({img, altimg, title, descr, price}) => {
                 new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
             });
         });
-
-    // 1-й метод
-    // getResourse("http://localhost:3000/menu")
-    //     .then(data => {
-    //         data.forEach(({img, altimg, title, descr, price}) => {
-    //             new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-    //         });
-    //     });
 
     // 2- й метод
     // getResourse("http://localhost:3000/menu")
@@ -314,5 +306,10 @@ axios.get('http://localhost:3000/menu')
          closeModal(); // everything well done, close box "modal"
      }, 4000);
     }
+
+// fetch(' http://localhost:3000/menu')
+//     .then(dataDB => dataDB.json())
+//     .then(data => console.log(data));         
+
 
 });

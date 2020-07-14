@@ -315,4 +315,83 @@ axios.get('http://localhost:3000/menu')
      }, 4000);
     }
 
+// fetch(' http://localhost:3000/menu')
+//     .then(dataDB => dataDB.json())
+//     .then(data => console.log(data));         
+
+
 });
+
+//https://cdnjs.com/libraries/axios
+// установить  в теминале:
+//  npm install axios
+{/* <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js" integrity="sha512-VGxuOMLdTe8EmBucQ5vYNoYDTGijqUsStF6eM7P3vA/cM1pqOwSBv/uxw94PhhJJn795NlOeKBkECQZ1gIzp6A==" crossorigin="anonymous"></script> */}
+// https://github.com/axios/axios
+//
+//<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+//Features
+// Make XMLHttpRequests from the browser
+// Make http requests from node.js
+// Supports the Promise API
+// Intercept request and response
+// Transform request and response data
+// Cancel requests
+// Automatic transforms for JSON data
+// Client side support for protecting against XSRF
+
+
+/* 
+Response Schema
+The response for a request contains the following information.
+
+{
+  // `data` is the response that was provided by the server
+  data: {},
+
+  // `status` is the HTTP status code from the server response
+  status: 200,
+
+  // `statusText` is the HTTP status message from the server response
+  statusText: 'OK',
+
+  // `headers` the HTTP headers that the server responded with
+  // All header names are lower cased and can be accessed using the bracket notation.
+  // Example: `response.headers['content-type']`
+  headers: {},
+
+  // `config` is the config that was provided to `axios` for the request
+  config: {},
+
+  // `request` is the request that generated this response
+  // It is the last ClientRequest instance in node.js (in redirects)
+  // and an XMLHttpRequest instance in the browser
+  request: {}
+}
+When using then, you will receive the response as follows:
+
+axios.get('/user/12345')
+  .then(function (response) {
+    console.log(response.data);
+    console.log(response.status);
+    console.log(response.statusText);
+    console.log(response.headers);
+    console.log(response.config);
+  });    */
+
+      
+
+    // в js формате:
+    // .then(data => console.log(data));
+
+//   .then(function (response) {
+//     // handle success
+//     console.log(response);
+//   })
+//   .catch(function (error) {
+//     // handle error
+//     console.log(error);
+//   })
+//   .then(function () {
+//     // always executed
+//   });
+
