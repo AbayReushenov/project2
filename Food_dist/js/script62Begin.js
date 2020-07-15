@@ -310,140 +310,50 @@ window.addEventListener("DOMContentLoaded", () => {
         }, 4000);
     }
 
-    // slider var 2 'Карусель'
-    // создаем обертку в index.html
-    //  <div class="offer______slider-inner2"> оно будет нашем окошком и в нем будут находиться наши слайды
-    // Это будет слайд карусель и он займет фактический размер всех слайдов, в данном случае 4 слайда и всего 400 % от ширина окна 'wrapper'
-    //
-    // в 1-м <div class="offer__slider-wrapper"> будет свойство  overlow : hidden, скрыто все что больше ширины данного окна
-    // 
-    // 
-    
+    // slider
+    let slideIndex = 1;
     const slides = document.querySelectorAll('.offer__slide'),
         prev = document.querySelector('.offer__slider-prev'),
         next = document.querySelector('.offer__slider-next'),
         total = document.querySelector('#total'),
-        current = document.querySelector('#current'),
-        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-        inner2 = document.querySelector('.offer______slider-inner2'),
-        width = window.getComputedStyle(slidesWrapper).width; // ширина нашего окошка
+        current = document.querySelector('#current');
 
-    let slideIndex = 1;
-    let offset = 0; // переменная будет отслеживать на сколько мы отступили от краев нашего большого слайда 'inner2'
+    showSlides(slideIndex);
 
     if (slides.length < 10) {
         total.textContent = `0${slides.length}`;
-        current.textContent =  `0${slideIndex}`;
     } else {
         total.textContent = slides.length;
-        current.textContent =  slideIndex;
     }
 
-
-    //CSS : зададим ширину нашей карусели 
-    inner2.style.width = 100 * slides.length + '%'; // 400 %
-    inner2.style.display = 'flex'; // переведет все слайды в 1 линию
-    inner2.style.transition = '0.5s all'; // постепенный переход
-
-    slidesWrapper.style.overflow = 'hidden'; // убираем видимость рмками wrspper
-
-    
-    slides.forEach(item => {
-        item.style.width = width; // каждый слайд получил стнадартный размер
-        // равный размеру нашего 'wrappera'
-    });
-
-    next.addEventListener('click', () => {  // next => вправо будет "-"
-        if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) { 
-        // '500px' => 500
-        // 500 * (4 -1) = 1500,то есть мы подошли к последнему слайду
-        //  const slides = document.querySelectorAll('.offer__slide')
-            offset = 0;
-        } else { 
-            offset += +width.slice(0, width.length - 2);
-           // width = window.getComputedStyle(slidesWrapper).width; 
-           // ширина нашего окошка
-           //вставляем без 'px'
-        }
-
-        inner2.style.transform = `translateX(-${offset}px)`; // "-"
-
-        if (slideIndex == slides.length) {
+    function showSlides(n) {
+        if (n > slides.length) {
             slideIndex = 1;
-        }   else {
-            slideIndex++;
+        }
+        if (n < 1) {
+            slideIndex = slides.length;
         }
 
+        slides.forEach((item) => item.style.display = 'none');
+
+        slides[slideIndex - 1].style.display = 'block'; // Как ваша самостоятельная работа - переписать на использование классов show/hide
+        
         if (slides.length < 10) {
             current.textContent =  `0${slideIndex}`;
         } else {
             current.textContent =  slideIndex;
         }
-
-    });
-
-    prev.addEventListener('click', () => {  // next => вправо будет "-"
-        if (offset == 0) {
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
-        } else { 
-            offset -= +width.slice(0, width.length - 2);
-        }
-
-    inner2.style.transform = `translateX(-${offset}px)`; // "-"
-
-    if (slideIndex == 1) {
-        slideIndex = slides.length;
-    }   else {
-        slideIndex--;
     }
 
-    if (slides.length < 10) {
-        current.textContent =  `0${slideIndex}`;
-    } else {
-        current.textContent =  slideIndex;
+    function plusSlides (n) {
+        showSlides(slideIndex += n);
     }
+
+    prev.addEventListener('click', function(){
+        plusSlides(-1);
     });
-// в консоле мы видим как меняется : transform: translateX(0px) => transform: translateX(-1950px)
 
-
+    next.addEventListener('click', function(){
+        plusSlides(1);
+    });
 });
-
-    // showSlides(slideIndex);
-
-    // if (slides.length < 10) {
-    //     total.textContent = `0${slides.length}`;
-    // } else {
-    //     total.textContent = slides.length;
-    // }
-
-    // function showSlides(n) {
-    //     if (n > slides.length) {
-    //         slideIndex = 1;
-    //     }
-    //     if (n < 1) {
-    //         slideIndex = slides.length;
-    //     }
-
-    //     slides.forEach((item) => item.style.display = 'none');
-
-    //     slides[slideIndex - 1].style.display = 'block'; // Как ваша самостоятельная работа - переписать на использование классов show/hide
-        
-    //     if (slides.length < 10) {
-    //         current.textContent =  `0${slideIndex}`;
-    //     } else {
-    //         current.textContent =  slideIndex;
-    //     }
-    // }
-
-    // function plusSlides (n) {
-    //     showSlides(slideIndex += n);
-    // }
-
-    // prev.addEventListener('click', function(){
-    //     plusSlides(-1);
-    // });
-
-    // next.addEventListener('click', function(){
-    //     plusSlides(1);
-    // });
-
