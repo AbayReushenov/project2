@@ -311,6 +311,26 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // slider var 2 'Карусель'
+    // создаем обертку в index.html
+    //  <div class="offer______slider-inner2"> оно будет нашем окошком и в нем будут находиться наши слайды
+    // Это будет слайд карусель и он займет фактический размер всех слайдов, в данном случае 4 слайда и всего 400 % от ширина окна 'wrapper'
+    //
+    // в 1-м <div class="offer__slider-wrapper"> будет свойство  overlow : hidden, скрыто все что больше ширины данного окна
+    // 
+    // 
+// список нащих <div class=
+// offer__slider
+// offer__slider-counter
+// offer__slider-prev
+// <span id="current
+// <span id="total
+// offer__slider-next
+// offer__slider-wrapper
+// offer______slider-inner2
+// offer__slide
+// offer__slide
+// offer__slide
+// offer__slide
   
     const slider = document.querySelector('.offer__slider'), // added in lesson 63
         slides = document.querySelectorAll('.offer__slide'),
@@ -324,21 +344,32 @@ window.addEventListener("DOMContentLoaded", () => {
 
     let slideIndex = 1;
     let offset = 0; // переменная будет отслеживать на сколько мы отступили от краев нашего большого слайда 'inner2'
-    let step = i => +width.slice(0, width.length - 2) * (i - 1); // step * N
 
     const nN = n =>  n > 9 ? "" + n: "0" + n;
 
     total.textContent = nN(slides.length);
     current.textContent =  nN(slideIndex);
+    
+    // if (slides.length < 10) {
+    //     total.textContent = `0${slides.length}`;
+    //     current.textContent =  `0${slideIndex}`;
+    // } else {
+    //     total.textContent = slides.length;
+    //     current.textContent =  slideIndex;
+    // }
 
+
+    //CSS : зададим ширину нашей карусели 
     inner2.style.width = 100 * slides.length + '%'; // 400 %
     inner2.style.display = 'flex'; // переведет все слайды в 1 линию
     inner2.style.transition = '0.5s all'; // постепенный переход
 
     slidesWrapper.style.overflow = 'hidden'; // убираем видимость рмками wrspper
+
     
     slides.forEach(item => {
         item.style.width = width; // каждый слайд получил стнадартный размер
+        // равный размеру нашего 'wrappera'
     });
 
     // lesson 62
@@ -355,7 +386,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
     for (let i = 0; i < slides.length; i++) {
         const dot = document.createElement("li");
+
         dot.setAttribute('data-slide-to', i + 1);
+
         dot.classList.add('dot');
 
         if (i == 0) {
@@ -363,24 +396,38 @@ window.addEventListener("DOMContentLoaded", () => {
         }
      
         clickDots.append(dot);
+
         dots.push(dot); //массив с точками
     }
 
     function functionDotOpacity(i) {
+        
         inner2.style.transform = `translateX(-${offset}px)`; // "-"
 
-        current.textContent =  nN(i);
+        if (slides.length < 10) {
+            current.textContent =  `0${i}`;
+            } else {
+            current.textContent =  i;
+        }
 
         dots.forEach(dot => dot.style.opacity = '.5');
         dots[i - 1].style.opacity = 1;
-    }
+     }
 
     next.addEventListener('click', () => {  // next => вправо будет "-"
-        if (offset == step(slides.length)) { 
+        if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) { 
+        // '500px' => 500
+        // 500 * (4 -1) = 1500,то есть мы подошли к последнему слайду
+        //  const slides = document.querySelectorAll('.offer__slide')
             offset = 0;
         } else { 
-            offset += step(2); // + ONE step
+            offset += +width.slice(0, width.length - 2);
+           // width = window.getComputedStyle(slidesWrapper).width; 
+           // ширина нашего окошка
+           //вставляем без 'px'
         }
+
+        // inner2.style.transform = `translateX(-${offset}px)`; // "-"
 
         if (slideIndex == slides.length) {
             slideIndex = 1;
@@ -388,32 +435,57 @@ window.addEventListener("DOMContentLoaded", () => {
             slideIndex++;
         }
 
+        // if (slides.length < 10) {
+        //     current.textContent =  `0${slideIndex}`;
+        // } else {
+        //     current.textContent =  slideIndex;
+        // }
+
         functionDotOpacity(slideIndex);
+        // dots.forEach(dot => dot.style.opacity = '.5');
+        // dots[slideIndex - 1].style.opacity = 1;
+
     });
 
-    prev.addEventListener('click', () => { 
+    prev.addEventListener('click', () => {  // next => вправо будет "-"
         if (offset == 0) {
-            offset = step(slides.length);
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
         } else { 
-            offset -= step(2);// - ONE step
+            offset -= +width.slice(0, width.length - 2);
         }
+
+        // inner2.style.transform = `translateX(-${offset}px)`; // "-"
 
         if (slideIndex == 1) {
             slideIndex = slides.length;
         }   else {
             slideIndex--;
         }
+
+        // if (slides.length < 10) {
+        //     current.textContent =  `0${slideIndex}`;
+        // } else {
+        //     current.textContent =  slideIndex;
+        // }
+
         functionDotOpacity(slideIndex);
+        // dots.forEach(dot => dot.style.opacity = '.5');
+        // dots[slideIndex - 1].style.opacity = 1;
     });
 
-    // действие на нажатие точки
+    // действие на нажаиме точки
     dots.forEach(dot => {
         dot.addEventListener('click', (e) => {
             const slideto = e.target.getAttribute('data-slide-to');
+
             slideIndex = slideto;
-            offset = step(slideto);
+            offset = +width.slice(0, width.length - 2) * (slideto - 1);
+            // inner2.style.transform = `translateX(-${offset}px)`; // "-"
+
             functionDotOpacity(slideto);
         });
     });
-
+// в консоле мы видим как меняется : transform: translateX(0px) => transform: translateX(-1950px)
+// slider - продолжение
+// файл добавлен в css/styles.css => ссылка в index.html
 });

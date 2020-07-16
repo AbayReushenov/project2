@@ -377,6 +377,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     next.addEventListener('click', () => {  // next => вправо будет "-"
         if (offset == step(slides.length)) { 
+           // (offset == +width.slice(0, width.length - 2) * (slides.length - 1))
             offset = 0;
         } else { 
             offset += step(2); // + ONE step
