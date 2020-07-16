@@ -324,7 +324,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     let slideIndex = 1;
     let offset = 0; // переменная будет отслеживать на сколько мы отступили от краев нашего большого слайда 'inner2'
-    let step = i => +width.slice(0, width.length - 2) * (i - 1); // step * N
+    let step = i => +width.replace(/\D/g, '') * (i - 1); // step * N
 
     const nN = n =>  n > 9 ? "" + n: "0" + n;
 
