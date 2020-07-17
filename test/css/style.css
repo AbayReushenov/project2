@@ -13,13 +13,63 @@ div.outdiv {
     background-color: #e9eed7;
     border: 3px solid #03353b;
   }
-  div.midle {
+div.midle {
     width: 1000%;
   }
   
-  div.menu__item {
+div.menu__item {
     float: left;
     width: 250px;
     height: auto;
     border: 3px ;
   }
+
+.offer__slide>img{
+  height:500px;
+  width: 667px;
+  /* box-shadow: none;
+  margin: none; */
+}
+
+.offer__slider-counter {
+  position: absolute; /* Абсолютное позиционирование */
+  width: 100px;
+  position: absolute;
+  top: -35px;
+  right: 100px;
+  float: 500px;
+  display: flex;
+  font-size: 200%;
+
+}
+
+#strelka {
+  height:35px;
+  width: 35px;
+  box-shadow: none;
+  margin: none;
+  /* position: absolute; */
+}
+
+.offer__slider {
+  position: relative; 
+  float: right;
+  width: 700px;
+  height: auto;
+  border: 3px ;
+}
+div.midle2  {
+  width: 100%;
+}
+span#current {
+  font-size:150%;
+  color: maroon; /* Цвет текста */
+  font-weight: 800; /* Жирное начертание */
+}
+
+span#total {
+  /* font-size: 200%; */
+  color: rgb(168, 69, 69); /* Цвет текста */
+  font-weight: 400; /* Жирное начертание */
+  
+}
