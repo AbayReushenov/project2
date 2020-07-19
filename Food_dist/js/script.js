@@ -416,4 +416,107 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Calc
+
+    const kilocalor = document.querySelector('.calculating__result span');
+    // <div class="calculating__result">
+    // <span>2700</span> ккал
+    // </div>
+    let sex = 'female', height, weight, age, ratio = 1.375;
+
+    function calcTotal() {
+        if (!sex || !height || !weight || !age || !ratio) {
+            kilocalor.textContent = '____';
+            return;
+        }
+
+        if (sex === 'female') {
+            kilocalor.textContent = Math.round((447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age)) * ratio) ;
+        } else {
+            kilocalor.textContent = Math.round((88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age)) * ratio );
+        }
+    }
+
+    calcTotal();
+
+    function getStatInfo(selectorRoditel, classFlagAktiven) {
+        const elementsCalc = document.querySelectorAll(`${selectorRoditel} div`);
+        //подучим все дивы
+
+
+        // при присвоении родителю события возникает баг
+        // активируется область вокруг наших необходимых событий
+        // поэтому код перерабатываес и устанавливаем новоеый перебор событий  и присвоение
+        // только конкретным выдеряемым div-ам
+        elementsCalc.forEach(itemDiv => {
+            itemDiv.addEventListener('click', (event) => {
+                if (event.target.getAttribute('data-ratio')) {
+                    ratio = +event.target.getAttribute('data-ratio');
+                } else {
+                    sex = event.target.getAttribute('id');
+                }
+    
+                elementsCalc.forEach(intem => {
+                    intem.classList.remove(classFlagAktiven);
+                });
+    
+                event.target.classList.add(classFlagAktiven);
+    
+                calcTotal();
+                //call recalculating function each time when we have event
+                });
+        });
+
+        // данный код ниже дает ошибку при клике рядом с нашими необходимыми div-ми:
+        // document.querySelector(selectorRoditel).addEventListener('click', (event) => {
+        //     if (event.target.getAttribute('data-ratio')) {
+        //         ratio = +event.target.getAttribute('data-ratio');
+        //     } else {
+        //         sex = event.target.getAttribute('id');
+        //     }
+
+        //     elementsCalc.forEach(intem => {
+        //         intem.classList.remove(classFlagAktiven);
+        //     });
+
+        //     event.target.classList.add(classFlagAktiven);
+
+        //     calcTotal();
+        //     //call recalculating function each time when we have event
+        //     });
+    }
+
+    getStatInfo('#gender', 'calculating__choose-item_active');
+    getStatInfo('.calculating__choose_big', 'calculating__choose-item_active');
+
+    function getInputOrDinamicInfo(selectorID) {
+        const nashInput = document.querySelector(selectorID);
+
+        nashInput.addEventListener('input', (eee) => { // событие 'input' состоялось
+            switch(nashInput.getAttribute('id')) { //  in this div there is 'id'
+            // if there is === 'true'
+                case 'height' :
+                    height = +nashInput.value; // we will get new value for the element
+                    break; // mission have been complited
+
+                case 'weight' :
+                    weight = +nashInput.value; // we will get new value for the element
+                    break; 
+
+                case 'age' :
+                    age = +nashInput.value; // we will get new value for the element
+                    break;                   
+
+            }
+
+            //call recalculating function each time when we have event
+            calcTotal(); 
+        });        
+    }
+
+    // call the functionc with 3 different selectors
+    getInputOrDinamicInfo('#height');
+    getInputOrDinamicInfo('#age');
+    getInputOrDinamicInfo('#weight');
+
 });
