@@ -24,6 +24,7 @@ div.midle {
 div.menu__item {
     display: inline-block;
     vertical-align: middle;
+    
   }
 .offer__slide>img{
   height:500px;
@@ -113,12 +114,13 @@ div.calculating__choose-item {
 
 .order__input {
     width: 280px;
-    height: 50px;
+    height: auto;
     background: #fff;
     box-shadow: 3px 4px 15px rgba(0,0,0,.2);
     border: 1 ;
     font-size: 18px;
-    text-align: center;
+    text-align: left;
     padding: 0 20px;
     outline: 0;
+
 }

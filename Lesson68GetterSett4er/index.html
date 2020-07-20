@@ -8,26 +8,32 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-            <H3>Getter and Setter</H3>
-            <p class="order__input">Getter</p>
-            <p class="order__input">Setter</p>
+    <div class="outdiv">
+        <div class="midle">
+            <div class="menu__item">
+                <H3>Getter and Setter</H3>
+                <p class="order__input">Getter</p>
+                <p class="order__input">Setter</p>
 
-            <xmp>
-                'use strict';
+                <xmp>
+'use strict';
 
-                const chel = {
-                    name: "Evgeniy",
-                    age: 25,
-                    bisnessIncome: 100,
-                    get chelBisiness() {
-                        return this.bisnessIncome;
-                    },
-                    wife: " NAtasha",
-                    set chelBisiness(newInfo) {
-                        this.bisnessIncome = newInfo;
-                    }
-                };
-            </xmp>
+const chel = {
+    name: "Evgeniy",
+    age: 25,
+    bisnessIncome: 100,
+        get chelBisiness() {
+            return this.bisnessIncome;
+        },
+    wife: " NAtasha",
+        set chelBisiness(newInfo) {
+            this.bisnessIncome = newInfo;
+        }
+};
+                </xmp>
+                </div>
+         </div>
+    </div>
             <div class="outdiv">
                 <div class="midle">
                     <div class="menu__item">
@@ -87,7 +93,686 @@ script.js:37 2000
                 </div>
             </div>
 
+            <div class="outdiv">
+                <h2>Lesson 69 (1)</h2>
+                <H3>Инкапсуляция</H3>
+                <p class="order__input">function constructor </p>
+                <div class="midle">
 
+                       
+                        <div class="menu__item">
+
+<xmp>
+function UserStandart(xName, xAge) {
+    this.name = xName;
+    this.age = xAge;
+
+    this.functiuonSay = function() {
+        console.log(`User name is: ${this.name},
+         age is ${this.age}`);
+    };
+}
+
+const abay = new UserStandart('Abay', 53);
+console.log(abay.name);
+console.log( abay.age);
+
+abay.name = "Leon de Filiciticion";
+abay.age = 46;
+
+console.log(abay.name);
+console.log(abay.age);
+abay.functiuonSay();
+</xmp>
+</div>
+                       
+<div class="menu__item">                   
+                     
+                            <xmp>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+             Abay
+script.js:51 53
+script.js:56 Leon de Filiciticion
+script.js:57 46
+script.js:45 User name is: Leon de Filiciticion, age is 46
+                        </xmp>
+                       
+        
+
+                   
+                </div>
+            </div>
+            </div>
+            <div class="outdiv">
+                <h2>Lesson 69 (2)</h2>
+                <H3>Инкапсуляция<br> function UserStandart(xName, xAge)</H3>
+                <p class="order__input">Можно сделать <br>abay.userAge = 65; <br>но это уже другая переменная<br>
+                Ошибка!</p>
+                <div class="midle"><div class="menu__item">
+<xmp>
+function UserStandart(xName, xAge) {
+    this.name = xName;
+    // this.age = xAge;
+    let userAge = xAge;
+
+    this.functiuonSay = function() {
+        console.log(`User name is: ${this.name}, age is ${userAge}`);
+    };
+}
+
+const abay = new UserStandart('Abay', 53);
+
+abay.functiuonSay();
+console.log(abay.name);
+
+console.log( abay.userAge);
+
+abay.name = "Leon de Filiciticion";
+
+abay.userAge = 65;
+
+console.log(abay.name);
+
+console.log(abay.userAge);
+
+abay.functiuonSay();
+</xmp>
+</div>
+                       
+<div class="menu__item">                   
+                     
+                            <xmp>
+
+
+
+
+
+
+
+
+
+
+
+
+User name is: Abay, age is 53
+Abay
+
+undefined
+
+
+
+
+
+Leon de Filiciticion
+
+65
+
+User name is: Leon de Filiciticion, age is 53
+                </xmp>
+            </div>
+        </div>
+    </div>
+
+    <div class="outdiv">
+        <h2>Lesson 69 (3)</h2>
+        <H3>Инкапсуляция, переменная внутри <br>
+            function UserStandart(xName, xAge) 
+        </H3>
+        <p class="order__input"> this.getAge = function() <br>
+        this.setage = function(xAge)</p>
+        <div class="midle"><div class="menu__item">
+<xmp>
+function UserStandart(xName, xAge) {
+    this.name = xName;
+    // this.age = xAge;
+    let userAge = xAge;
+
+    this.functiuonSay = function() {
+        console.log(`User name is: ${this.name}, age is ${userAge}`);
+    };
+
+    this.getAge = function() {
+        return userAge;
+    };
+
+    this.setage = function(xAge) {
+        if (typeof xAge === 'number' && xAge > 0 && xAge < 110) {
+            userAge = xAge;
+        } else {
+            console.log('Недопустимое значение!');
+        }
+    };
+}
+
+const abay = new UserStandart('Abay', 53);
+
+abay.functiuonSay();
+console.log(abay.name);
+console.log( abay.getAge());
+
+abay.name = "Leon de Filiciticion";
+abay.setage(65);
+abay.setage(111);
+abay.functiuonSay();
+console.log(abay.name);
+console.log(abay.getAge());
+</xmp>
+</div>
+               
+<div class="menu__item">                   
+             
+                    <xmp>
+
+
+
+
+
+
+                       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+User name is: Abay, age is 53
+Abay
+53
+
+
+
+Недопустимое значение!
+User name is: Leon de Filiciticion, age is 65
+Leon de Filiciticion
+65
+        </xmp>
+    </div>
+</div>
+</div>
+
+<div class="outdiv">
+    <h2>Lesson 69 (4)</h2>
+    <H3>Инкапсуляция, конструктор<br>
+    НЕЛЬЗЯ убрать доступ в к объекту созданному из CLASS - new
+ 
+    </H3>
+    <p class="order__input"> </p>
+    <div class="midle"><div class="menu__item">
+<xmp>
+    class UserStandart {
+        constructor(xName, xAge) {
+            this.name = xName;
+        // this.age = xAge;
+            this.userAge = xAge;
+        }
+    
+        functiuonSay() {
+            console.log(`User name is: ${this.name}, age is ${this.userAge}`);
+        }
+    
+        getAge() {
+            return this.userAge;
+        }
+    
+        setage(xAge) {
+            if (typeof xAge === 'number' && xAge > 0 && xAge < 110) {
+                this.userAge = xAge;
+            } else {
+                console.log('Недопустимое значение!');
+            }
+        }
+    }
+    
+    
+const abay = new UserStandart('Abay', 53);
+
+abay.functiuonSay();
+console.log(abay.name);
+
+abay.userAge = 99;
+console.log(abay.userAge);
+console.log(abay.getAge());
+
+abay.name = "Leon de Filiciticion";
+abay.setage(65);
+abay.setage(111);
+
+abay.functiuonSay();
+console.log(abay.name);
+console.log(abay.getAge());
+</xmp>
+</div>
+           
+<div class="menu__item">                   
+         
+                <xmp>
+
+
+
+
+
+
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+User name is: Abay, age is 53
+Abay
+
+
+99
+99
+
+
+
+Недопустимое значение!
+
+User name is: Leon de Filiciticion, age is 65
+Leon de Filiciticion
+65
+    </xmp>
+</div>
+</div>
+</div>
+
+ <!-- Lesson 69 (5 var) -->
+
+
+<div class="outdiv">
+    <h2>Lesson 69 (5)</h2>
+    <H3>Инкапсуляция, конструктор + this._element + get + set<br>
+    НЕЛЬЗЯ убрать доступ в к объекту созданному из CLASS - new
+ 
+    </H3>
+    <p class="order__input"> к переменным _element обращаться только с помощью get и set</p>
+    <div class="midle"><div class="menu__item">
+<xmp>
+class UserStandart {
+    constructor(xName, xAge) {
+        this.name = xName;
+    // this.age = xAge;
+        this._userAge = xAge;
+    }
+
+    functiuonSay() {
+        console.log(`User name is: ${this.name}, age is ${this._userAge}`);
+    }
+
+    get age() {
+        return this._userAge;
+    }
+
+    set age(xAge) {
+        if (typeof xAge === 'number' && xAge > 0 && xAge < 110) {
+            this._userAge = xAge;
+        } else {
+            console.log('Недопустимое значение!');
+        }
+    }
+
+    functiuonSay2() {
+        console.log(`User name is: ${this.name}, age is ${this.age}`);
+    }
+}
+
+
+const abay = new UserStandart('Abay', 53);
+
+abay.functiuonSay();
+abay.functiuonSay2();
+console.log(abay.name);
+
+abay._userAge = 99; // так нельзя делать
+console.log(abay._userAge);
+console.log(abay.age); //get age()
+
+abay.name = "Leon de Filiciticion";
+abay.age = 65; //set age(xAge) , а так можно
+abay.age = 111; //set age(xAge)
+
+abay.functiuonSay();
+abay.functiuonSay2();
+
+console.log(abay.name);
+console.log(abay._userAge);  // так нельзя делать
+console.log(abay.age);//get age()
+</xmp>
+</div>
+           
+<div class="menu__item">                   
+         
+                <xmp>
+
+
+
+
+
+
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+User name is: Abay, age is 53
+User name is: Abay, age is 53
+Abay
+
+
+99
+99
+
+
+
+Недопустимое значение!
+
+User name is: Leon de Filiciticion, age is 65
+User name is: Leon de Filiciticion, age is 65
+
+Leon de Filiciticion
+65
+65
+    </xmp>
+</div>
+</div>
+</div>
+
+
+<div class="outdiv">
+    <h2>Lesson 69 (6)</h2>
+    <H3>Инкапсуляция, конструктор + добавление свойства (Only Chrome)
+    </H3>
+    <p class="order__input"> #surname<br>
+    нельзя изменить нароямую</p>
+    <div class="midle"><div class="menu__item">
+<xmp>
+    'use strict';
+
+    class UserStandart {
+        constructor(xName, xAge) {
+            this.name = xName;
+        // this.age = xAge;
+            this._userAge = xAge;
+        }
+    
+        //вне конструктора!!!
+        #surname = 'Reushenov';
+    
+        functiuonSay() {
+            console.log(`User name is: ${this.name} ${this.#surname}, age is ${this._userAge}`);
+        }
+    
+        functiuonSay3 = () => {
+            console.log(`User name is: ${this.name} ${this.#surname}, age is ${this._userAge}`);
+        }
+    
+        get age() {
+            return this._userAge;
+        }
+    
+        set age(xAge) {
+            if (typeof xAge === 'number' && xAge > 0 && xAge < 110) {
+                this._userAge = xAge;
+            } else {
+                console.log('Недопустимое значение!');
+            }
+        }
+    }
+    
+    
+    const abay = new UserStandart('Abay', 53);
+    
+    abay.functiuonSay();
+    abay.functiuonSay3();
+    console.log(abay.surname);
+    // console.log(abay.#surname);
+    
+      
+</xmp>
+</div>
+           
+<div class="menu__item">                   
+         
+                <xmp>
+
+
+
+
+
+
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+User name is: Abay Reushenov, age is 53
+User name is: Abay Reushenov, age is 53
+undefined
+ Private field '#surname' must be declared in an enclosing class
+    </xmp>
+</div>
+</div>
+</div>
+
+<div class="outdiv">
+    <h2>Lesson 69 (7)</h2>
+    <H3>Инкапсуляция, конструктор + #surname + get / set (Only Chrome)
+    </H3>
+    <p class="order__input"> #surname<br>
+    Setter and Getter for #newproperty</p>
+    <div class="midle"><div class="menu__item">
+<xmp>
+    'use strict';
+
+    class UserStandart {
+        constructor(xName, xAge) {
+            this.name = xName;
+        // this.age = xAge;
+            this._userAge = xAge;
+        }
+    
+        //вне конструктора!!!
+        #surname = 'Reushenov';
+    
+        functiuonSay() {
+            console.log(`User name is: ${this.name} ${this.#surname}, age is ${this._userAge}`);
+        }
+    
+        functiuonSay3 = () => {
+            console.log(`User name is: ${this.name} ${this.#surname}, age is ${this._userAge}`);
+        }
+    
+        get age() {
+            return this._userAge;
+        }
+    
+        set age(xAge) {
+            if (typeof xAge === 'number' && xAge > 0 && xAge < 110) {
+                this._userAge = xAge;
+            } else {
+                console.log('Недопустимое значение!');
+            }
+        }
+    
+        get surnameGet() {
+            return this.#surname;
+        }
+    
+        set surnameSet(surname) {
+            if (typeof surname === 'string' && surname.length < 50) {
+                this.#surname = surname;
+            } else {
+                console.log('Недопустимое значение!');
+            }
+        }
+    }
+    
+    
+    const abay = new UserStandart('Abay', 53);
+    
+    abay.functiuonSay();
+    abay.functiuonSay3();
+    console.log(abay.surname);
+    // console.log(abay.#surname);
+    console.log(abay.surnameGet);
+    abay.surnameSet = "Fedorovitch";
+    console.log(abay.surnameGet);
+    abay.functiuonSay();
+    abay.functiuonSay3();
+</xmp>
+</div>
+           
+<div class="menu__item">                   
+         
+                <xmp>
+
+
+
+
+
+
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***
+User name is: Abay Reushenov, age is 53
+User name is: Abay Reushenov, age is 53
+undefined
+
+Reushenov
+
+Fedorovitch
+User name is: Abay Fedorovitch, age is 53
+User name is: Abay Fedorovitch, age is 53
+    </xmp>
+</div>
+</div>
+</div>
 <script src="js/script.js"></script>
 </body>
 </html>
