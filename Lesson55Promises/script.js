@@ -137,3 +137,4 @@ promise.then(
   result => alert(result), // выведет "done!" через одну секунду
   error => console.error(error) // не будет запущена
 );
+

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getter and Setter</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+            <H3>Getter and Setter</H3>
+            <p class="order__input">Getter</p>
+            <p class="order__input">Setter</p>
+
+            <xmp>
+                'use strict';
+
+                const chel = {
+                    name: "Evgeniy",
+                    age: 25,
+                    bisnessIncome: 100,
+                    get chelBisiness() {
+                        return this.bisnessIncome;
+                    },
+                    wife: " NAtasha",
+                    set chelBisiness(newInfo) {
+                        this.bisnessIncome = newInfo;
+                    }
+                };
+            </xmp>
+            <div class="outdiv">
+                <div class="midle">
+                    <div class="menu__item">
+                        <xmp>
+console.log( chel.bisnessIncome);
+console.log( chel.chelBisiness);
+console.log('---');
+
+console.log( chel.bisnessIncome = 500);
+console.log( chel.bisnessIncome);
+console.log( chel.chelBisiness);
+console.log('---');
+
+console.log( chel.chelBisiness = 200);
+console.log( chel.bisnessIncome);
+console.log( chel.chelBisiness);
+console.log('---');
+
+chel.bisnessIncome = 0;
+console.log( chel.bisnessIncome);
+console.log( chel.chelBisiness);
+console.log('---');
+
+chel.chelBisiness = 2000;
+console.log( chel.bisnessIncome);
+console.log( chel.chelBisiness);
+                        </xmp>
+                    </div>
+                    <div class="menu__item">
+
+<xmp>
+script.js:16 100
+script.js:17 100
+script.js:18 ---
+
+script.js:20 500
+script.js:21 500
+script.js:22 500
+script.js:23 ---
+
+script.js:25 200
+script.js:26 200
+script.js:27 200
+script.js:28 ---
+
+
+script.js:31 0
+script.js:32 0
+script.js:33 ---
+
+
+script.js:36 2000
+script.js:37 2000
+</xmp>
+                        
+                    </div>
+                </div>
+            </div>
+
+
+<script src="js/script.js"></script>
+</body>
+</html>
