@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The "submit" event on forms in JavaScript</title>
+    <link rel="stylesheet" href="css/style3.css">
 </head>
 <body>
     <header>
@@ -62,29 +63,40 @@
 
     <div class="container">
         <div class="left">
+
+
             <h1 class="text-center">'onclick'</h1>
 
-            <h3 onclick="console.log(`html - onclick`)">1. Click here: html - onclick</h3>
+        <div class="calculating__choose">
+            <h3 class="calculating__choose-item" onclick="console.log(`html - onclick`)">1. Click here: html - onclick</h3>
 
-            <h3 onclick="helloFunction()">2. Click here: html - onclick: "helloFunction()"</h3>            
+            <h3 class="calculating__choose-item" onclick="helloFunction()">2. Click here: html - onclick: "helloFunction()"</h3>            
+        </div>
 
-            <h3 id="h3">3. Click here: js onclick #h3</h3>
+            <div class="calculating__choose calculating__choose_big">
+                <h3 id="h3" class="calculating__choose-item">3. Click here: js onclick #h3</h3>
 
-            <h3 id="h4">4. Click here: js onclick = function; #h4</h3>
+                <h3 id="h4" class="calculating__choose-item">4. Click here: js onclick = function; #h4</h3>
 
-            <h3 id="h5">5. Click here: js onclick = 1 событие #h5</h3>  
+                <h3 id="h5" class="calculating__choose-item">5. Click here: js onclick = 1 событие #h5</h3>  
 
-            <h3 id="h6">6. Click here: js onclick = 2 события #h6</h3>                
-
-        <h1 class="text-center">'Click'</h1>
-    
-            <h3 id="h7">1. Click here: "click", #h7</h3>
+                <h3 id="h6" class="calculating__choose-item">6. Click here: js onclick = 2 события #h6</h3>       
+                
+            </div>
+            
+        <h1 class="">'Click'</h1>
+        <div class="calculating__choose calculating__choose_big">
+            <h3 id="h7" class="calculating__choose-item">1. Click here: "click", #h7</h3>
    
-            <h3 id="h8">1. Click here: "click", 1 событие #h8</h3>
+            <h3 id="h8" class="calculating__choose-item">1. Click here: "click", 1 событие #h8</h3>
 
-            <h3 id="h9">1. Click here: 'click' 2 события, #h9</h3>            
+            <h3 id="h9" class="calculating__choose-item">1. Click here: 'click' 2 события, #h9</h3>   
+            </div>         
        </div>
     </div>
+
+
+<hr>
 
     <script src="js/script.js"></script> 
 </body>
