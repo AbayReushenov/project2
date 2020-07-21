@@ -34,7 +34,6 @@ div.menu__item {
 .offer__slider-counter {
   position: absolute; /* Абсолютное позиционирование */
   width: 100px;
-  position: absolute;
   top: -35px;
   right: 100px;
   float: 500px;
@@ -72,4 +71,40 @@ span#total {
   color: rgb(168, 69, 69); /* Цвет текста */
   font-weight: 400; /* Жирное начертание */
   
+}
+
+div.calculating__choose-item {
+  display: inline-block;
+  position: flex;
+  top: 35px;
+  right: 10px;
+  font-size: 100%;
+  width: 120px;
+  height: auto;
+  border: 1px solid black;
+  opacity: 1;
+  outline: 10px solid rgba(255,100,200,.5);
+  outline-offset: -10px;
+  box-shadow: 0 0 0 0 red inset;
+}
+
+.blink {
+  animation-name: blinker;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+  animation-duration: 2s;
+  -webkit-animation-name: blinker;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+  -webkit-animation-duration: 2s;
+}
+ 
+@keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.0; }
+}
+ 
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.0; }
 }
