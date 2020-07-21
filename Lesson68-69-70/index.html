@@ -65,28 +65,28 @@ console.log( chel.chelBisiness);
                     <div class="menu__item">
 
 <xmp>
-script.js:16 100
-script.js:17 100
-script.js:18 ---
+16 100
+17 100
+18 ---
 
-script.js:20 500
-script.js:21 500
-script.js:22 500
-script.js:23 ---
+20 500
+21 500
+22 500
+23 ---
 
-script.js:25 200
-script.js:26 200
-script.js:27 200
-script.js:28 ---
-
-
-script.js:31 0
-script.js:32 0
-script.js:33 ---
+25 200
+26 200
+27 200
+28 ---
 
 
-script.js:36 2000
-script.js:37 2000
+31 0
+32 0
+33 ---
+
+
+36 2000
+37 2000
 </xmp>
                         
                     </div>
@@ -145,10 +145,10 @@ abay.functiuonSay();
 
 
              Abay
-script.js:51 53
-script.js:56 Leon de Filiciticion
-script.js:57 46
-script.js:45 User name is: Leon de Filiciticion, age is 46
+51 53
+56 Leon de Filiciticion
+57 46
+45 User name is: Leon de Filiciticion, age is 46
                         </xmp>
                        
         
@@ -773,6 +773,136 @@ User name is: Abay Fedorovitch, age is 53
 </div>
 </div>
 </div>
+
+
+<div class="outdiv">
+        <h2>Lesson 70 Modul</h2>
+        <H3></H3>
+        <p class="order__input"></p>
+        <div class="midle"><div class="menu__item">
+        <xmp>
+'use strict';
+
+(function(){
+console.log('this is anonym selfcalling function');
+}());
+console.log('---------------*--------------*---------------*---------------');
+
+const hiddenFunction = (function(){
+    console.log('check1');
+
+    const privat = function() {
+        console.log("I am privat");
+        console.log('selfcalling function => hiddenFunction = (function(){..}())');
+    };
+    
+    console.log('check2');
+    
+    return {
+        privatSayHello: privat
+    };
+
+  //  console.log('check3');
+
+}());
+console.log('---------------*--------------*---------------*---------------');
+// hiddenFunction();
+hiddenFunction.privatSayHello();
+console.log('---------------*--------------*---------------*---------------');
+const hiddenFunction2 = (function() {
+    const privat2 = function() {
+        console.log("I am privat2");
+        console.log('selfcalling function => hiddenFunction2 = (function(){..}())');
+    };
+
+    return {
+        privatSayHello2: privat2
+    };
+}());
+console.log('---------------*--------------*---------------*---------------');
+hiddenFunction2.privatSayHello2();
+console.log('---------------*--------------*---------------*---------------');
+var multiplyES5 = function(x, y) {
+    console.log('var multiplyES5 = function(x, y)');
+    hiddenFunction.privatSayHello();
+    hiddenFunction2.privatSayHello2();
+    return x * y;
+  };
+  console.log('---------------*--------------*---------------*---------------');
+console.log(multiplyES5(2, 5));
+console.log('---------------*--------------*---------------*---------------');  
+var multiplyES5Xa = function(x, y) {
+    console.log( x * y);
+  };
+  console.log('---------------*--------------*---------------*---------------');
+multiplyES5Xa(20, 10);
+console.log('---------------*--------------*---------------*---------------');
+        </xmp>
+    </div>   
+<div class="menu__item">                   
+    <xmp> 
+
+
+
+        4 this is anonym selfcalling function
+       
+        6 ---------------*--------------*---------------*---------------
+                     
+        9 check1
+        
+        
+        
+        
+        
+        
+        
+        16 check2
+        
+        
+        
+        
+        
+        
+        
+        
+        25 ---------------*--------------*---------------*---------------
+        
+        12 I am privat
+        13 selfcalling function => hiddenFunction = (function(){..}())
+        28 ---------------*--------------*---------------*---------------
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        -------*--------------*---------------*---------------
+        31 I am privat2
+        32 selfcalling function => hiddenFunction2 = (function(){..}())
+         ---------------*--------------*---------------*---------------
+        
+        
+        
+        
+        
+         ---------------*--------------*---------------*---------------
+        43 var multiplyES5 = function(x, y)
+        12 I am privat
+        13 selfcalling function => hiddenFunction = (function(){..}())
+        31 I am privat2
+        32 selfcalling function => hiddenFunction2 = (function(){..}())
+        49 10
+        50 ---------------*--------------*---------------*---------------
+        54 ---------------*--------------*---------------*---------------
+        52 200
+        56 ---------------*--------------*---------------*---------------
+    </xmp>
+
+</div>
+
 <script src="js/script.js"></script>
 </body>
 </html>
