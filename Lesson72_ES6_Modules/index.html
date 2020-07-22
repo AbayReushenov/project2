@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="outdiv">
+        <h2>72. ES6 Modules</h2>
+        <h3>Модульная структура</h3>
+        <div class="midle">
+            <h3>Модуль <br> экспортер<br></br>module.js</h3>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+export let one = 1;
+
+let two = 2;
+
+export {two};
+
+export function sayHi() {
+    console.log('Hello!');
+}
+                </textarea>
+
+            </div>
+            <h3>Модуль <br> имортер<br></br>script.js</h3>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+import {one, two} from './module';
+
+console.log(`${one} and ${two}`);
+
+import {one as first} from './module';
+
+console.log(`this is next type to call var from other module: ${first}`);  
+                </textarea>
+
+            </div>
+
+            <h3>webpack.config.js</h3>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+'use strict';
+
+const path = require('path');
+
+module.exports = {
+    mode: 'development',
+    entry: './src/js/script.js',
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'app')
+    },
+    watch: true,
+
+    devtool: "source-map",
+
+    module: {},
+};
+                      
+                </textarea>
+
+            </div>
+        </div>
+        <h4>console:</h4>
+        <div class="menu__item outdiv">
+            <textarea name="Modul" id="avessome" cols="130" rows="5">
+    1 and 2
+    this is next type to call var from other module: 1
+    </textarea>
+        </div>
+
+    </div>
+    <div class="outdiv">
+        <div class="midle">
+            <h3>экспортер</h3>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+export let one = 1;
+
+let two = 2;
+
+export {
+two
+};
+
+export function sayHi() {
+console.log('Hello!');
+}
+                </textarea>
+
+            </div>
+            <h3>import * as data from </h3>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+import * as data from './module';
+
+console.log(`New version: ${data.one} and ${data.two}`);
+data.sayHi(); 
+                </textarea>
+
+            </div>
+            <h4>console:</h4>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+New version: 1 and 2
+Hello!
+        </textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="outdiv"> <h1>default</h1>
+        <div class="midle">
+            <h3>экспортер</h3>
+            <div class="menu__item outdiv">
+<xmp>
+export default function sayHi() {
+    console.log('Default Hello!');
+}
+</xmp>
+            </div>
+            <h3>импортер</h3>
+            <div class="menu__item outdiv">
+                <xmp>
+import sayHi from './module';
+sayHi();
+// или
+// import {default as sayHi } from './module';
+// sayHi();
+                </xmp>
+
+            </div>
+            <h4>console:</h4>
+            <div class="menu__item outdiv">
+                <xmp>
+Default Hello!
+                </xmp>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="outdiv">
+        <h2>В Терминале</h2>
+        <div class="midle">
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+npm install --save-dev webpack
+
+webpack
+                </textarea>
+
+            </div>
+            <h3>=></h3>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+webpack is watching the files…
+
+Hash: c501e3b7eb01cf78fb9c
+Version: webpack 4.43.0
+Time: 132ms
+Built at: 2020-07-22 18:48:23
+        Asset      Size  Chunks                   Chunk Names
+    bundle.js  4.79 KiB    main  [emitted]        main
+bundle.js.map  3.93 KiB    main  [emitted] [dev]  main
+Entrypoint main = bundle.js bundle.js.map
+[./src/js/module.js] 111 bytes {main} [built]
+[./src/js/script.js] 80 bytes {main} [built]             
+                </textarea>
+
+            </div>
+
+            <h3>app/bundle.js</h3>
+            <div class="menu__item outdiv">
+                <textarea name="Modul" id="avessome" cols="30" rows="20">
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+
+etc           
+                </textarea>
+
+            </div>
+        </div>
+    </div>
+    <!-- //-------------- -->
+    <div class="outdiv"><h3>Изменить в index.html script src="*****" </h3>
+    <div class="menu__item outdiv"> <h4>old</h4>
+        <textarea name="Modul" id="avessome" cols="30" rows="3">
+"src='src/js/script'"
+
+</textarea>
+    </div>
+
+    <div class="menu__item outdiv"><h4>new</h4>
+        <textarea name="Modul" id="avessome" cols="30" rows="3">
+ "src="./app/bundle.js" 
+</textarea>
+    </div>    
+</div>
+
+<div class="outdiv">
+    <h2>script type='module'</h2>
+      <div class="midle">
+        <h3>module.js<br>
+        без изменений</h3>
+        <div class="menu__item outdiv">
+            <textarea name="Modul" id="avessome" cols="30" rows="20">
+export let one = 1.0;
+
+let two = 2.0;
+
+export {two};
+
+export default function sayHi() {
+    console.log('Default Hello!');
+}
+            </textarea>
+
+        </div>
+        <h3>script.js<br> + .js</h3>
+        <div class="menu__item outdiv">
+            <textarea name="Modul" id="avessome" cols="30" rows="20">
+import {one, two} from './module.js';
+
+console.log(`${one} and ${two}`);
+
+import {one as first} from './module.js';
+
+console.log(`this is next type to call var from other module: ${first}`);
+
+
+import {default as sayHi } from './module.js';
+sayHi();
+            </textarea>
+
+        </div>
+
+        <h3>index.html</h3>
+        <div class="menu__item outdiv">
+            <textarea name="Modul" id="avessome" cols="30" rows="20">
+<!-- <script src="./app/bundle.js"></script> -->
+
+<script type='module' src="./src/js/module.js"></script>
+
+<script type='module' src="./src/js/script.js"></script>         
+            </textarea>
+
+        </div>
+    </div>
+    <h4>console:</h4>
+    <div class="menu__item outdiv">
+        <textarea name="Modul" id="avessome" cols="130" rows="5">
+1 and 2
+this is next type to call var from other module: 1
+Default Hello!
+</textarea>
+    </div>
+
+
+    <!-- <script src="./app/bundle.js"></script> -->
+    <script type='module' src="./src/js/module.js"></script>
+    <script type='module' src="./src/js/script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,126 @@
+body {
+    background-color: beige;    
+}
+img{
+    height:200px;
+    width: 220px;
+    box-shadow:5px 5px 2px #555;
+    margin:10px;
+}
+
+div.outdiv {
+    overflow: hidden;
+    margin: 10px 10px 10px 10px;
+    width: auto;
+    padding: 35px;
+    background-color: #e3eebc;
+    border: 3px solid #03353b;
+  }
+div.midle {
+    display: flex;
+    justify-content: left;
+     }
+  
+div.menu__item {
+    display: inline-block;
+    vertical-align: middle;
+    
+  }
+.offer__slide>img{
+  height:500px;
+  width: 667px;
+  /* box-shadow: none;
+  margin: none; */
+}
+
+.offer__slider-counter {
+  position: absolute; /* Абсолютное позиционирование */
+  width: 100px;
+  top: -35px;
+  right: 100px;
+  float: 500px;
+  display: flex;
+  font-size: 200%;
+
+}
+
+#strelka {
+  height:35px;
+  width: 35px;
+  box-shadow: none;
+  margin: none;
+  /* position: absolute; */
+}
+
+.offer__slider {
+  position: relative; 
+  float: right;
+  width: 700px;
+  height: auto;
+  border: 3px ;
+}
+div.midle2  {
+  width: 100%;
+}
+span#current {
+  font-size:150%;
+  color: maroon; /* Цвет текста */
+  font-weight: 800; /* Жирное начертание */
+}
+
+span#total {
+  /* font-size: 200%; */
+  color: rgb(168, 69, 69); /* Цвет текста */
+  font-weight: 400; /* Жирное начертание */
+  
+}
+
+div.calculating__choose-item {
+  display: inline-block;
+  position: flex;
+  top: 35px;
+  right: 10px;
+  font-size: 100%;
+  width: 120px;
+  height: auto;
+  border: 1px solid black;
+  opacity: 1;
+  outline: 10px solid rgba(255,100,200,.5);
+  outline-offset: -10px;
+  box-shadow: 0 0 0 0 red inset;
+}
+
+.blink {
+  animation-name: blinker;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+  animation-duration: 2s;
+  -webkit-animation-name: blinker;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+  -webkit-animation-duration: 2s;
+}
+ 
+@keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.0; }
+}
+ 
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.0; }
+}
+
+
+.order__input {
+    width: 280px;
+    height: auto;
+    background: #fff;
+    box-shadow: 3px 4px 15px rgba(0,0,0,.2);
+    border: 1 ;
+    font-size: 18px;
+    text-align: left;
+    padding: 0 20px;
+    outline: 0;
+
+}
