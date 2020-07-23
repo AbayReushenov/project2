@@ -1,45 +1,50 @@
-function modal() {
+function closeModal(selectorTargetModal) {
+    const modal = document.querySelector(selectorTargetModal);
 
-    const modalTrigger = document.querySelectorAll('[data-modal'),
-        modal = document.querySelector('.modal');
+    modal.classList.add('hide');
+    modal.classList.remove('show'); 
+    document.body.style.overflow = '';
+}
 
-    modalTrigger.forEach(btn => {
-        btn.addEventListener('click', openModal);
-    });
+function openModal(selectorTargetModal, modalTimerId) {
+    const modal = document.querySelector(selectorTargetModal);
 
-    function closeModal() {
-        modal.classList.add('hide');
-        modal.classList.remove('show');
-        document.body.style.overflow = '';
-    }
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    document.body.style.overflow = 'hidden';
 
-    function openModal() {
-        modal.classList.add('show');
-        modal.classList.remove('hide');
-        document.body.style.overflow = 'hidden';
+    console.log(modalTimerId);
+    if (modalTimerId) {
         clearInterval(modalTimerId);
     }
+}
+
+function modal(selectorTrigger, selectorTargetModal, modalTimerId) {
+
+    const modalTrigger = document.querySelectorAll(selectorTrigger),
+        modal = document.querySelector(selectorTargetModal);
+
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', () => openModal(selectorTargetModal, modalTimerId));
+        // open(..) оборачиваем в самовызывающуюся callback функцию, которая вызывается после клика
+    });
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal || e.target.getAttribute('data-close') == '') {
-            closeModal();
+            closeModal(selectorTargetModal);
         }
     });
 
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Escape' && modal.classList.contains('show')) {
             // в Google искать event.code для конкретной клавиши
-            closeModal();
+            closeModal(selectorTargetModal);
         }
     });
 
-    // Lesson 44 - \/ Lesson 48 не забудь раскоментировать \/
-    const modalTimerId = setTimeout(openModal, 299999);
-    // Изменил значение, чтобы не отвлекало
-
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
-            openModal();
+            openModal(selectorTargetModal, modalTimerId);
             window.removeEventListener('scroll', showModalByScroll);
         }
     }
@@ -47,4 +52,5 @@ function modal() {
     window.addEventListener('scroll', showModalByScroll);
 }
 
-module.exports = modal;
+export default modal;
+export {openModal, closeModal};

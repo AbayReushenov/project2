@@ -1,5 +1,3 @@
-import {getResourse} from '../services/services';
-
 function cards() {
     class MenuCard {
         constructor(src, alt, title, descr, price, parensSelrctor, ...classes) {
@@ -42,8 +40,7 @@ function cards() {
         }
     }
 
-    // axios.get('http://localhost:3000/menu')
-        getResourse('http://localhost:3000/menu')
+    axios.get('http://localhost:3000/menu')
         .then(response => {
             response.data.forEach(({
                 img,
@@ -55,6 +52,7 @@ function cards() {
                 new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
             });
         });
+
 }
 
-export default cards;
+module.exports = cards;

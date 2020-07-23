@@ -118,4 +118,4 @@ function calc() {
 
 }
 
-export default calc;
+module.exports = calc;

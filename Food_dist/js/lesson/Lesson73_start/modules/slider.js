@@ -1,13 +1,13 @@
-function slider({container, slide, nextAroow, prevArrow, totalCounter, currentCounter, wrapper, field}) {
+function slider() {
 
-    const slider = document.querySelector(container), // added in lesson 63
-        slides = document.querySelectorAll(slide),
-        prev = document.querySelector(prevArrow),
-        next = document.querySelector(nextAroow),
-        total = document.querySelector(totalCounter),
-        current = document.querySelector(currentCounter),
-        slidesWrapper = document.querySelector(wrapper),
-        inner2 = document.querySelector(field),
+    const slider = document.querySelector('.offer__slider'), // added in lesson 63
+        slides = document.querySelectorAll('.offer__slide'),
+        prev = document.querySelector('.offer__slider-prev'),
+        next = document.querySelector('.offer__slider-next'),
+        total = document.querySelector('#total'),
+        current = document.querySelector('#current'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        inner2 = document.querySelector('.offer______slider-inner2'),
         width = window.getComputedStyle(slidesWrapper).width; // ширина нашего окошка
 
     let slideIndex = 1;
@@ -106,4 +106,4 @@ function slider({container, slide, nextAroow, prevArrow, totalCounter, currentCo
 
 }
 
-export default slider;
+module.exports = slider;

@@ -1,5 +1,7 @@
-function timer(timerId, deadline) {
- 
+function timer() {
+    const deadline = '2020-08-05';
+    // const t = Date.parse(deadline); //?
+
     function getTimeRemining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()) - 3 * 60 * 60 * 1000,
             // скорректируем для учета разницы с UTF на 3 часа
@@ -49,7 +51,8 @@ function timer(timerId, deadline) {
         }
     }
 
-    setClock(timerId, deadline);
+    setClock('.timer', deadline);
+
 }
 
-export default timer;
+module.exports = timer;
