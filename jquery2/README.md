@@ -9,7 +9,23 @@ added 785 packages from 346 contributors and audited 785 packages in 68.336s
     - import $ from "jquery";
 
 3. webpack :
+    $ npm install babel-loader@8.0.0-beta.0 @babel/core @babel/preset-env webpack
     $ npx webpack
+
+    module: {
+  rules: [
+    {
+      test: /\.js$/,
+      exclude: /(node_modules|bower_components)/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-env']
+        }
+      }
+    }
+  ]
+}
 
 4. script.js
 
