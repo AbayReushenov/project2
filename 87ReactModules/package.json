@@ -1,0 +1,25 @@
+{
+  "name": "react_modules_test",
+  "version": "1.0.0",
+  "description": "\"Testing use React\"",
+  "main": "./src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "Test"
+  },
+  "author": "Abay Reushenov",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.0",
+    "@babel/plugin-transform-arrow-functions": "^7.10.4",
+    "@babel/preset-env": "^7.11.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.10.4",
+    "core-js": "^3.6.5"
+  }
+}

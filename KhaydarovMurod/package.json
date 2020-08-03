@@ -1,0 +1,17 @@
+{
+  "name": "khaydarovmurod",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": 
+  {
+    "pusk" : "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abay Reushenov",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.44.1"
+  }
+
+}

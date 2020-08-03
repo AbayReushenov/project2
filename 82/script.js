@@ -91,22 +91,22 @@
 // console.log(matrica2)
 
 // //Деструктуризация
-const ourObject = {
-    a: 12,
-    b: 16,
-    i: false,
-    j: "Ok",
-}
-const {a, b11, i, j01} = ourObject
+// const ourObject = {
+//     a: 12,
+//     b: 16,
+//     i: false,
+//     j: "Ok",
+// }
+// const {a, b11, i, j01} = ourObject
 
 
-console.log(a, b11, i, j01 )  //=> 12 undefined false undefined
+// console.log(a, b11, i, j01 )  //=> 12 undefined false undefined
 
-//------
-const massiv = [12, 16, false,"Ok"]
-const [a, , i, j01] = massiv
+// //------
+// const massiv = [12, 16, false,"Ok"]
+// const [a, , i, j01] = massiv
 
-console.log(a, i, j01)  
+// console.log(a, i, j01)  
 //=> 12 false Ok
 
 
@@ -120,4 +120,4 @@ console.log(a, i, j01)
 //=> Hi 0, your login is default and password: default
 
 
-console.log("hello world".capitalize());
+// console.log("hello world");
