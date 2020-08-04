@@ -4,7 +4,7 @@ function button() {
 
 // class
 class Slider {
-// export default class Slider {    
+// export default class Slider {    //каквариант export default ..etc
     constructor(shirina, visota, kolvo) {
         this.shirina = shirina
         this.visota = visota

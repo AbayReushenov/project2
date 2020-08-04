@@ -1,25 +1,17 @@
 {
-  "name": "react_modules_test",
+  "name": "modul_and_react_lesson_87_ivan_petrichenko",
   "version": "1.0.0",
-  "description": "\"Testing use React\"",
+  "description": "Modul and React Lesson grpm Ivan Petrichenko #87",
   "main": "./src/index.js",
-  "type": "module",
   "scripts": {
-    "test": "Test"
+    "create_webpack_please": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Abay Reushenov",
-  "license": "ISC",
-  "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.0",
-    "@babel/plugin-transform-arrow-functions": "^7.10.4",
-    "@babel/preset-env": "^7.11.0",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
-  },
+  "author": "Abay Reushenov <abay.reushenov@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.10.4",
-    "core-js": "^3.6.5"
+    "react": "^16.13.1",
+    "react-scripts": "^3.4.1"
   }
 }
