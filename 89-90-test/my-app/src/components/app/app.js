@@ -34,8 +34,6 @@ export default class App extends Component {
         })
     }
 
-    idUniq()
-
     addItem(necto) {
         const newItem = {
             label: necto,
