@@ -3,7 +3,7 @@ import PostListItem from '../post-list-item';
 
 import './post-list.css'
 
-function PostList({posts, onDeleteFunction}) {
+function PostList({posts, onDeleteFunction, importantOnOffFunction, likedOnOffFunction}) {
 
     const elements = posts.map((item) => {
         const {id, ...itemProps} = item
@@ -11,7 +11,9 @@ function PostList({posts, onDeleteFunction}) {
             <li key={id} className='list-group-item'>
                 <PostListItem 
                     {...itemProps}
-                    eraseRecords={() => onDeleteFunction(id)}/> 
+                    eraseRecords={() => onDeleteFunction(id)}
+                    toggleImpotant={() => importantOnOffFunction(id)}
+                    toggleLiked={() => likedOnOffFunction(id)}/> 
             </li>
         )
     })
