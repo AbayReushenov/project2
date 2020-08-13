@@ -17,12 +17,16 @@ export default class App extends Component {
                 {label: "Going to learn React", important: true, like: false, id: 2 },
                 {label: "That is so good", important: false, like: false, id: 3},
                 {label: "Going to learn React", important: false, like: false, id: 4},
-                ]
+                ],
+                term: '',
+                filter: 'all'
         }
         this.deleteItemMethod = this.deleteItemMethod.bind(this)
         this.addItem = this.addItem.bind(this)
         this.importantOnOff = this.importantOnOff.bind(this)
         this.likedOnOff = this.likedOnOff.bind(this)
+        this.onUpdateSearch = this.onUpdateSearch.bind(this)
+        this.onFilterSelect = this.onFilterSelect.bind(this)
         this.maxId = 5
 
     }
@@ -50,8 +54,18 @@ export default class App extends Component {
         })      
     }
 
-    importantOnOff(id) {
-        console.log(` i m p o r t ${id}`)
+    importantOnOff(id)  {
+        this.setState(({data}) => {
+            const i = data.findIndex(item => item.id === id)
+
+            const old = data[i] // old object with id === i
+            const newItem = {...old, important: !old.important}  // create new item where  {like: !old.like}
+
+            const newData = [...data.slice(0, i), newItem, ...data.slice(i + 1)]
+            return {
+                data: newData
+            }
+        })
     }
 
     likedOnOff(id) {
@@ -67,11 +81,38 @@ export default class App extends Component {
             }
         })
     }
+    searchPost(items, term) {
+        if (term.length === 0) {
+            return items
+        }
+
+        return  items.filter( (item) => {
+            return item.label.indexOf(term) > -1
+        })
+    }
+
+    filterPost(items, filter) {
+        if (filter ==='like') {
+            return items.filter(item =>  item.like)
+        } else {
+            return items
+        }
+    }
+
+    onUpdateSearch(term) {
+        this.setState({term})
+    }
+
+    onFilterSelect(filter) {
+        this.setState({filter})          
+    }
 
     render() {   
-        const {data} =this.state
+        const {data, term, filter} =this.state
         const liked = data.filter(item => item.like).length
         const allPosts = data.length // or => this.state.data.length
+
+        const visiblePosts = this.filterPost(this.searchPost(data, term), filter)
 
         return ( 
             <div className="app">
@@ -79,11 +120,15 @@ export default class App extends Component {
                 liked={liked}
                 allPosts={allPosts}/>
                 <div className="search-panel d-flex">
-                    <SearchPanel/>
-                    <PostStatusFilter/>
+                    <SearchPanel
+                        onUpdateSearch={this.onUpdateSearch}/>
+                    <PostStatusFilter
+                    filter={filter}
+                    onFilterSelect={this.onFilterSelect}
+                    />
                 </div>
-                <PostList 
-                posts={this.state.data}
+                <PostList
+                posts={visiblePosts}  // this.state.data
                 onDeleteFunction={this.deleteItemMethod}
                 importantOnOffFunction={this.importantOnOff}
                 likedOnOffFunction={this.likedOnOff}/>
