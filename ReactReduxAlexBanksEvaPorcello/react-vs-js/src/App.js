@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Item from './item'
 import {Item2 }from './item'
@@ -29,12 +29,32 @@ render(
 )
 
 
-function App() {
+
+export default class App extends Component {
+  // constructor() {
+  //   super()
+  //   this.state = {
+  //     showMe: true
+  //   }
+  // }
+
+  state = {
+    show: true
+  }
+
+  fun() {
+    this.setState({
+      show: !this.state.show
+  })
+  }
+
+  render() {
   return (
     <div className="App">
-    <Header />
+    {this.state.show ? (<h1><Header /></h1>) :null }
+    <button onClick={()=> this.fun()}>Click me</button>
     </div>
   );
 }
+}
 
-export default App;
