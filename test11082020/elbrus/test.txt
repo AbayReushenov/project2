@@ -1,0 +1,75 @@
+Привет, друзья! 👋🏼
+В этой группе можете задавать вопросы, которые у вас возникают в процессе подготовки к вступительному экзамену. 
+
+Мы постараемся помочь, однако помните - вы должны изучить эти базовые темы самостоятельно, чтобы понять следующее:
+🚀 Мне нравится программирование и я хочу заниматься именно этим.
+🚀 Я могу изучить такой объем информации за 30 часов.
+🚀 Я принимаю ответственность за свое развитие на себя. 
+
+Ранее вы получили письмо с материалами для подготовки и уже знаете, что для поступления вам необходимо разобраться в базовом синтаксисе JavaScript:
+1. Типы данных
+2. Циклы
+3. Массивы
+4. Функции
+
+ВАЖНО!
+- Не мешай задания друг с другом, как минимум отделяй их комментариями. 
+- Не копипасти, каждый раз пиши заново. 
+- Не переиспользуй код заданий между собой! 
+- Каждое задание начинается с чистого листа.
+
+————
+
+На все вопросы, не касающиеся подготовки к экзамену, мы тоже с радостью ответим!
+Для этого пишите нам в личку в
+telegram @elbrus_bootcamp
+whatsapp 
+https://wa.me/74957860581
+
+или подключайтесь к Дню открытых дверей, который проходит 
+Очно - каждый вторник в 19:00
+Онлайн - каждый четверг в 19:00
+Регистрация на мероприятия
+https://elbrus-coding-bootcamp.timepad.ru/events/future/
+
+Удачи! 💪🏼🤓🧠
+
+
+
+Примеры задач, которые должны быть подвластны:
+
+Function 1 - hello world https://www.codewars.com/kata/523b4ff7adca849afe000035/train/javascript
+Opposite number https://www.codewars.com/kata/56dec885c54a926dcd001095/train/javascript
+Grasshopper - Summation https://www.codewars.com/kata/55d24f55d7dd296eb9000030/train/javascript
+
+Is it even?
+https://www.codewars.com/kata/555a67db74814aa4ee0001b5/train/javascript
+
+Array plus array https://www.codewars.com/kata/5a2be17aee1aaefe2a000151/train/javascript
+
+Find min and max codewars.com/kata/57a1ae8c7cb1f31e4e000130/train/javascript
+
+Find the Difference in Age between Oldest and Youngest Family Members
+https://www.codewars.com/kata/5720a1cb65a504fdff0003e2/train/javascript
+
+
+Sum even numbers https://www.codewars.com/kata/586beb5ba44cfc44ed0006c3/train/javascript
+
+How good are you really? https://www.codewars.com/kata/5601409514fc93442500010b/train/javascript
+
+
+Sum of positive https://www.codewars.com/kata/5715eaedb436cf5606000381/train/javascript
+
+
+Square(n) Sum https://www.codewars.com/kata/515e271a311df0350d00000f/train/javascript
+
+Squash the bugs https://www.codewars.com/kata/56f173a35b91399a05000cb7/train/javascript
+
+
+Convert number to reversed array of digits https://www.codewars.com/kata/5583090cbe83f4fd8c000051/train/javascript
+
+
+Sum Mixed Array https://www.codewars.com/kata/57eaeb9578748ff92a000009/train/javascript
+
+
+Find numbers which are divisible by given number https://www.codewars.com/kata/55edaba99da3a9c84000003b/train/javascript

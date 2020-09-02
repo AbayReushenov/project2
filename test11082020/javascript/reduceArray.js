@@ -27,3 +27,10 @@ const proizvedenie = massive => massive.reduce((acc,dop) => acc * dop)
 
 const numbers4 = [10, 2.1, 2.2, 3.3, 4.4, 5.5, -6.6]
 console.log(proizvedenie(numbers4))  // -24350.9112
+
+
+
+let a = [1,2,3,4,5];
+a.reduce((x,y) => x+y, 0) // => 15; the sum of the values 
+a.reduce((x,y) => x*y, 1) // => 120; the product of the values 
+a.reduce((x,y) => (x > y) ? x : y) // => 5; the largest of the values
