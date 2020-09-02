@@ -1,6 +1,3 @@
-export const inc=()=>({type:"999"})
-export const dec=()=>({type:"000"})
-export const rnd=()=>{
-  const rnd = Math.floor(Math.random() * 10);
-  return {type: '***', step: rnd };
-}
+export const inc=()=>({type:"INC"})
+export const dec=()=>({type:"DEC"})
+export const rnd=()=> ({type: 'RND', value: Math.floor(Math.random() * 10) })

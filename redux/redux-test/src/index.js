@@ -1,28 +1,16 @@
+import React from 'react'
+import ReactDOM from 'react-dom'
 import {createStore} from 'redux'
+import {Provider} from 'react-redux'
 import reducer from './reducer'
-import {inc, dec, rnd} from './actions'
-
-
+import App from './components/app'
 
 const store = createStore(reducer);
-const {dispatch} = store
 
-const incDispatch =()=>dispatch(inc())
-const decDispatch =()=>dispatch(dec())
-const rndDispatch =()=>dispatch(rnd())
-
-document.getElementById('inc').addEventListener("click", incDispatch)
-
-
-document.getElementById('dec').addEventListener("click", decDispatch)
-
-document.getElementById('rnd').addEventListener("click", rndDispatch)
-
-const update = () => {
-  document.getElementById('counter').textContent = store.getState()
-}
-
-store.subscribe(update)
+ReactDOM.render(
+      <Provider store={store}>
+        <App/>
+      </Provider>
+  ,document.getElementById('root'))
 
 
- 

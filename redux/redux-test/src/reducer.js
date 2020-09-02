@@ -1,11 +1,11 @@
-const reducer = (state = 0, action) => {
+const reducer = (state = 5, action) => {
     switch  (action.type) {
-      case '999':
+      case 'INC':
         return ++state;
-      case "000":
+      case "DEC":
         return --state;
-      case '***':
-        return  state + action.step;
+      case 'RND':
+        return  state + action.value;
       default:
         return state;
     }
