@@ -1,0 +1,46 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Chapter 6: Combining SQL Queries</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0034.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0036.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch06"></a>
+<h1 class="chapter-title"><span class="chapter-titlelabel">Chapter 6: </span>Combining SQL Queries</h1><div class="section">
+<h2 class="sect2-title">
+<a name="377"></a>Overview</h2>
+<a name="378"></a><a name="IDX-147"></a>
+<div class="highlights">
+<p class="first-para">In this chapter, you'll look for the first time at ways that you can combine several <span class="fixed">SELECT</span> statements in a single query. The first topic discussed is the use of <i class="emphasis">subqueries</i>. Put simply, a subquery is a query that's embedded in some way inside another query.</p>
+<p class="para">For example, in <a href="LiB0013.html#98" target="_parent" class="chapterjump">Chapter 2</a>, "Retrieving Data with SQL," you saw how you can check whether a value is in a certain set using the <span class="fixed">IN</span> keyword. You can use the same syntax but extract the values from a SQL query rather than hard-coding them:</p>
+<p class="para">
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Student
+WHERE StudentID IN (
+   SELECT StudentID FROM StudentExam
+   WHERE ExamID = 1);
+</pre>
+</div>
+</p>
+<p class="para">This returns the names of all the students who took a particular exam and is just one of many examples of using subqueries that you'll investigate in this chapter.</p>
+<p class="last-para">The latter half of the chapter discusses how to combine SQL queries using a variety of <i class="emphasis">set operators</i>, such as the <span class="fixed">UNION</span> operator. You use these operators when you want to compare data from different tables that are similar in structure but that contain different data.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0034.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0036.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

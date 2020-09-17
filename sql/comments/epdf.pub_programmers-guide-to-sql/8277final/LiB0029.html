@@ -1,0 +1,142 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Using Analytic Functions</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0028.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0030.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch04"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="261"></a><a name="ch04lev1sec3"></a>Using Analytic Functions</h2><a name="262"></a><a name="IDX-103"></a>
+<p class="para">With the introduction of the <span class="fixed">RANK()</span> function in the <a href="LiB0028.html#235" target="_parent" class="chapterjump">previous section</a>, you actually strayed from the realm of basic aggregate functions into the more complex topic of <i class="emphasis">analytic</i> functions. Oracle and DB2 provide a range of analytic functions that allow you to perform complex computation that would otherwise need to be performed outside of the SQL standard.</p>
+<p class="para">Of the databases covered in this book, analytic functions are currently only supported in Oracle and DB2, so this section won't tackle the subject in much detail. You should consult your database documentation to see exactly which analytic functions are supported and how they work. However, if you do happen to be using Oracle or DB2, you can at least learn how aggregate functions such as <span class="fixed">SUM</span> and <span class="fixed">AVG</span> can be used as analytic functions.</p>
+<p class="para">The basic syntax for analytic functions is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+<i class="emphasis">Function</i> (&lt;<i class="emphasis">argument</i>&gt;) OVER
+(&lt;<i class="emphasis">Partition clause</i>&gt; &lt;ORDER BY <i class="emphasis">clause</i>&gt; &lt;<i class="emphasis">Windowing clause</i>&gt;)
+</pre>
+</div>
+<p class="para">It's the <span class="fixed">OVER</span> keyword that identifies your function as an analytic function. The best way to get a feel for this is to see it in action. Let's start with the simplest example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Mark, AVG(Mark) OVER
+() Average_Mark
+FROM StudentExam
+ORDER BY StudentID, Mark;
+</pre>
+</div>
+<p class="para">The output from this query is as follows (the output is cropped after six rows):</p>
+<div class="informalexample">
+<pre class="literallayout">
+STUDENTID  MARK       AVERAGE_MARK
+
+---------- ---------- ----------------
+1          55         63.9310345
+1          73         63.9310345
+2          39         63.9310345
+2          44         63.9310345
+2          63         63.9310345
+3          78         63.9310345
+...
+<a name="263"></a><a name="IDX-104"></a>
+</pre>
+</div>
+<p class="para">In the absence of any clauses, the average mark is computed over every row. The resulting value displayed for each row is the same as that which would have been obtained by a simple <span class="fixed">SELECT AVG(Mark) from StudentExam;</span> query. Let's see what happens when you add an <span class="fixed">ORDER BY</span> clause:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Mark, AVG(Mark) OVER
+(ORDER BY StudentID, Mark) Running_Average
+FROM StudentExam
+ORDER BY StudentID, Mark;
+</pre>
+</div>
+<p class="para">You now obtain the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+STUDENTID  MARK    RUNNING_AVERAGE
+
+---------- ------- ---------------
+1          55      55
+1          73      64
+2          39      55.6666667
+2          44      52.75
+2          63      54.8
+3          78      58.6666667
+...&lt;output cropped&gt;...
+10         79      63.9310345
+</pre>
+</div>
+<p class="para">As you can see, the calculation is performed differently when an <span class="fixed">ORDER BY</span> clause is specified. It applies ordering to a group of data and essentially tells the database to calculate the average of the current row and all preceding rows (in effect, this applies a default windowing clause, but more about that in a moment). Thus, you get a running average over the group of data. In this case the "group" is every row of data, so by the time you get to the last row, you arrive at the average over all rows&#8212;the same value that the previous query supplied.</p>
+<p class="para">Finally, let's add a partitioning clause:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Mark, AVG(Mark) OVER
+(PARTITION BY StudentID
+ ORDER BY StudentID, Mark) Running_Avg_by_Student
+FROM StudentExam
+ORDER BY StudentID, Mark;
+<a name="264"></a><a name="IDX-105"></a>
+</pre>
+</div>
+<p class="para">The output should look as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+STUDENTID  MARK    RUNNING_AVG_BY_STUDENT
+
+---------- ------- ----------------------
+1          55      55
+1          73      64
+2          39      39
+2          44      41.5
+2          63      48.6666667
+3          78      78
+3          82      80
+</pre>
+</div>
+<p class="para">The partitioning clause logically breaks the data down into groups, and the function is applied independently to each group. Thus, you obtain a running average by student.</p>
+<p class="para">To finish off, let's briefly look at the windowing clause. The syntax gets a little complex here, and you should definitely refer to your database manual for full details. However, it basically allows you to supply a specific range of data against which you should execute the function. The previous query is actually equivalent to this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Mark, AVG(Mark) OVER
+(PARTITION BY StudentID
+ ORDER BY StudentID, Mark
+ RANGE BETWEEN UNBOUNDED PRECEDING AND
+ CURRENT ROW
+ ) Running_Avg_by_Student
+FROM StudentExam
+ORDER BY StudentID, Mark;
+</pre>
+</div>
+<p class="para">The highlighted code specifies that the window of data is the current row and all rows preceding it (which is the default). However, you can change this. For example, the following code would take the average over only the current row and the preceding row:</p>
+<a name="265"></a><a name="IDX-106"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Mark, AVG(Mark) OVER
+(PARTITION BY StudentID
+ ORDER BY StudentID, Mark
+ ROWS 1 preceding
+ ) Running_Avg_by_Student
+FROM StudentExam
+ORDER BY StudentID, Mark;
+</pre>
+</div>
+<p class="last-para">This short section should have at least given you a feel for the potential power of analytic functions.</p>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0028.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0030.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

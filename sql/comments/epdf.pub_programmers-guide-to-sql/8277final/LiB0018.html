@@ -1,0 +1,926 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Filtering Data</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0017.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0019.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="140"></a><a name="ch02lev1sec5"></a>Filtering Data</h2><p class="first-para">So far, all the queries you've seen have returned data from <i class="emphasis">all</i> the rows in a table. However, there are times when this isn't desirable. Often you'll want to extract only a subset of the rows in a table, or even a single row, based on specific criteria. SQL includes a whole host of tools to enable this kind of query, and in the following sections you'll examine them.</p>
+<p class="para">First, you'll look at how you can filter out any duplicate rows in your result set. Next, you'll look at how to extract certain rows based on simple conditions and how to combine these conditions for a powerful search facility. You'll move on to see how more advanced conditions and comparisons can give you even greater control over the rows returned, even in situations where you need to be vague in the conditions you set (that is, finding records based on small hints). Finally, you'll examine a topic that will come up time and time again: dealing with <span class="fixed">NULL</span> data (where no value has been entered for that field).</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="141"></a><a name="ch02lev2sec8"></a>Eliminating Duplicate Data using DISTINCT</h3>
+<p class="first-para">You'll often encounter situations where the same data value occurs multiple times in the same column, whether by design or accident. Sometimes, you may want to ensure that you retrieve only unique rows of data from a query prior to processing. For example, from a <span class="fixed">Customers</span> table during a purchase, you wouldn't want to charge a customer twice for a single order!</p>
+<p class="para">To filter out duplicate rows of data, you use the <span class="fixed">DISTINCT</span> keyword. Let's start with the simplest case, where you're returning rows from a single column. <a name="142"></a><a name="IDX-48"></a>If you only want to see unique row values for this column, the query would look as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT <i class="emphasis">ColumnA</i> FROM <i class="emphasis">Table</i>;
+</pre>
+</div>
+<p class="para">This can often be very useful. For example, single columns in a database may have a restricted set of values allowed. To find out all the different values in a column, you don't really want to have to read through every row in the table just to find the values that exist. To demonstrate this clearly, say that you wanted to query the <span class="fixed">Exam</span> table in the <span class="fixed">InstantUniversity</span> database to get a list of all the dates on which exams have been taken. You might try the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT SustainedOn from Exam;
+</pre>
+</div>
+<p class="para">The result would look as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SustainedOn
+
+---------
+3/12/2003
+3/13/2003
+3/11/2003
+3/18/2003
+3/19/2003
+3/25/2003
+3/26/2003
+3/10/2003
+3/21/2003
+3/26/2003
+3/24/2003
+</pre>
+</div>
+<p class="para">This is actually quite a simple case because there are only 11 rows and only one duplicate value, <span class="fixed">3/26/2003</span>, but in any event it's much more convenient to issue the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT SustainedOn FROM Exam;
+<a name="143"></a><a name="IDX-49"></a>
+</pre>
+</div>
+<p class="para">The results are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SustainedOn
+
+------------
+3/10/2003
+3/11/2003
+3/12/2003
+3/13/2003
+3/18/2003
+3/19/2003
+3/21/2003
+3/24/2003
+3/25/2003
+3/26/2003
+</pre>
+</div>
+<p class="para">This time the duplicate value has been removed and you have a simple list of unique exam dates&#8212;and as an added bonus you'll see that the dates have been automatically sorted into ascending order.</p>
+<p class="para">Let's move on to the case where you want to retrieve multiple columns. When you do this, you can guarantee that every row you obtain contains unique data for the specified set of columns with the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>;
+</pre>
+</div>
+<p class="para">For example, the following query will return only unique combinations of customer names and credit card details:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT CustomerName, CreditCard FROM Customers;
+</pre>
+</div>
+<p class="para">Note that this doesn't mean you won't have duplicates in either column, only that each combination is unique. You could, for example, have several customers with the same name but with different credit card numbers. To illustrate this point, suppose you changed the query on <span class="fixed">InstantUniversity</span> as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT ExamID, SustainedOn FROM Exam;
+<a name="144"></a><a name="IDX-50"></a>
+</pre>
+</div>
+<p class="last-para">You would obtain the full 11 rows from the database. This is because there are 11 different combinations of these two fields, even though there's a duplicate in the <span class="fixed">SustainedOn</span> column. Always remember that <span class="fixed">DISTINCT</span> acts on the <i class="emphasis">combination</i> of columns you use in the query.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="145"></a><a name="ch02lev2sec9"></a>Using WHERE Conditions</h3>
+<p class="first-para">The <span class="fixed">WHERE</span> clause allows you to filter queries by demanding that the rows in your result set satisfy a particular condition:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">Condition</i>;
+</pre>
+</div>
+<p class="para">
+<i class="emphasis"><span class="fixed">Condition</span></i> is very flexible, allowing you to test for equalities and inequalities in column data, ranges of values to look for, and much more. You achieve all this using a simple syntax that includes various operators and keywords that, when combined, allow you to search for pretty much anything.</p>
+<p class="para">Before you get to the more complex usages of this clause, though, you'll look at the simplest: equalities. These are particularly useful because they allow you to constrain the rows you obtain from queries in the tightest way. The syntax is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> = <i class="emphasis">Value</i>;
+</pre>
+</div>
+<p class="para">The <span class="fixed">WHERE</span> clause lets you apply a search condition to the rows of data gathered by your <span class="fixed">SELECT</span> query. The search condition can take various forms, all of which can be evaluated to a Boolean value. In this case, you're only interested in rows for which the condition <i class="emphasis"><span class="fixed">ColumnC = Value</span></i> evaluates to <span class="fixed">TRUE</span>; in other words, you're interested in those rows in which <i class="emphasis"><span class="fixed">ColumnC</span></i> has a value of <i class="emphasis"><span class="fixed">Value</span></i>. If this condition is <span class="fixed">TRUE</span>, then the row is returned. If it evaluates to <span class="fixed">FALSE</span> or <span class="fixed">UNKNOWN</span> (because the presence of a <span class="fixed">NULL</span> value), then it's ignored.</p>
+<p class="para">Note that there's no need for a <span class="fixed">WHERE</span> clause of this type to use a column that's being returned by the query (here only <i class="emphasis"><span class="fixed">ColumnA</span></i> and <i class="emphasis"><span class="fixed">ColumnB</span></i> are returned for rows). However, in practice, because you know what's contained in <i class="emphasis"><span class="fixed">ColumnC</span></i>, there's no need to extract this data from the database.</p>
+<p class="para">For example, you might extract a single row from a <span class="fixed">Customers</span> table based on the ID of the customer (assuming that customer IDs are unique):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName, LastName, Address FROM Customers
+WHERE CustomerID = 7;
+</pre>
+</div>
+<p class="para">Alternatively, you could extract all the customers with a certain last name:</p>
+<a name="146"></a><a name="IDX-51"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName, LastName, Address FROM Customers
+WHERE LastName = 'Smith';
+</pre>
+</div>
+<p class="para">Of course, in many countries, searching for people called Smith in this way could land you with an awful lot of results!</p>
+<p class="para">You don't have to use literals in these comparisons. You could, for example, use equalities between columns:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName, LastName, Address FROM Customers
+WHERE LastName = FirstName;
+</pre>
+</div>
+<p class="para">Here all customers with identical first and last names will be found. For example, Major Major would be there.</p>
+<p class="para">Suppose you wanted to query the <span class="fixed">InstantUniversity</span> database to find the name of the student whose ID is <span class="fixed">3</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Student
+WHERE StudentID = 3;
+</pre>
+</div>
+<p class="para">This will yield you the following result:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name
+
+   ----------------
+   Emily Scarlett
+</pre>
+</div>
+<p class="last-para">This sort of query is extremely useful when you know the ID of a record and want to get other pertinent data about that record. Rather than extract a lot of potentially useless data in a single query, you can use this technique to home in on the data you actually want.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="147"></a><a name="ch02lev2sec10"></a>Using Other WHERE Clause Comparisons</h3>
+<p class="first-para">As mentioned earlier, equalities are just one of the many things you can test for in a <span class="fixed">WHERE</span> clause. You can use several other operators, which vary by RDBMS, as described in <a class="internaljump" href="#ch02table01">Table 2-1</a>.</p>
+<a name="148"></a><a name="ch02table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 2-1: </span>Comparison Operators</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="center" valign="middle">
+<p class="table-para">
+<b class="bold"><span class="fixed">Operator</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">RDBMSs</span></b> </p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Meaning</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">=</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All</p>
+</td><td class="td" align="left">
+<p class="table-para">Used to check if values are equal to one another</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">!=</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All except Access</p>
+</td><td class="td" align="left">
+<p class="table-para">Used to check if values aren't equal to one another</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">^=</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Oracle</p>
+</td><td class="td" align="left">
+<p class="table-para">Same meaning as !=</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">&lt;&gt;</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All</p>
+</td><td class="td" align="left">
+<p class="table-para">Same meaning as !=</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">&gt;</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All</p>
+</td><td class="td" align="left">
+<p class="table-para">True if the first operand is greater than the second operand</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">&gt;=</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All</p>
+</td><td class="td" align="left">
+<p class="table-para">Used to check if the first operand is greater than or equal to the second</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">!&lt;</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">SQL Server, DB2</p>
+</td><td class="td" align="left">
+<p class="table-para">Same as &gt;= (Means "not less than," which is logically equivalent to "greater than or equal to")</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">&lt;</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All</p>
+</td><td class="td" align="left">
+<p class="table-para">True if the first operand is less than the second operand</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">&lt;=</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All</p>
+</td><td class="td" align="left">
+<p class="table-para">Used to check if the first operand is less than or equal to the second</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">!&gt;</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">SQL Server, DB2</p>
+</td><td class="td" align="left">
+<p class="table-para">Same as &lt;=</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="149"></a><a name="IDX-52"></a>
+<p class="para">As you can see, there's some redundancy here, with the possibility of a choice of operator to use in some situations. The main reason for this is so you can use the operator that fits in best with your development experience&#8212;you're likely to have similar operators available in whatever programming language you're used to using.</p>
+<a name="150"></a><a name="IDX-53"></a>
+<div class="example">
+<span class="example-title">WHERE CLAUSE COMPARISONS</span><a name="151"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">An example SQL query that you could run on the <span class="fixed">InstantUniversity</span> database is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ExamID, SustainedOn, Comments FROM Exam
+WHERE SustainedOn &gt; '2003-03-20';
+</pre>
+</div>
+<p class="para">In this example, you extract data from the <span class="fixed">Exam</span> table, only getting data for exams that occur after March 20, 2003. The results from this query are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ExamID SustainedOn Comments
+
+   <b class="bold">------ ----------- -----------------------------</b>
+   6      3/25/2003
+   7      3/26/2003   They'll enjoy this one
+   9      3/21/2003   Two hours long. They might find it tricky
+   10     3/26/2003   2hr test
+   11     3/24/2003   Part two should be an hour and a half long
+</pre>
+</div>
+<p class="last-para">It's worth noting here that it's the RDBMS that's responsible for interpreting a date or time format string, and the specific string you need to use will depend on factors such as what the RDBMS can interpret and your operating system's locale settings. However, the format <span class="fixed">YYYY-MM-DD</span> as used in this query works on all platforms. See <a href="LiB0031.html#267" target="_parent" class="chapterjump">Chapter 5</a>, "Performing Calculations and Using Functions," for more details on working with date values.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">Access expects dates to be enclosed, Visual Basic&#8211;style, within pound characters (<span class="fixed">#</span>), so this query won't work with Access. Instead, you need to use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ExamID, SustainedOn, Comments FROM Exam
+WHERE SustainedOn &gt; #2003-03-20#;
+<a name="152"></a><a name="IDX-54"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="153"></a><a name="ch02lev2sec11"></a>Combining WHERE Conditions</h3>
+<p class="first-para">Often a single <span class="fixed">WHERE</span> clause isn't enough to narrow down the data you require. You might want to get only those rows with specified data in one column <i class="emphasis">and</i> other specified data in another column. Alternatively, you might require rows that have certain data in one column <i class="emphasis">or</i> certain data in another column. Here you need to combine multiple <span class="fixed">WHERE</span> clauses as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE Condition LINK Condition;
+</pre>
+</div>
+<p class="para">Note that <i class="emphasis"><span class="fixed">LINK</span></i> in the previous query isn't a keyword. Instead, it refers to one of the keywords shown in <a class="internaljump" href="#ch02table02">Table 2-2</a>.</p>
+<a name="154"></a><a name="ch02table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 2-2: </span>Basic Operators</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Link Keyword</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Meaning</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">AND</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Both conditions must be met for the records found.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">OR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Either condition must be met for the records found.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">For example, suppose you wanted to specify particular conditions on the <span class="fixed">Occupation</span> and <span class="fixed">FiscalStatus</span> fields when querying the <span class="fixed">Customers</span> table. You could ask that both of your conditions be met as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers
+WHERE Occupation = 'Carpenter' AND FiscalStatus = 'Loaded';
+</pre>
+</div>
+<p class="para">Alternatively, you could select rows where either one of the two conditions is met or both are met:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers
+WHERE Occupation = 'Carpenter' OR FiscalStatus = 'Loaded';
+</pre>
+</div>
+<p class="para">Additionally, the <span class="fixed">NOT</span> keyword can be applied to a condition, making the condition evaluate to true when it isn't met rather than when it is:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers
+WHERE Occupation = 'Carpenter'
+  AND NOT FiscalStatus = 'Bankrupt';
+<a name="155"></a><a name="IDX-55"></a>
+</pre>
+</div>
+<p class="para">The following SQL statement queries the <span class="fixed">InstantUniversity</span> database to select only those records from the <span class="fixed">StudentExam</span> table where the <span class="fixed">ExamID</span> field is equal to <span class="fixed">1</span> and the <span class="fixed">IfPassed</span> field is also <span class="fixed">1</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Mark, Comments FROM StudentExam
+WHERE ExamID = 1 AND IfPassed = 1;
+</pre>
+</div>
+<p class="para">Here are the results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   Mark        Comments
+
+   ----------- ----------- ------------------------
+   1           55          Satisfactory
+   8           71          Excellent, great work!
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="156"></a><a name="ch02lev2sec12"></a>Performing Range Tests</h3>
+<p class="first-para">It's possible to combine two comparison operators to select values that fall within a within a specified range. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ExamID, SustainedOn, Comments FROM Exam
+WHERE SustainedOn &gt;= '2003-03-20'
+AND SustainedOn &lt;= '2003-03-24';
+</pre>
+</div>
+<p class="para">However, it's also possible to use another of the SQL keywords, <span class="fixed">BETWEEN</span>, to make such range tests more readable:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> BETWEEN <i class="emphasis">LowerLimit</i> AND <i class="emphasis">UpperLimit</i>;
+</pre>
+</div>
+<p class="para">Here the value of <i class="emphasis"><span class="fixed">ColumnC</span></i> is checked to see if it's greater than or equal to <i class="emphasis"><span class="fixed">LowerLimit</span></i> and less than or equal to <i class="emphasis"><span class="fixed">UpperLimit</span></i>. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ExamID, SustainedOn, Comments FROM Exam
+WHERE SustainedOn BETWEEN '2003-03-20' AND '2003-03-24';
+</pre>
+</div>
+<p class="para">You can also use <span class="fixed">NOT</span> with <span class="fixed">BETWEEN</span> to exclude a range:</p>
+<a name="157"></a><a name="IDX-56"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ExamID, SustainedOn, Comments FROM Exam
+WHERE SustainedOn NOT BETWEEN '2003-03-20' AND '2003-03-24';
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="158"></a><a name="ch02lev2sec13"></a>Defining Set Membership</h3>
+<p class="first-para">As well as checking to see if values fall inside (or outside) set ranges of values, it's also possible to check to see if values are one of a set number of possibilities.</p>
+<p class="para">Again, you can achieve this using operators and keywords that you've already met:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> = <i class="emphasis">Value1</i>
+OR ColumnC = Value2
+OR ColumnC = Value3;
+</pre>
+</div>
+<p class="para">However, you can achieve this much more elegantly using the <span class="fixed">IN</span> keyword in your <span class="fixed">WHERE</span> clause, along with a set of possible values:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table </i>WHERE <i class="emphasis">ColumnC</i> IN (<i class="emphasis">Set</i>);
+</pre>
+</div>
+<p class="para">Here <i class="emphasis"><span class="fixed">Set</span></i> (enclosed in parentheses) is the set of values you're looking for in <i class="emphasis"><span class="fixed">ColumnC</span></i>. You can define sets in a number of ways. The simplest is probably to provide a set of literal values in the query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> IN ('<i class="emphasis">Value1</i>', '<i class="emphasis">Value2</i>', '<i class="emphasis">Value3</i>');
+</pre>
+</div>
+<p class="para">Alternatively, you can create your set by including by a completely separate <span class="fixed">SELECT</span> query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> IN (SELECT <i class="emphasis">ColumnD</i> FROM <i class="emphasis">Table2</i>);
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">This is an example of a subquery, a topic you'll look at in more detail in <a href="LiB0035.html#376" target="_parent" class="chapterjump">Chapter 6</a>, "Combining SQL Queries."</p>
+</td>
+</tr>
+</table>
+<p class="para">As with the other keywords you've seen in this chapter, <span class="fixed">IN</span> can be combined with <span class="fixed">NOT</span> to search for values that don't occur in a set:</p>
+<a name="159"></a><a name="IDX-57"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> NOT IN ('<i class="emphasis">Value1</i>', '<i class="emphasis">Value2</i>', '<i class="emphasis">Value3</i>');
+</pre>
+</div>
+<div class="example">
+<span class="example-title">FINDING RECORDS IN A SET</span><a name="160"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">As a more concrete example, you can try selecting information from the <span class="fixed">StudentExam</span> table in the <span class="fixed">InstantUniversity</span> database where the <span class="fixed">StudentID</span> is one of three values:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, ExamID, Mark FROM StudentExam
+WHERE StudentID IN (2, 7, 3);
+</pre>
+</div>
+<p class="para">This query produces the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   ExamID      Mark
+
+   ----------- ----------- -----------
+   2           3           44
+   2           5           39
+   2           6           63
+   3           4           78
+   3           7           82
+   7           6           84
+   7           8           62
+   7           11          68
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="161"></a><a name="ch02lev2sec14"></a>Using Pattern Matching</h3>
+<p class="first-para">One of the most powerful ways of filtering rows is to search for text values in column data using patterns. You can, for example, look for rows with text columns that contain a certain word or for more complex patterns of characters. To do this, you use the <span class="fixed">LIKE</span> keyword (you can also specify <span class="fixed">NOT LIKE</span>) and supply a pattern to match:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> LIKE <i class="emphasis">Pattern</i>;
+<a name="162"></a><a name="IDX-58"></a>
+</pre>
+</div>
+<p class="para">
+<i class="emphasis"><span class="fixed">Pattern</span></i> is made up of literal characters plus certain wildcards that represent one or more characters. The wildcards shown in <a class="internaljump" href="#ch02table03">Table 2-3</a> are supported by all the database systems covered in this book.</p>
+<a name="163"></a><a name="ch02table03"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 2-3: </span>Wildcards</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Wildcard</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Meaning</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">%</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Any string of characters, including strings of zero length</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">_</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Any one character</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">Patterns are case sensitive in Oracle and DB2 but not in SQL Server, MySQL, or Access.</p>
+</td>
+</tr>
+</table>
+<p class="para">For example, to search for a string value that contains the text <span class="fixed">'manager'</span>, you could use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, ContactName, ContactTitle FROM Customers
+WHERE ContactTitle LIKE '%manager%';
+</pre>
+</div>
+<p class="para">You need to be aware of several issues when using patterns. Perhaps most important, you need to be very specific when you use them. Simply including one space too many could break the query, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, ContactName, ContactTitle FROM Customers
+WHERE ContactTitle LIKE '%manager %';
+</pre>
+</div>
+<p class="para">This pattern searches for the string <span class="fixed">'manager '</span>&#8212;including a trailing space. If any columns contain the string <span class="fixed">'manager'</span> at the end of their value, there will be no trailing space, and the record won't be matched.</p>
+<p class="para">As another example, this query looks for four characters followed by a space at the start of the <span class="fixed">Name</span> column in the <span class="fixed">Student</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Student WHERE Name LIKE '____ %';
+</pre>
+</div>
+<p class="para">This returns all the students whose first names are four characters long:</p>
+<a name="164"></a><a name="IDX-59"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Name
+
+   -----------
+   John Jones
+   Gary Burton
+   Anna Wolff
+</pre>
+</div>
+<p class="para">Another issue to be aware of is that wildcards are reserved characters and must be escaped if you want to include them in a pattern without their wildcard meaning. To do this, you need to include more information when these characters occur in the data you're searching. Let's say you want to look for percentages. The following search isn't good enough:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerName, CustomerRating FROM Customers
+WHERE CustomerRating LIKE '%50%%';
+</pre>
+</div>
+<p class="para">Here the <span class="fixed">%</span> character is interpreted as a wildcard as usual, and the match will actually be for the string <span class="fixed">'50'</span> rather than <span class="fixed">'50%'</span>. To get round this, you can use an escape character to force the first <span class="fixed">%</span> of the <span class="fixed">%%</span> part of the pattern to be interpreted as the character <span class="fixed">%</span> rather than a string:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerName, CustomerRating FROM Customers
+WHERE CustomerRating LIKE '%50<i class="emphasis">&lt;Escape Char&gt;</i>%%';
+</pre>
+</div>
+<p class="para">There's no escape character defined in SQL, so instead you need to specify your own using the <span class="fixed">ESCAPE</span> keyword. You can choose any character you like for this, but you should try to choose one that doesn't occur elsewhere in the string, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerName, CustomerRating FROM Customers
+WHERE CustomerRating LIKE '%50p%%' ESCAPE 'p';
+</pre>
+</div>
+<p class="para">Here <span class="fixed">p</span> is used as an escape character and causes the first <span class="fixed">%</span> character to be interpreted as a character, not as an escape code.</p>
+<p class="para">Access doesn't support this syntax, but you can escape the wildcard character by enclosing it in square brackets:</p>
+<a name="165"></a><a name="IDX-60"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerName, CustomerRating FROM Customers
+WHERE CustomerRating LIKE '%50[%]%';
+</pre>
+</div>
+<p class="para">SQL Server also supports this syntax.</p>
+<div class="example">
+<span class="example-title">PATTERN MATCHING</span><a name="166"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Let's look at an example from the <span class="fixed">InstantUniversity</span> database. Suppose you wanted to search for exam results in the <span class="fixed">StudentExam</span> table that had been described as "great." You could try something like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, ExamID, Mark, Comments FROM StudentExam
+WHERE Comments LIKE '%great%';
+</pre>
+</div>
+<p class="para">This works for SQL Server, MySQL, and Access because pattern matching is case insensitive in these systems. However, it will find <span class="fixed">'great'</span> but not <span class="fixed">'Great'</span> in DB2 and Oracle. To get around this, you need to convert the column to upper case before applying the match. You can do this in both DB2 and Oracle using the <span class="fixed">UPPER()</span> function:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, ExamID, Mark, Comments FROM StudentExam
+WHERE UPPER(Comments) LIKE '%GREAT%';
+</pre>
+</div>
+<p class="para">This query produces the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   ExamID      Mark        Comments
+
+   ----------- ----------- ----------- ------------------------
+   3           7           82          Great result!
+   8           1           71          Excellent, great work!
+</pre>
+</div>
+<p class="last-para">However, this will also match records with a comment such as <span class="fixed">'So far from</span> <span class="fixed">great I'm expelling this student.'</span> Be careful when using patterns because it's easy to forget things such as this, and sometimes the logical process you use to create a pattern will have unexpected results!</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="167"></a><a name="IDX-61"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="168"></a><a name="ch02lev2sec15"></a>Performing Complex Pattern Matching</h3>
+<p class="first-para">SQL Server, Access, and MySQL allow a more complex form of pattern matching based more or less closely on regular expressions. In the case of SQL Server and Access, this consists merely of extensions to the standard <span class="fixed">LIKE</span> syntax, but MySQL uses a completely different keyword (<span class="fixed">REGEXP</span> or <span class="fixed">RLIKE</span>) for regular expression pattern matching.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="169"></a><a name="ch02lev3sec5"></a>SQL Server and Access</h4>
+<p class="first-para">As well as the wildcards <span class="fixed">%</span> and <span class="fixed">_</span>, SQL Server and Access patterns can contain characters enclosed in square brackets. A match will be made if the entire pattern matches using any one of these characters. For example, <span class="fixed">'%[abcde]%'</span> will match any expression that contains any of the letters A, B, C, D, or E anywhere (matches aren't case sensitive).</p>
+<p class="para">You can also use a hyphen to indicate a range of values, so you could also write the previous expression as <span class="fixed">'%[a-e%]'</span>. You can therefore use <span class="fixed">[a-z]</span> to represent any alphabetic character, <span class="fixed">[0-9]</span> to match any numeric character, and <span class="fixed">[a-z0-9]</span> to match any alphanumeric character.</p>
+<p class="para">In addition, SQL Server allows you to prefix the sign <span class="fixed">^</span> to a character or range of characters in order to match only characters that aren't in that range; for example, <span class="fixed">[^a-z0-9]</span> will match nonalphanumeric characters.</p>
+<div class="example">
+<span class="example-title">COMPLEX PATTERN MATCHING (ACCESS AND SQL SERVER)</span><a name="170"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Student
+WHERE Name LIKE '% [a-dw-z]%';
+</pre>
+</div>
+<p class="para">This query looks for all student names that contain a space, followed by a character in the range A&#8211;D or W&#8211;Z. The effect (because this sample data contains only students with two names) is to return a list of all the students whose second names start with one of the first four or last four letters of the alphabet:</p>
+<a name="171"></a><a name="IDX-62"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Name
+
+   --------------
+   Gary Burton
+   Anna Wolff
+   Vic Andrews
+   Steve Alaska
+   Mohammed Akbar
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="172"></a><a name="ch02lev3sec6"></a>MySQL</h4>
+<p class="first-para">The basic syntax for MySQL's regular expression matching is similar but provides more options. You can use square brackets to match one of a set of characters or a specific range of characters, as in SQL Server and Access, but there are some important differences. First, MySQL regular expression patterns are case sensitive, so to match all alphabetic characters, you need to use <span class="fixed">[a-zA-Z]</span> instead of just <span class="fixed">[a-z]</span>. Second, matches will be found anywhere in the string, regardless of whether anything comes before or after (unless you explicitly say otherwise), so you don't need (and in fact can't use) the <span class="fixed">%</span> wildcard.</p>
+<p class="para">There are also some more character-matching patterns available, as shown in <a class="internaljump" href="#ch02table04">Table 2-4</a>.</p>
+<a name="173"></a><a name="ch02table04"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 2-4: </span>Character-Matching Patterns</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="center">
+<p class="table-para">
+<b class="bold"><span class="fixed">Character</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Matches</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">^</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">The start of the string. For example, <span class="fixed">'^B'</span> matches the first but not the second B in <span class="fixed">'BOB'</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">$</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">The end of the string. For example, <span class="fixed">'B$'</span> matches the second but not the first B in <span class="fixed">'BOB'</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">.</p>
+</td><td class="td" align="left">
+<p class="table-para">Any single character.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">*</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">The previous character repeated zero or more times. For example, <span class="fixed">'Ke*l'</span> matches <span class="fixed">'Kl'</span>, <span class="fixed">'Kel'</span>, <span class="fixed">'Keel'</span>, and so on.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center" valign="middle">
+<p class="table-para">
+<span class="fixed">{n}</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">The previous character repeated <i class="emphasis"><span class="fixed">n</span></i> times. For example, <span class="fixed">'b{3}'</span> matches <span class="fixed">'bbb'</span> but not <span class="fixed">'bb'</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">To use MySQL's regular expression matching, you use the <span class="fixed">REGEXP</span> (or <span class="fixed">RLIKE</span>) keyword instead of <span class="fixed">LIKE</span>:</p>
+<a name="174"></a><a name="IDX-63"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Student WHERE Name REGEXP '^[Aa]';
+</pre>
+</div>
+<p class="para">This is equivalent to the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Student WHERE Name LIKE 'A%';
+</pre>
+</div>
+<div class="example">
+<span class="example-title">REGULAR EXPRESSION MATCHING (MYSQL)</span><a name="175"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Student
+WHERE Name REGEXP '^[AM].*r$';
+</pre>
+</div>
+<p class="para">This query matches all student names that begin with either <span class="fixed">'A'</span> or <span class="fixed">'M'</span>, followed by any number of characters and ending with the character <span class="fixed">'r'</span>. Two names in the sample data match these criteria:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name
+
+   --------------
+   Andrew Foster
+   Mohammed Akbar
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0017.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0019.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

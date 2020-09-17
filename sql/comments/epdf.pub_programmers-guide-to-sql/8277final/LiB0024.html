@@ -1,0 +1,151 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Changing Existing Data</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0023.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0025.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch03"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="199"></a><a name="ch03lev1sec3"></a>Changing Existing Data</h2><p class="first-para">In most databases, you'll want to modify data at some point as it becomes out-of-date. This isn't always the case; for example, you wouldn't want to change data in a database containing a list of World Cup-winning snowboarders of recent years, but in many cases it's vital. Allowing customers to update their details in an e-commerce application is essential, for example, or else they would forever be getting orders delivered to houses at which they no longer lived. In SQL you use the <span class="fixed">UPDATE</span> keyword to do this.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="200"></a><a name="ch03lev2sec3"></a>Updating Rows with UPDATE</h3>
+<p class="first-para">The basic syntax for <span class="fixed">UPDATE</span> is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE <i class="emphasis">Table</i> SET <i class="emphasis">NewColumnValues</i> WHERE <i class="emphasis">RowFilter</i>;
+</pre>
+</div>
+<p class="para">As before, <i class="emphasis"><span class="fixed">Table</span></i> selects the table containing the row (or rows) you want to modify. <i class="emphasis"><span class="fixed">NewColumnValues</span></i> is where you provide the new values you want to apply to row(s), and <i class="emphasis"><span class="fixed">RowFilter</span></i> allows you to select what row or rows to update, using the same <span class="fixed">WHERE</span> syntax you saw in the <a href="LiB0013.html#98" target="_parent" class="chapterjump">previous chapter</a>.</p>
+<p class="para">The main new thing here is <i class="emphasis"><span class="fixed">NewColumnValues</span></i>. This part of the statement involves providing a list of comma-separated column names and new values as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE <i class="emphasis">Table</i>
+SET ColumnA = NewValueA, ColumnB = NewValueB
+WHERE RowFilter;
+</pre>
+</div>
+<p class="para">The values can be literal values, column names if you want to copy data from other columns, or the results of some calculation. Calculations are covered in detail in <a href="LiB0031.html#267" target="_parent" class="chapterjump">Chapter 5</a>, "Performing Calculations and Using Functions," but for now it's worth noting that you can perform tasks such as incrementing column values, adding values based on values in other columns, and so on. As a quick example, the following query would be great if someone were feeling generous and wanted to increase their wife's bank account by a substantial amount to pay for hair-care products:</p>
+<a name="201"></a><a name="IDX-76"></a>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE BankAccounts
+SET Balance = Balance * 10
+WHERE AccountHolder = 'Donna Watson';
+</pre>
+</div>
+<p class="para">Unfortunately, we don't have access to the database we'd need to do this, but the idea is nice.</p>
+<p class="para">More typically, you'll change values with literal values obtained as part of some other application, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE LineProducts
+SET ProductName = 'New Improved Plastic Asparagus Tips', ItemsInStock = 1000
+WHERE ProductID = 47;
+</pre>
+</div>
+<p class="para">Here a row is identified by its ID and values changed. Note that there's no need to provide values for all the columns in the table; where a new column value isn't specified, the old value will remain after the statement has executed.</p>
+<div class="example">
+<span class="example-title">MODIFYING ROW DATA</span><a name="202"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following code against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Professor
+SET Name = 'Prof. ' || Name
+   WHERE ProfessorID &gt; 6;
+</pre>
+</div>
+<p class="para">Note that for SQL Server and Access, the <span class="fixed">||</span> concatenation symbol should be replaced with a <span class="fixed">+</span>. Also, the syntax for concatenation for MySQL is quite different, and the previous SQL should appear as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Professor
+SET Name = CONCAT('Prof. ', Name)
+   WHERE ProfessorID &gt; 6;
+</pre>
+</div>
+<p class="para">The rows should now have been altered as follows:</p>
+<a name="203"></a><a name="IDX-77"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   ProfessorID  Name
+
+   -----------  ---------------
+   ...          ...
+   6            Prof. Hwa
+   7            Prof. Snail at work
+   8            Prof. John Jones
+   9            Prof. Gary Burton
+   ...          ...
+</pre>
+</div>
+<p class="last-para">This example changes the value in the <span class="fixed">Name</span> column in <span class="fixed">Professor</span> to a concatenation of <span class="fixed">'Prof. '</span> and the original value of this column. This modification is applied to the 13 new records added to the <span class="fixed">Professor</span> table in the previous two examples. To filter these rows, we selected all records with a <span class="fixed">ProfessorID</span> value of more than six.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Care should be taken when using an <i class="emphasis"><span class="fixed">UPDATE</span></i> statement&#8212; omitting the <i class="emphasis"><span class="fixed">WHERE</span></i> clause will result in changes to every row of the table. If in doubt, replace the word <i class="emphasis"><span class="fixed">UPDATE</span></i> with <i class="emphasis"><span class="fixed">SELECT</span></i> while building your statement to test the results before applying them.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="204"></a><a name="ch03lev2sec4"></a>Using UPDATE with Different RDBMSs</h3>
+<p class="first-para">Again, different RDBMSs include their own additions to the <span class="fixed">UPDATE</span> syntax:</p>
+
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="para">
+<b>SQL Server:</b> Includes the option of having a <span class="fixed">FROM</span> clause after the <span class="fixed">SET</span> clause to make updating related tables much simpler. It can also include an <span class="fixed">OPTION</span> clause that contains optimizer hints used to optimize the way the statement is executed by SQL Server. For example, specifying <span class="fixed">OPTION FAST <i class="emphasis">n</i></span> causes SQL Server to optimize the query so that the first <i class="emphasis"><span class="fixed">n</span></i> rows are returned as quickly as possible, before the rest of the result set is returned.</p>
+<a name="205"></a><a name="IDX-78"></a>
+</li>
+<li class="listitem">
+<p class="para">
+<b>Oracle:</b> Oracle allows you to include a <span class="fixed">RETURNING</span> clause at the end of the <span class="fixed">UPDATE</span> statement to return the amended rows into a variable.</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>MySQL:</b> Includes a <span class="fixed">LIMIT</span> clause to limit the number of rows that will be affected (see the <a href="LiB0027.html#216" target="_parent" class="chapterjump">next chapter</a> for more information on this keyword).</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>DB2:</b> Includes an <span class="fixed">ONLY</span> clause that can be used to limit the scope of the update to just the table in question and not to any subtables. This clause is only used with typed tables and typed views. These are special DB2-specific constructs that allow you to store object instances and to define the hierarchical relationships between them.</p>
+</li>
+</ul>
+<p class="last-para">There are also capabilities for dealing with cursors, which you'll look at a little later in the book (in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures"), using the <span class="fixed">WHERE CURRENT OF <i class="emphasis">cursor</i></span> syntax in SQL Server, Oracle, and DB2.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0023.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0025.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

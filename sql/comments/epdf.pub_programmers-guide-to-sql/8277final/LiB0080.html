@@ -1,0 +1,149 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Understanding Declarative Referential Integrity and the FOREIGN KEY Constraint</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0079.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0081.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="851"></a><a name="ch12lev1sec9"></a>Understanding Declarative Referential Integrity and the FOREIGN KEY Constraint</h2><p class="first-para">You learned in <a href="LiB0009.html#31" target="_parent" class="chapterjump">Chapter 1</a>, "Understanding SQL and Relational Databases," about the relationships that can exist between data tables; <i class="emphasis">Declarative Referential Integrity (DRI)</i> is what makes sure that the rules aren't broken.</p>
+<p class="para">You saw that both one-to-many and many-to-many relationships are physically implemented as one-to-many relationships (a many-to-many relationship is composed of two one-to-many relationships). By "declaring" these relationships to the database, you ensure the database will take care of itself and enforce those rules.</p>
+<p class="para">You can enforce a one-to-many relationship in the database through foreign keys, which tie the referencing table to the referenced table. To test foreign keys, you'll add something to the <span class="fixed">Friend</span> scenario: You'll assume that each friend can have any number of phone numbers, thus creating a simple one-to-many scenario.</p>
+<p class="para">To implement this, you'll need to store the phone numbers in a separate table named <span class="fixed">Phone</span>. <span class="fixed">Phone</span> will have three columns: an ID column named <span class="fixed">PhoneID</span>, which will be the primary key; a <span class="fixed">FriendID</span> column, which links to the friend that has the phone number; and a <span class="fixed">PhoneNo</span> column, which contains the actual phone number. <a class="internaljump" href="#ch12fig01">Figure 12-1</a> shows the relationship between <span class="fixed">Phone</span> and <span class="fixed">Friend</span>.</p>
+<div class="figure">
+<a name="852"></a><a name="ch12fig01"></a><span class="figuremediaobject"><a href="images/fig374%5F01%5F0%2Ejpg" NAME="IMG_31" target="_parent"><img src="images/fig374_01.jpg" height="87" width="221" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 12-1: </span>The relationship between <i class="emphasis"><span class="fixed">Phone</span></i> and <i class="emphasis"><span class="fixed">Friend</span></i></span>
+</div>
+<a name="853"></a><a name="IDX-359"></a>
+<p class="para">The referential integrity in this case is between the <span class="fixed">FriendID</span> column in the <span class="fixed">Phone</span> table and the <span class="fixed">FriendID</span> column in the <span class="fixed">Friend</span> table. This ensures that each record in the <span class="fixed">Phone</span> table belongs to a real record of the <span class="fixed">Friend</span> table.</p>
+<p class="para">The arrow in <a class="internaljump" href="#ch12fig01">Figure 12-1</a> shows the nature of the relationship that happens between <span class="fixed">Friend</span> and <span class="fixed">Phone</span>. It points to the <i class="emphasis">one</i> table of the one-to-many relationship, which is the table whose primary key field is being referenced.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The two columns you're connecting with the <i class="emphasis"><span class="fixed">FOREIGN KEY</span></i> constraint must be of the same (or at least similar) data type.</p>
+</td>
+</tr>
+</table>
+<p class="para">The <span class="fixed">FOREIGN KEY</span> constraint applies on the column in the referencing table&#8212; in this case, the <span class="fixed">FriendID</span> field in <span class="fixed">Phone</span>. So, let's build the two data tables.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">The basic syntax of specifying <i class="emphasis"><span class="fixed">FOREIGN KEY</span></i> constraints is the same for all databases. However, with MySQL there are a couple of tricks you need to know first.</p>
+</td>
+</tr>
+</table>
+<p class="para">If you're using SQL Server, Oracle, DB2, or Access, create <span class="fixed">Friend</span> and <span class="fixed">Phone</span> like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (FriendID INT PRIMARY KEY NOT NULL,
+                      Name VARCHAR(50));
+
+CREATE TABLE Phone (
+   PhoneID INT PRIMARY KEY NOT NULL,
+   FriendID INT,
+   PhoneNo VARCHAR(20),
+   CONSTRAINT FID_FK FOREIGN KEY(FriendID)
+      REFERENCES Friend(FriendID));
+</pre>
+</div>
+<p class="para">Let's examine how you create the constraint in <span class="fixed">Phone</span>. First, you use the <span class="fixed">CONSTRAINT</span> keyword to supply a name for the new constraint. <span class="fixed">FOREIGN KEY(FriendID) </span>specifies that you're placing a <span class="fixed">FOREIGN KEY</span> constraint on the <span class="fixed">FriendID</span> column in the current table (<span class="fixed">Phone</span>). You then use the <span class="fixed">REFERENCES</span> keyword to specify the column that the foreign key points to: In this case, you're referencing <span class="fixed">Friend(FriendID)</span>, which means the <span class="fixed">FriendID</span> column in the <span class="fixed">Friend</span> table.</p>
+<p class="para">This command creates a <span class="fixed">FOREIGN KEY</span> constraint named <span class="fixed">FID_FK</span>, which enforces the one-to-many relationship between <span class="fixed">Friend</span> and <span class="fixed">Phone</span>. As usual, if you're not interested in providing a name for the constraint, you can let the database take care of this by not supplying the <span class="fixed">CONSTRAINT</span> keyword:</p>
+<a name="854"></a><a name="IDX-360"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Phone
+   (PhoneID INT PRIMARY KEY NOT NULL,
+    FriendID INT,
+    PhoneNo VARCHAR(20),
+    FOREIGN KEY(FriendID) REFERENCES Friend(FriendID));
+</pre>
+</div>
+<p class="para">Because SQL is flexible, each database usually supports even more ways to create a <span class="fixed">FOREIGN KEY</span> constraint. For example, if you're using SQL Server, here's a faster way to create <span class="fixed">Phone</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Phone (
+   PhoneID INT PRIMARY KEY NOT NULL,
+   FriendID INT FOREIGN KEY REFERENCES Friend(FriendID),
+   PhoneNo VARCHAR(20));
+</pre>
+</div>
+<p class="para">MySQL supports foreign keys only with the <span class="fixed">InnoDB</span> table type&#8212;it's not the first time you've encountered this table type because it's the most advanced table type supported by MySQL (as you saw in <a href="LiB0056.html#633" target="_parent" class="chapterjump">Chapter 10</a>, "Transactions," it's the only one that fully supports the ACID transaction properties).</p>
+<p class="para">Both the referencing and referenced tables must be <span class="fixed">InnoDB</span> tables, so don't forget to add <span class="fixed">TYPE=InnoDB</span> at the end of the <span class="fixed">CREATE TABLE</span> statement; otherwise, MySQL will simply ignore any <span class="fixed">FOREIGN KEY</span> constraint you may define.</p>
+<p class="para">
+<span class="fixed">InnoDB</span> tables also require you to create an index on the column being used as a foreign key. Here's how you create the <span class="fixed">Phone</span> table with MySQL:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Phone (
+   PhoneID INT PRIMARY KEY NOT NULL,
+   FriendID INT,
+   PhoneNo VARCHAR(20),
+   FOREIGN KEY(FriendID) REFERENCES Friend(FriendID),
+   INDEX idx1(FriendID))
+TYPE=InnoDB;
+</pre>
+</div>
+<p class="para">You can test the relationship by executing the following commands:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend (FriendID, Name) VALUES (1, 'Helen');
+INSERT INTO Friend (FriendID, Name) VALUES (2, 'Susan');
+INSERT INTO Phone (PhoneID, FriendID, PhoneNo)
+   VALUES (1, 1, '555-HELEN');
+INSERT INTO Phone (PhoneID, FriendID, PhoneNo)
+   VALUES (2, 1, '555-HL-WORK');
+INSERT INTO Phone (PhoneID, FriendID, PhoneNo)
+   VALUES (3, 2, '555-SUZY-Q');
+INSERT INTO Phone (PhoneID, FriendID, PhoneNo)
+   VALUES (5, 9, '0982734833');
+<a name="855"></a><a name="IDX-361"></a>
+</pre>
+</div>
+<p class="para">The last command will generate an error because you tried to add a phone number for a friend that doesn't exist (a friend with an ID of <span class="fixed">9</span>). Because the phone numbers are stored in a separate table, you need to do a table join in order to get a list with your friends and their phone numbers (you learned about table joins in <a href="LiB0039.html#418" target="_parent" class="chapterjump">Chapter 7</a>, "Querying Multiple Tables"):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Friend.FriendID, Friend.Name, Phone.PhoneNo
+FROM Friend
+   INNER JOIN Phone
+   ON Friend.FriendID = Phone.FriendID
+ORDER BY Friend.Name;
+</pre>
+</div>
+<p class="para">The results are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                   PhoneNo
+
+   -------------------- --------------------
+   Helen                  555-HELEN
+   Helen                  555-HELEN-WORK
+   Susan                  555-SUZY-Q
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">As you might expect, you can't drop a table if it's being referenced from another table.</p>
+</td>
+</tr>
+</table>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0079.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0081.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

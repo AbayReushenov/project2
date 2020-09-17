@@ -1,0 +1,1020 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Creating the Database</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0106.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0108.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="appendix">
+<a name="ap02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1212"></a><a name="ap02lev1sec1"></a>Creating the Database</h2><p class="first-para">To start with, the most basic command for creating the empty sample database is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE DATABASE InstantUniversity;
+</pre>
+</div>
+<p class="para">On each of the different database platforms (except for Access), this command creates a new database with the default set of properties assigned to it. For more information, see <a href="LiB0089.html#915" target="_parent" class="chapterjump">Chapter 14</a>, "Working with Database Objects."</p>
+<p class="para">Note that Access can't create a new database in this manner, so to create the new database in Access, you need to select File <font face="wingdings">Ø</font> New from the main menu. Then you need to create a new blank database, as shown in <a class="internaljump" href="#ap02fig02">Figure B-2</a>.</p>
+<div class="figure">
+<a name="1213"></a><a name="ap02fig02"></a><span class="figuremediaobject"><a href="images/fig530%5F01%5F0%2Ejpg" NAME="IMG_62" target="_parent"><img src="images/fig530_01.jpg" height="221" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure B-2: </span>Creating a new database</span>
+</div>
+<p class="para">Once the database is created, you need to create the tables and relationships. In just a moment you'll look at the design for each table and the code needed to create each table.</p>
+<a name="1214"></a><a name="IDX-515"></a>
+<p class="para">It's worth noting that because you'll be using transactions in some of the chapters in this book, the code for creating tables in MySQL is slightly different from that used on other RDBMSs. When working with MySQL, you need to specify a table type that supports transactions and referential integrity: <span class="fixed">InnoDB</span>. Also, when creating fields that have a data type suitable for storing dates and times, in SQL Server you refer to the data type as <span class="fixed">DATETIME</span>, but other database platforms use the <span class="fixed">DATE</span> data type. We'll highlight differences as you encounter them.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1215"></a><a name="ap02lev2sec1"></a>Creating the Professor Table</h3>
+<p class="first-para">The first table you need to create is the <span class="fixed">Professor</span> table. This table stores information about the professors at the fictitious university. <a class="internaljump" href="#ap02table01">Table B-1</a> shows the <span class="fixed">Professor</span> table definition.</p>
+<a name="1216"></a><a name="ap02table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-1: </span>The <i class="emphasis"><span class="fixed">Professor</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ProfessorID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Name</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(50)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">The SQL code used to create this table is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Professor (
+   ProfessorID INT NOT NULL PRIMARY KEY,
+   Name         VARCHAR(50) NOT NULL);
+</pre>
+</div>
+<p class="para">As mentioned previously, you need to specify the <span class="fixed">InnoDB</span> table type when working with MySQL, so you should add one last clause to the statement before executing it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Professor (
+   ProfessorID INT NOT NULL PRIMARY KEY,
+   Name         VARCHAR(50) NOT NULL)
+TYPE = InnoDB;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1217"></a><a name="ap02lev2sec2"></a>Creating the Course Table</h3>
+<p class="first-para">The <span class="fixed">Course</span> table stores information on each of the available courses at the university, as shown in <a class="internaljump" href="#ap02table02">Table B-2</a>.</p>
+<a name="1218"></a><a name="ap02table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-2: </span>The <i class="emphasis"><span class="fixed">Course</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">CourseID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Name</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(50)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Credits</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1219"></a><a name="IDX-516"></a>
+<p class="para">The code for creating this table is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Course (
+   CourseID INT NOT NULL PRIMARY KEY,
+   Name     VARCHAR(50),
+   Credits INT);
+</pre>
+</div>
+<p class="para">The only platform difference to this example is for MySQL, where you specify the <span class="fixed">InnoDB</span> table type:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Course (
+   CourseID INT NOT NULL PRIMARY KEY,
+   Name     VARCHAR(50),
+   Credits INT)
+TYPE = InnoDB;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1220"></a><a name="ap02lev2sec3"></a>Creating the Room Table</h3>
+<p class="first-para">The <span class="fixed">Room</span> table stores information on the available rooms in the university that can be used for teaching courses or for sitting exams, as shown in <a class="internaljump" href="#ap02table03">Table B-3</a>.</p>
+<a name="1221"></a><a name="ap02table03"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-3: </span>The <i class="emphasis"><span class="fixed">Room</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RoomID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Comments</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(50)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Capacity</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">The SQL used for creating this table is as follows:</p>
+<a name="1222"></a><a name="IDX-517"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Room (
+   RoomID   INT NOT NULL PRIMARY KEY,
+   Comments VARCHAR(50),
+   Capacity INT);
+</pre>
+</div>
+<p class="para">Again, you specify the <span class="fixed">InnoDB</span> table type when using MySQL:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Room (
+   RoomID   INT NOT NULL PRIMARY KEY,
+   Comments VARCHAR(50),
+   Capacity INT)
+TYPE = InnoDB;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1223"></a><a name="ap02lev2sec4"></a>Creating the Class Table</h3>
+<p class="first-para">The <span class="fixed">Class</span> table stores information on where and when a course is being held and who is taking the class. This table relies on the <span class="fixed">Professor</span>, <span class="fixed">Course</span>, and <span class="fixed">Room</span> tables, as shown in <a class="internaljump" href="#ap02table04">Table B-4</a>.</p>
+<a name="1224"></a><a name="ap02table04"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-4: </span>The <i class="emphasis"><span class="fixed">Class</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ClassID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">CourseID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Course</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ProfessorID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Professor</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RoomID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Room</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Time</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(50)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">We've used a data type of <i class="emphasis"><span class="fixed">VARCHAR (50)</span></i> for the <i class="emphasis"><span class="fixed">Time</span></i> field. This allows you to enter text to describe when a class is taking place and for how long, rather than entering just a time.</p>
+</td>
+</tr>
+</table>
+<a name="1225"></a><a name="IDX-518"></a>
+<p class="para">The code for creating this table on platforms other than MySQL is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Class (
+   ClassID      INT NOT NULL PRIMARY KEY,
+   CourseID     INT NOT NULL,
+   ProfessorID  INT NOT NULL,
+   RoomID       INT NOT NULL,
+   Time         VARCHAR(50),
+
+   CONSTRAINT   FK_Course FOREIGN KEY (CourseID)
+                 REFERENCES Course(CourseID),
+
+   CONSTRAINT   FK_Prof FOREIGN KEY (ProfessorID)
+                 REFERENCES Professor(ProfessorID),
+
+   CONSTRAINT   FK_Room FOREIGN KEY (RoomID)
+                 REFERENCES Room(RoomID));
+</pre>
+</div>
+<p class="para">Note that for Access, if you're creating this table using this SQL statement, you need to enclose <span class="fixed">Time</span> in square brackets (because <span class="fixed">Time</span> is a reserved word):</p>
+<div class="informalexample">
+<pre class="literallayout">
+...
+   [Time]        VARCHAR(50),
+...
+</pre>
+</div>
+<p class="para">The code for creating this table on MySQL is a bit different:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Class (
+   CourseID     INT NOT NULL,
+   ProfessorID  INT NOT NULL,
+   RoomID       INT NOT NULL,
+   ClassID      INT NOT NULL PRIMARY KEY,
+   Time         VARCHAR(50),
+
+   INDEX        course_index(CourseID),
+   CONSTRAINT   FK_Course FOREIGN KEY (CourseID)
+                 REFERENCES Course(CourseID),
+
+   INDEX        prof_index(ProfessorID),
+   CONSTRAINT   FK_Prof FOREIGN KEY (ProfessorID)
+                 REFERENCES Professor(ProfessorID),<a name="1226"></a><a name="IDX-519"></a>
+   INDEX        room_index(RoomID),
+   CONSTRAINT   FK_Room FOREIGN KEY (RoomID)
+                  REFERENCES Room(RoomID)
+) TYPE = InnoDB;
+</pre>
+</div>
+<p class="last-para">Note that all foreign keys in the table must be indexed when creating an <span class="fixed">InnoDB</span> table. This topic is covered in more detail in <a href="LiB0089.html#915" target="_parent" class="chapterjump">Chapter 14</a>, "Working with Database Objects."</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1227"></a><a name="ap02lev2sec5"></a>Creating the Student Table</h3>
+<p class="first-para">The <span class="fixed">Student</span> table stores basic information about the students who attend the university, as shown in <a class="internaljump" href="#ap02table05">Table B-5</a>.</p>
+<a name="1228"></a><a name="ap02table05"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-5: </span>The <i class="emphasis"><span class="fixed">Student</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">StudentID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Name</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(50)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">To create the Student table, use the following SQL code:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Student (
+   StudentID INT NOT NULL PRIMARY KEY,
+   Name       VARCHAR(50) NOT NULL);
+</pre>
+</div>
+<p class="para">And to specify the table type in MySQL, alter the end of the statement as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Student (
+   StudentID INT NOT NULL PRIMARY KEY,
+   Name      VARCHAR(50) NOT NULL
+) TYPE = InnoDB;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1229"></a><a name="ap02lev2sec6"></a>Creating the Exam Table</h3>
+<p class="first-para">The <span class="fixed">Exam</span> table stores information on the course on which the exam is based, the professor who is marking the exam, the date when the exam is to be held, and any extra comments about the contents of the exam, as shown in <a class="internaljump" href="#ap02table06">Table B-6</a>.</p>
+<a name="1230"></a><a name="ap02table06"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-6: </span>The <i class="emphasis"><span class="fixed">Exam</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ExamID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">CourseID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Course</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ProfessorID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Professor</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">SustainedOn</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">DATE</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Comments</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(255)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1231"></a><a name="IDX-520"></a>
+<p class="para">The code for creating this table is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Exam (
+   ExamID       INT NOT NULL PRIMARY KEY,
+   CourseID     INT NOT NULL,
+   ProfessorID  INT NOT NULL,
+   SustainedOn  DATE,
+   Comments     VARCHAR(255),
+
+   CONSTRAINT   FK_ExamCourse FOREIGN KEY (CourseID)
+                 REFERENCES Course(CourseID),
+
+   CONSTRAINT   FK_ExamProf FOREIGN KEY (ProfessorID)
+                 REFERENCES Professor(ProfessorID));
+</pre>
+</div>
+<p class="para">Note that SQL Server uses <span class="fixed">DATETIME</span> instead of <span class="fixed">DATE</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+...
+   SustainedOn DATETIME,
+...
+</pre>
+</div>
+<p class="para">And, again, MySQL has extra indexes and a table type definition:</p>
+<div class="informalexample">
+<pre class="literallayout">
+...
+   INDEX        examcourse_index(CourseID),
+   CONSTRAINT  FK_ExamCourse FOREIGN KEY (CourseID)
+                REFERENCES Course(CourseID),<a name="1232"></a><a name="IDX-521"></a>
+   INDEX        examprof_index(ProfessorID),
+   CONSTRAINT  FK_ExamProf FOREIGN KEY (ProfessorID)
+                REFERENCES Professor(ProfessorID)
+) TYPE = InnoDB;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1233"></a><a name="ap02lev2sec7"></a>Creating the Enrollment Table</h3>
+<p class="first-para">The <span class="fixed">Enrollment</span> table describes which students attend which classes. Of course, a student will attend more than one class, and each class will have more than one student, as shown in <a class="internaljump" href="#ap02table07">Table B-7</a>.</p>
+<a name="1234"></a><a name="ap02table07"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-7: </span>The <i class="emphasis"><span class="fixed">Enrollment</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">EnrollmentID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">StudentID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Student</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ClassID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Class</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">EnrolledOn</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">DATE</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Grade</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(255)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">You can create this table with the following code:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Enrollment (
+   EnrollmentID INT NOT NULL PRIMARY KEY,
+   StudentID    INT NOT NULL,
+   ClassID      INT NOT NULL,
+   EnrolledOn   DATE,
+   Grade        INT,
+
+   CONSTRAINT   FK_EnrollStudent FOREIGN KEY (StudentID)
+                 REFERENCES Student(StudentID),
+
+   CONSTRAINT   FK_EnrollClass FOREIGN KEY (ClassID)
+                 REFERENCES Class(ClassID));
+<a name="1235"></a><a name="IDX-522"></a>
+</pre>
+</div>
+<p class="para">Make sure to change <span class="fixed">DATE</span> to <span class="fixed">DATETIME</span> for SQL Server:</p>
+
+<div class="informalexample">
+<pre class="literallayout">
+...
+   EnrolledOn DATETIME,
+...
+</pre>
+</div>
+<p class="para">Again, MySQL has a couple of extra indexes to add, along with the table type:</p>
+<div class="informalexample">
+<pre class="literallayout">
+...
+   INDEX        enrollstudent_index(StudentID),
+   CONSTRAINT  FK_EnrollStudent FOREIGN KEY (StudentID)
+                REFERENCES Student(StudentID),
+
+   INDEX        enrollclass_index(ClassID),
+   CONSTRAINT   FK_EnrollClass FOREIGN KEY (ClassID)
+                 REFERENCES Class(ClassID)
+) TYPE = InnoDB;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1236"></a><a name="ap02lev2sec8"></a>Creating the StudentExam Table</h3>
+<p class="first-para">This joining table makes a note of which exams were taken by which students, the grades achieved by each student for each exam taken, and whether the exam was passed (subject to moderation), as shown in <a class="internaljump" href="#ap02table08">Table B-8</a>.</p>
+<a name="1237"></a><a name="ap02table08"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table B-8: </span>The <i class="emphasis"><span class="fixed">StudentExam</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Required?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Primary Key</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">StudentID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Student</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ExamID</span>
+</p>
+<p class="table-para">(Foreign key, table: <span class="fixed">Exam</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Mark</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INTEGER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">IfPassed</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">DATE</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Comments</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR(255)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1238"></a><a name="IDX-523"></a>
+<p class="para">To create the table, use the following SQL:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE StudentExam (
+   StudentID  INT NOT NULL,
+   ExamID     INT NOT NULL,
+   Mark       INT,
+   IfPassed   SMALLINT,
+   Comments   VARCHAR(255),
+
+   CONSTRAINT PK_StudentExam PRIMARY KEY (StudentID, ExamID),
+
+   CONSTRAINT FK_Student FOREIGN KEY (StudentID)
+               REFERENCES Student(StudentID),
+
+   CONSTRAINT FK_Exam FOREIGN KEY (ExamID)
+               REFERENCES Exam(ExamID));
+</pre>
+</div>
+<p class="para">And, if you're using MySQL, add the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+...
+   INDEX       student_index (StudentID),
+   CONSTRAINT FK_Student FOREIGN KEY (StudentID)
+               REFERENCES Student(StudentID),
+
+   INDEX      exam_index (ExamID),
+   CONSTRAINT FK_Exam FOREIGN KEY (ExamID)
+               REFERENCES Exam(ExamID)
+) TYPE = InnoDB;
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0106.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0108.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

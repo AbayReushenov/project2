@@ -1,0 +1,152 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>What are Triggers?</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0083.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0085.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch13"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="862"></a><a name="ch13lev1sec1"></a>What are Triggers?</h2><p class="first-para">Triggers are essentially the event handlers of the database. When creating a trigger, you need to specify some important pieces of information.</p>
+<p class="para">Triggers are associated with data tables and are executed by reacting automatically to events. When creating a trigger, it's a basic requirement that you associate it with a table and specify the event or events on which it should fire. Do you want the trigger to execute when new rows are added to the table or when rows are deleted or updated? You're allowed to specify any of these actions (<span class="fixed">INSERT</span>, <span class="fixed">DELETE</span>, <span class="fixed">UPDATE</span>) or any combination of them.</p>
+<a name="863"></a><a name="IDX-364"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">There are scenarios when triggers aren't called, even though it may seem like they should be. For example, a <i class="emphasis"><span class="fixed">DELETE</span></i> trigger isn't called if the table records are deleted using a <i class="emphasis"><span class="fixed">TRUNCATE TABLE</span></i> command. <i class="emphasis"><span class="fixed">TRUNCATE TABLE</span></i> is an unlogged operation; it doesn't fire any triggers and can't be rolled back by transactions.</p>
+</td>
+</tr>
+</table>
+<p class="para">Another decision you need to make is when exactly the trigger should fire. Because triggers are executed by events, they can be instructed to execute <i class="emphasis">before</i> or <i class="emphasis">after</i> those events occur. You can also create a trigger that executes <i class="emphasis">instead of</i> the event that fired it.</p>
+<p class="para">The final important part of a trigger is the code itself&#8212;the SQL procedure that executes when the trigger is fired.</p>
+<p class="para">Note that although a trigger is similar to a stored procedure in that it's made up of SQL statements, it can't take any input values or return any values&#8212;this makes sense because the trigger is called automatically by the database.</p>
+<p class="para">Inside the trigger code, each database has its own ways of telling you why the trigger was raised and which rows are about to be modified, updated, or deleted. In this chapter, you'll examine these details separately for each database.</p>
+<p class="para">You can create more than one trigger on a single data table. The actions that happen in a trigger can fire other triggers (in which case they're said to be <i class="emphasis">nested</i> <i class="emphasis">triggers</i>), and a trigger can even call itself recursively.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="864"></a><a name="ch13lev2sec1"></a>A Variety of Triggers</h3>
+<p class="first-para">Based on the number of times a trigger executes when an event that affects multiple rows happens, triggers are categorized in statement-level triggers and row-level triggers:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="para">
+<b>Statement-level triggers:</b> A statement-level trigger executes only once, even if the <span class="fixed">INSERT</span>, <span class="fixed">UPDATE</span>, or <span class="fixed">DELETE</span> statement that fired the trigger affects multiple rows.</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>Row-level triggers:</b> These triggers fire for each row affected by an <span class="fixed">INSERT</span>, <span class="fixed">UPDATE</span>, or <span class="fixed">DELETE</span> statement. If an <span class="fixed">UPDATE</span> affects 100 rows, the trigger will be executed 100 times, once for each row.</p>
+</li>
+</ul>
+<p class="para">You can set both statement-level triggers and row-level triggers to execute <i class="emphasis">before</i>, <i class="emphasis">after,</i> or <i class="emphasis">instead of</i> the command that triggered them. Based on the time when the trigger executes relative to the event that fired it, there are three kinds of triggers:</p>
+<a name="865"></a><a name="IDX-365"></a>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="para">
+<b><span class="fixed">BEFORE</span> and <span class="fixed">AFTER</span> triggers:</b> Because triggers are executed by events, they can be set to fire <i class="emphasis">before</i> or <i class="emphasis">after</i> those events happen. It's important to keep in mind that <span class="fixed">BEFORE</span> triggers fire before any existing constraints are checked; <span class="fixed">AFTER</span> triggers only fire after the new rows have actually been modified (which implies that the command has passed the referential integrity constraints defined for the table). For this reason, <span class="fixed">AFTER</span> triggers are often used in auditing applications (you'll see simple examples in action later in this chapter).</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b><span class="fixed">INSTEAD OF</span> triggers:</b> These are used when you want to replace the action intended by the user with some other actions&#8212;so the code defined in the trigger is executed in place of the statement that was actually issued. This is particularly useful for triggers that are associated with views. When a complex view is updated, you're likely to want its underlying data tables to be updated.</p>
+</li>
+</ul>
+<p class="para">Some databases also support triggers that act on other events, such as table creation or modification, a user login or log out, database startup or shutdown, and so on. Please consult the documentation for your database to find out what it has in store for you in this area.</p>
+<p class="last-para">This chapter discusses each type of trigger, but focuses on the code examples on <span class="fixed">AFTER</span> triggers because these are probably the most commonly used in day-to-day SQL programming.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="866"></a><a name="ch13lev2sec2"></a>Creating Triggers</h3>
+<p class="first-para">The SQL-99 command for creating triggers is <span class="fixed">CREATE TRIGGER</span>. You drop triggers via the <span class="fixed">DROP TRIGGER</span> command. The SQL-99 syntax for creating triggers looks pretty ugly, and it isn't implemented as such by any database software. However, here it is for reference:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER <i class="emphasis">trigger_name</i>
+   { BEFORE | AFTER }
+   {[DELETE] | [INSERT} | [UPDATE]
+    [OF column [,...n]} ON <i class="emphasis">table_name</i>
+    [REFERENCING {OLD [ROW] [AS] <i class="emphasis">old_name</i> | NEW [ROW] [AS] <i class="emphasis">new_name</i>
+     OLD TABLE [AS] <i class="emphasis">old_name</i> | NEW TABLE [AS] <i class="emphasis">new_name</i>}]
+    [FOR EACH { ROW | STATEMENT }]
+    [WHEN (conditions)]
+&lt;&lt;<i class="emphasis">SQL code block</i>&gt;&gt;
+</pre>
+</div>
+<p class="para">It looks rather complex, but as you work through some examples, things will become clearer.</p>
+<p class="para">The syntax for dropping a trigger is the same for all platforms:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP TRIGGER <i class="emphasis">trigger_name</i>;
+<a name="867"></a><a name="IDX-366"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="868"></a><a name="ch13lev2sec3"></a>Using Triggers</h3>
+<p class="first-para">Triggers are complex beasts, with applications in programming, administration, security, and so on. Typical uses for triggers include the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="para">
+<b>Supplementing Declarative Referential Integrity (DRI):</b> You know DRI is done using foreign keys. However, there are times when the foreign key isn't powerful enough because there are complex kinds of table relationships it can't deal with (such as the ones that spread across more databases or database servers).</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>Enforcing complex business rules:</b> When data is being modified in a table, you can use a trigger to make sure that no complex business rules or data integrity rules are broken.</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>Creating audit trails:</b> In these examples, you'll see how to log all the operations that take place on a data table.</p>
+
+</li>
+<li class="listitem">
+<p class="para">
+<b>Simulating functionality:</b> They can simulate the functionality of <span class="fixed">CHECK</span> constraints but across tables, databases, or database servers.</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>Substituting statements:</b> You can substitute your own statements instead of the action that was intended by the user. This is particularly useful when the user tries to insert data in a view, and you intercept this and update the underlying tables instead.</p>
+</li>
+</ul>
+<p class="para">Yes, triggers are a powerful and versatile feature you can use to control many aspects of your database operation. However, this control comes at the expense of database processing power. Triggers definitely have their place but should not be used where simple constraints, such as foreign keys for referential integrity, will suffice.</p>
+<p class="para">In this chapter, you'll implement a simple auditing example using <span class="fixed">AFTER</span> triggers. This example will use statement-level triggers for SQL Server and row-level triggers for Oracle and DB2.</p>
+<p class="para">In the examples, you'll use a simple version of the <span class="fixed">Friend</span> table. You'll see how to log changes that happen to it using a second table, <span class="fixed">FriendAudit</span>. For now, remove your existing <span class="fixed">Friend</span> table and re-create it like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (Name VARCHAR(50) PRIMARY KEY NOT NULL,
+                       PhoneNo VARCHAR(15));
+<a name="869"></a><a name="IDX-367"></a>
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">Remember that if you need to drop <i class="emphasis"><span class="fixed">Friend</span></i> and it's being referenced from the <i class="emphasis"><span class="fixed">Phone</span></i> table you created earlier through a <i class="emphasis"><span class="fixed">FOREIGN KEY</span></i> constraint, you need to drop the <i class="emphasis"><span class="fixed">Phone</span></i> table first or remove the <i class="emphasis"><span class="fixed">FOREIGN KEY</span></i> constraint in <i class="emphasis"><span class="fixed">Phone</span></i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">You'll create a <span class="fixed">FriendAudit</span> table separately for each database with which you'll work. <a class="internaljump" href="#ch13fig01">Figure 13-1</a> shows its structure.</p>
+<div class="figure">
+<a name="870"></a><a name="ch13fig01"></a><span class="figuremediaobject"><img src="images/fig383_01.jpg" height="199" width="172" alt="" border="0"></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 13-1: </span>The <i class="emphasis"><span class="fixed">FriendAudit</span></i> table</span>
+</div>
+<p class="para">The <span class="fixed">FriendAuditID</span> primary key uniquely identifies each record.</p>
+<p class="para">The <span class="fixed">Operation</span> field will contain <span class="fixed">"Update"</span>, <span class="fixed">"Insert"</span>, or <span class="fixed">"Delete"</span>, depending on the operation you're logging. The other fields will contain details about the specific operation.</p>
+<p class="last-para">For <span class="fixed">INSERT</span> operations, you'll populate the <span class="fixed">NewName</span> and <span class="fixed">NewPhone</span> fields, and <span class="fixed">OldName</span> and <span class="fixed">OldPhone</span> will contain <span class="fixed">NULL</span>s. For <span class="fixed">DELETE</span> operations, you'll populate the <span class="fixed">OldName</span> and <span class="fixed">OldPhone</span>, and <span class="fixed">NewName</span> and <span class="fixed">NewPhone</span> will contain <span class="fixed">NULL</span>s. On <span class="fixed">UPDATE</span> operations, all fields will be populated, specifying both the old friend values and the new updated ones.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0083.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0085.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

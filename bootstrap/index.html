@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        body {
+            margin: 30px;
+        }
+        .my-container{
+            border: 1px solid green;
+        }
+        .my-row{
+            border: 3px solid red;
+            height: 150px;
+        }
+        .my-col{
+            border: 3px dotted blue;
+            background:lightcyan;
+        }
+    </style>
+    <title>Bootstrap</title>
+</head>
+<body>
+    <div class="container my-container">
+        <div class="row my-row">
+            <div class="col-md-4 col-sm-6 my-col">
+                Row 1 Col 1
+            </div>
+            <div class="col-md-8 col-sm-6 my-col">
+                Row 1 Col 2
+            </div>
+        </div>
+        <div class="row my-row">
+            <div class="col-4 my-col">
+                Row 2 Col 1 (default - left)
+            </div>
+            <div class="col-4 my-col">
+                Row 2 Col 2 (default - left)
+            </div>
+        </div>
+        <div class="row justify-content-left align-items-stretch my-row">
+            <div class="col-4 my-col">
+                Row 2 Col 1<br>
+                left<br>
+                stretch = default
+            </div>
+            <div class="col-4 my-col">
+                Row 2 Col 2<br>
+                left<br>
+                stretch = default
+            </div>
+        </div>
+        <div class="row justify-content-end align-items-baseline my-row">
+            <div class="col-4 my-col">
+                Row 2 Col 1 <br>
+                end<br>
+                beseline
+            </div>
+            <div class="col-4 my-col">
+                Row 2 Col 2 <br>
+                end<br>
+                baseline
+            </div>
+        </div>
+        <div class="row justify-content-center align-items-center my-row">
+            <div class="col-4 my-col">
+                Row 2 Col 1 <br>
+                center<br>
+                center
+            </div>
+            <div class="col-4 my-col">
+                Row 2 Col 2 <br>
+                center<br>
+                center
+            </div>
+        </div>
+        <div class="row justify-content-around align-items-end my-row">
+            <div class="col-4 my-col">
+                Row 2 Col 1<br>
+                around<br>
+                end
+            </div>
+            <div class="col-4 my-col">
+                Row 2 Col 2<br>
+                around<br>
+                end
+            </div>
+        </div>
+        <div class="row justify-content-between align-items-start my-row">
+            <div class="col-4 my-col order-md-12">
+                Row 2 Col 1                 
+                <br>between start order-md-12
+            </div>
+            <div class="col-4 my-col  offset-md-2 order-md-2">
+                Row 2 Col 2 
+                <br>between start order-md-2 offset-md-2
+                <br> увеличивают левый марджин колонки на * колонок
+                
+            </div>
+        </div>        
+        
+    </div>
+    
+    <hr>
+    
+    <div class="container px-lg-5">
+        <div class="row mx-lg-n5">
+          <div class="col py-3 px-lg-5 border bg-light">Пользовательская вставка столбцов</div>
+          <div class="col py-3 px-lg-5 border bg-light">Пользовательская вставка столбцов</div>
+        </div>
+      </div>
+    
+      
+    <!-- Optional JavaScript -->
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+       <script type="text/javascript" src='js/main.js'></script>
+</body>
+
+</html>

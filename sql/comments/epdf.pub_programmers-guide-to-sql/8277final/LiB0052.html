@@ -1,0 +1,658 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Using Cursors</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0051.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0053.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch09"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="569"></a><a name="ch09lev1sec3"></a>Using Cursors</h2><p class="first-para">Cursors are a way of representing a result set within SQL code, and they allow you to loop through a set of rows, one row at a time. In general, if it's possible to avoid using cursors, then you should use the alternative because the performance of cursors is generally poor. However, situations do arise where you need to be able to loop through every row of a result set individually. More important, though, you need to use cursors in Oracle and DB2 if you want to create a stored procedure that returns a result set.</p>
+<p class="para">You'll look quickly at the syntax for declaring and using cursors before you move on to look at an actual example, which should make everything much clearer!</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="570"></a><a name="ch09lev2sec6"></a>Declaring Cursors</h3>
+<p class="first-para">As mentioned previously, you can declare cursor variables using this syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE <i class="emphasis">CursorName</i> CURSOR FOR <i class="emphasis">CursorSpec</i>;
+</pre>
+</div>
+<p class="para">Here the <i class="emphasis"><span class="fixed">CursorSpec</span></i> section is the SQL query with which the cursor will be used. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE cur_students CURSOR FOR
+   SELECT StudentID, Name FROM Student;
+</pre>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="571"></a><a name="ch09lev3sec9"></a>Oracle</h4>
+<p class="first-para">Oracle uses <span class="fixed">IS</span> instead of <span class="fixed">FOR</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE cur_students CURSOR IS
+   SELECT StudentID, Name FROM Student;
+<a name="572"></a><a name="IDX-235"></a>
+</pre>
+</div>
+<p class="para">If you want to update the data in the database through the cursor, you need to add the <span class="fixed">FOR UPDATE</span> clause:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE cur_students CURSOR IS
+   SELECT StudentID, Name FROM Student
+   FOR UPDATE;
+</pre>
+</div>
+<p class="para">This locks any tables queried so that no other user can update the data in the table; if the query affects more than one table, you can lock only a specific table using <span class="fixed">FOR UPDATE OF <i class="emphasis">ColumnList</i></span>, where <i class="emphasis"><span class="fixed">ColumnList</span></i> is a comma-delimited list of column names. In this case, a table will only be locked if one or more of its columns appears in the list of column names.</p>
+<p class="last-para">You'll look at locking in <a href="LiB0056.html#633" target="_parent" class="chapterjump">Chapter 10</a>, "Transactions."</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="573"></a><a name="ch09lev3sec10"></a>SQL Server</h4>
+<p class="first-para">SQL Server also allows you to specify a <span class="fixed">FOR UPDATE [OF <i class="emphasis">ColumnList</i>]</span> clause to indicate which columns you want to be updateable (alternatively, you can specify <span class="fixed">FOR READ ONLY</span> if you don't want the cursor to be updateable). You can also specify that you want the cursor to be insensitive to changes made by other uses by placing the word <span class="fixed">INSENSITIVE</span> after the cursor name; and you can specify whether you want the cursor to be scrollable (rather than forward only) by inserting the keyword <span class="fixed">SCROLL</span> before <span class="fixed">CURSOR</span> :</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE cur_students INSENSITIVE SCROLL CURSOR
+FOR
+   SELECT StudentID, Name FROM Student
+   FOR UPDATE OF Student;
+</pre>
+</div>
+<p class="para">Notice that, unlike other variables, SQL Server cursor names don't begin with the <span class="fixed">@</span> character.</p>
+<p class="para">As well as this SQL-92 syntax, Transact-SQL has an extended syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE <i class="emphasis">CursorName</i> CURSOR
+   [Scope]
+   [Scrollability]
+   [CursorType]
+   [LockType]
+   [TYPE_WARNING]
+   FOR <i class="emphasis">CursorSpec</i>
+   [FOR UPDATE [OF <i class="emphasis">ColumnList</i>]]
+<a name="574"></a><a name="IDX-236"></a>
+</pre>
+</div>
+<p class="para">
+<a class="internaljump" href="#ch09table01">Table 9-1</a> describes the options available using this syntax.</p>
+<a name="575"></a><a name="ch09table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 9-1: </span>Transact-SQL Options for Cursors</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Option</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<i class="emphasis"><span class="fixed">Scope</span></i>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">This can be <span class="fixed">LOCAL</span> or <span class="fixed">GLOBAL</span>. Local cursors can only be accessed from within the current stored procedure or batch of SQL statements; global cursors are available to any procedures using the same connection.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<i class="emphasis"><span class="fixed">Scrollability</span></i>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<i class="emphasis"><span class="fixed">FORWARD_ONLY</span></i> or <span class="fixed">SCROLL</span>. Indicates whether the cursor is scrollable, so you can move backward and forward through it or forward only (in which case you can only move forwards, one row at a time).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="3" align="left">
+<p class="table-para">
+<i class="emphasis"><span class="fixed">CursorType</span></i>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">One of <span class="fixed">STATIC</span>, <span class="fixed">KEYSET</span>, <span class="fixed">DYNAMIC</span>, or <span class="fixed">FAST_FORWARD</span>. Static cursors make a local copy of the data, so they don't reflect changes made by other users or allow modifications to the underlying data.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Keyset cursors fix the order and number of the rows when the cursor is opened; changes to nonkey values by other users will be visible, but rows inserted by other users won't be accessible. If another user deletes a row, then it won't be possible to fetch that row. If a key value for a row is changed, the keyset cursor will treat that as the deletion of the existing row and an insertion of a new row.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Dynamic cursors reflect any changes made by other users. Fast-forward cursors are a special type of forward-only, read-only cursor, which is optimized for performance.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<i class="emphasis"><span class="fixed">LockType</span></i>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">This can be <span class="fixed">READ_ONLY</span>, <span class="fixed">SCROLL_LOCKS</span>, or <span class="fixed">OPTIMISTIC</span>. Read-only cursors aren't updateable at all, optimistic cursors allow rows to be updated only if the underlying data hasn't changed since the cursor was opened, and cursors with scroll locks lock each row as it's fed into the cursor, so updates are always possible.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">TYPE_WARNING</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">If this option is specified, a warning will be generated if the cursor is implicitly converted to another type because the <i class="emphasis"><span class="fixed">CursorSpec</span></i> is incompatible with the requested options.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="576"></a><a name="ch09lev3sec11"></a>DB2</h4>
+<p class="first-para">DB2 has two extra options in the <span class="fixed">DECLARE CURSOR</span> statement (<a class="internaljump" href="#ch09table02">Table 9-2</a> describes these options):</p>
+<a name="577"></a><a name="IDX-237"></a>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE CURSOR <i class="emphasis">CursorName</i>
+   [WITH HOLD]
+   [WITH RETURN [TO CALLER | TO CLIENT]]
+FOR <i class="emphasis">CursorSpec</i>;
+</pre>
+</div>
+<a name="578"></a><a name="ch09table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 9-2: </span>DB2 Options for Cursors</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Option</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">WITH HOLD</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">If the <span class="fixed">WITH HOLD</span> option is specified, the cursor can be kept open over multiple transactions. If the transaction is aborted, the cursor will be closed.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">WITH RETURN [TO CALLER | TO CLIENT]</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Indicates whether the cursor can be returned to a client application from a stored procedure. If <span class="fixed">WITH RETURN TO CALLER</span> is specified, an open cursor will return a result set to any caller, such as a client application or another stored procedure. The <span class="fixed">WITH RETURN TO CLIENT</span> option only allows the procedure to return a result set directly to the client application&#8212;the result set will be invisible to any intermediate stored procedure or UDF.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="579"></a><a name="ch09lev2sec7"></a>Using Cursors</h3>
+<p class="first-para">Before you can use a cursor, you need to open it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+OPEN <i class="emphasis">CursorName</i>;
+</pre>
+</div>
+<p class="para">You can now retrieve rows from this cursor into local variables. To do this, you use the <span class="fixed">FETCH</span> keyword (but the syntax varies somewhat for the different RDBMSs). The simplest is DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FETCH <i class="emphasis">CursorName</i> INTO <i class="emphasis">var1</i>, <i class="emphasis">var2</i>, ...<i class="emphasis">varn</i>;
+</pre>
+</div>
+<p class="para">The variables that you're storing the row values in must obviously match the data types of the columns. For example, to fetch the values from the <span class="fixed">cur_students</span> cursor into variables called <span class="fixed">StudID</span> and <span class="fixed">StudName</span>, you use this statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FETCH cur_students INTO StudID, StudName;
+<a name="580"></a><a name="IDX-238"></a>
+</pre>
+</div>
+<p class="para">SQL Server uses the following syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FETCH [NEXT] FROM <i class="emphasis">CursorName</i> INTO <i class="emphasis">@var1</i>, <i class="emphasis">@var2</i>, ...<i class="emphasis">@varn</i>;
+</pre>
+</div>
+<p class="para">So, the previous statement appears in SQL Server as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FETCH NEXT FROM cur_students INTO @StudID, @StudName;
+</pre>
+</div>
+<p class="para">Depending on the cursor type, you can also fetch the first, previous, or last row from the cursor by specifying <span class="fixed">FETCH FIRST</span>, <span class="fixed">FETCH PRIOR</span>, or <span class="fixed">FETCH LAST</span>, instead of <span class="fixed">FETCH NEXT</span>. Alternatively, you can specify a particular row to retrieve using <span class="fixed">FETCH ABSOLUTE <i class="emphasis">n</i></span>, which retrieves the <i class="emphasis">n</i>th row in the cursor, or <span class="fixed">FETCH RELATIVE <i class="emphasis">n</i></span>, which retrieves the row <i class="emphasis">n</i> rows after the current row (for a positive number) or before it (if <i class="emphasis">n</i> is negative).</p>
+<p class="para">The syntax for Oracle is a bit different, in that you read the row from the cursor into a single variable. This variable must, of course, be of the same type as a row in the cursor or <span class="fixed"><i class="emphasis">CursorName</i>%ROWTYPE</span>. You can retrieve a row into this variable using the syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FETCH <i class="emphasis">CursorName</i> INTO <i class="emphasis">RowTypeVariable</i>;
+</pre>
+</div>
+<p class="para">You can then access an individual column value using <i class="emphasis"><span class="fixed">RowTypeVariable.ColumnName.</span></i>
+</p>
+<p class="para">Each system provides its own mechanism for looping through the rows in the cursor, so you'll examine these using an example. Once you've finished with the cursor, you need to close it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CLOSE <i class="emphasis">CursorName</i>;
+</pre>
+</div>
+<p class="para">Finally, if you're using SQL Server, you also need to release the resources used by the cursor with the <span class="fixed">DEALLOCATE</span> keyword:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DEALLOCATE <i class="emphasis">CursorName</i>;
+</pre>
+</div>
+<p class="last-para">This step isn't necessary in Oracle and DB2, and they don't support <span class="fixed">DEALLOCATE</span>.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="581"></a><a name="ch09lev2sec8"></a>Using Implicit Cursors</h3>
+<p class="first-para">Before you look at a concrete example of cursors in action, you need to look briefly at implicit cursors in Oracle and DB2. Implicit cursors provide a shortcut syntax <a name="582"></a><a name="IDX-239"></a>for creating, opening, looping through, and finally closing a cursor. This syntax uses a <span class="fixed">FOR</span> loop and resembles somewhat the <span class="fixed">foreach</span> construct available in some programming languages.</p>
+<p class="para">The syntax for Oracle is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FOR <i class="emphasis">CursorName</i> IN (<i class="emphasis">CursorSpec</i>)
+LOOP
+   ...statements that use the cursor...
+END LOOP;
+</pre>
+</div>
+<p class="para">And for DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FOR <i class="emphasis">CursorName</i> AS <i class="emphasis">CursorSpec</i>
+DO
+   ...statements that use the cursor...
+END FOR;
+</pre>
+</div>
+<p class="last-para">This opens a cursor, loops through each row in turn, and then closes the cursor. As you can see, this approach is much easier to code and also more readable. The following DB2 and Oracle examples use both the implicit and explicit syntaxes.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="583"></a><a name="ch09lev2sec9"></a>Cursor Example</h3>
+<p class="first-para">For this example, you'll print a list of each professor in the database and all the students in each class they take. Although there are some significant differences between the SQL Server, Oracle, and DB2 versions of this procedure, the overall structure is similar. You start by opening a cursor containing the <span class="fixed">ProfessorID</span> and <span class="fixed">Name</span> columns of the <span class="fixed">Professor</span> table and looping through each row in this cursor, printing the name of the professor. For each row, you open a nested cursor containing the names of all the students taught by that professor and loop through this, printing each name.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="584"></a><a name="ch09lev3sec12"></a>SQL Server</h4>
+<p class="first-para">To loop through the rows in a cursor in SQL Server, you use the <span class="fixed">WHILE</span> loop you saw previously. SQL Server has a system variable called <span class="fixed">@@FETCH_STATUS</span>, which returns zero as long as the last attempt to fetch a row from the cursor was successful.</p>
+<a name="585"></a><a name="IDX-240"></a>
+<div class="example">
+<span class="example-title">USING CURSORS (SQL SERVER)</span><a name="586"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter the following code into Query Analyzer and execute it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE @ProfName VARCHAR(50);
+DECLARE @StudentName VARCHAR(50);
+DECLARE @ProfID INT;
+DECLARE cur_profs CURSOR FOR
+   SELECT ProfessorID, Name FROM Professor;
+OPEN cur_profs;
+FETCH NEXT FROM cur_profs INTO @ProfID, @ProfName;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+   PRINT @ProfName;
+   DECLARE cur_students CURSOR FOR
+      SELECT DISTINCT Name FROM Student s
+      INNER JOIN Enrollment e
+      ON s.StudentID = e.StudentID
+         INNER JOIN Class c
+         ON e.ClassID = c.ClassID
+      WHERE c.ProfessorID = @ProfID;
+   OPEN cur_students;
+   FETCH NEXT FROM cur_students INTO @StudentName;
+   WHILE @@FETCH_STATUS = 0
+   BEGIN
+      PRINT @StudentName;
+      FETCH NEXT FROM cur_students INTO @StudentName;
+   END
+   CLOSE cur_students;
+   DEALLOCATE cur_students;
+   PRINT '---------------';
+   FETCH NEXT FROM cur_profs INTO @ProfID, @ProfName;
+END
+CLOSE cur_profs;
+DEALLOCATE cur_profs;
+</pre>
+</div>
+<p class="para">To see what's going on here more clearly, let's look at the outer loop separated from the inner loop:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE cur_profs CURSOR FOR
+   SELECT ProfessorID, Name FROM Professor;
+OPEN cur_profs;
+FETCH NEXT FROM cur_profs INTO @ProfID, @ProfName;<a name="587"></a><a name="IDX-241"></a>
+WHILE @@FETCH_STATUS = 0
+BEGIN
+   PRINT @ProfName;
+   -- Use cursor
+   PRINT '---------------';
+   FETCH NEXT FROM cur_profs INTO @ProfID, @ProfName;
+END
+CLOSE cur_profs;
+DEALLOCATE cur_profs;
+</pre>
+</div>
+<p class="para">You declare and open the cursor as normal and fetch the first row into two variables, <span class="fixed">@ProfID</span> and <span class="fixed">@ProfName</span>. You then loop for as long as the <span class="fixed">@@FETCH_STATUS</span> variable remains at zero, printing out the professor's name at the start of the loop and fetching the next row at the end (after you've finished using the current row). When the end of the cursor is reached, <span class="fixed">@@FETCH_STATUS</span> will be set to <span class="fixed">-1</span>, so the loop will end. You then close and deallocate the cursor.</p>
+<p class="para">Now let's look at the inner loop:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   DECLARE cur_students CURSOR FOR
+      SELECT DISTINCT Name FROM Student s
+      INNER JOIN Enrollment e
+      ON s.StudentID = e.StudentID
+         INNER JOIN Class c
+         ON e.ClassID = c.ClassID
+      WHERE c.ProfessorID = @ProfID;
+   OPEN cur_students;
+   FETCH NEXT FROM cur_students INTO @StudentName;
+   WHILE @@FETCH_STATUS = 0
+   BEGIN
+      PRINT @StudentName;
+      FETCH NEXT FROM cur_students INTO @StudentName;
+   END
+   CLOSE cur_students;
+   DEALLOCATE cur_students;
+</pre>
+</div>
+<p class="para">The structure of this loop is basically the same as that for the outer one: You declare and open the cursor containing the students' names and fetch the first row into a variable. You then loop through each row, printing out the student's name and fetching the next row from the cursor. When <span class="fixed">@@FETCH_STATUS</span> is set to zero, the loop ends, and you close and deallocate the cursor. At this point, you fetch the next row for the professor cursor, so <span class="fixed">@@FETCH_STATUS</span> will be reset, and the outer loop will continue.</p>
+<a name="588"></a><a name="IDX-242"></a>
+<p class="para">The output from this example is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Prof. Dawson
+
+   Anna Wolff
+   John Jones
+   Julia Picard
+   ---------------
+   Prof. Williams
+   Bruce Lee
+   ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="589"></a><a name="ch09lev3sec13"></a>Oracle</h4>
+<p class="first-para">The chief difference between the examples for SQL Server and Oracle is that you're using an implicit cursor for the inner loop. The way that you loop through the rows of the explicit cursor is similar. The cursor has a <span class="fixed">FOUND</span> attribute (<span class="fixed"><i class="emphasis">CursorName</i>%FOUND</span>), which evaluates to true if the last <span class="fixed">FETCH</span> returned a row or false otherwise. You therefore just need to loop while this remains true.</p>
+<div class="example">
+<span class="example-title">USING CURSORS (ORACLE)</span><a name="590"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter the following code into SQL*Plus:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET SERVEROUT ON
+DECLARE
+   CURSOR cur_profs IS
+      SELECT ProfessorID, Name FROM Professor;
+   prof cur_profs%ROWTYPE;
+BEGIN
+   OPEN cur_profs;
+   FETCH cur_profs INTO prof;
+   WHILE cur_profs%FOUND<a name="591"></a><a name="IDX-243"></a>
+   LOOP
+      dbms_output.put_line(prof.Name);
+      FOR c1 IN (SELECT DISTINCT Name FROM Student s
+                  INNER JOIN Enrollment e
+                  ON s.StudentID = e.StudentID
+                     INNER JOIN Class c
+                     ON e.ClassID = c.ClassID
+                  WHERE c.ProfessorID = prof.ProfessorID)
+      LOOP
+         dbms_output.put_line(c1.Name);
+      END LOOP;
+      FETCH cur_profs INTO prof;
+      dbms_output.put_line('----------------');
+   END LOOP;
+   CLOSE cur_profs;
+END;
+/
+</pre>
+</div>
+<p class="para">Again, let's look at the outer loop separated from the inner loop to see more clearly what's happening:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   OPEN cur_profs;
+   FETCH cur_profs INTO prof;
+   WHILE cur_profs%FOUND
+   LOOP
+      dbms_output.put_line(prof.Name);
+      ... Use cursor
+      FETCH cur_profs INTO prof;
+      dbms_output.put_line('----------------');
+   END LOOP;
+   CLOSE cur_profs;
+</pre>
+</div>
+<p class="para">You start by opening the professor cursor and reading the first row into the <span class="fixed">prof</span> variable, which you've declared as <span class="fixed">cur_profs%ROWTYPE</span>. You then loop while <span class="fixed">cur_profs%FOUND</span> remains true. For each row, you print the professor's name using <span class="fixed">dbms_output.put_line()</span>, and (after you've looped through the inner cursor) fetch the next row. When the end of the cursor is reached, <span class="fixed">cur_profs%FOUND</span> will evaluate to false, the loop will end, and you close the cursor.</p>
+<p class="para">The inner loop is much simpler because it uses an implicit cursor:</p>
+<a name="592"></a><a name="IDX-244"></a>
+<div class="informalexample">
+<pre class="literallayout">
+FOR c1 IN (SELECT DISTINCT Name FROM Student s
+            INNER JOIN Enrollment e
+            ON s.StudentID = e.StudentID
+               INNER JOIN Class c
+               ON e.ClassID = c.ClassID
+            WHERE c.ProfessorID = prof.ProfessorID)
+LOOP
+   dbms_output.put_line(c1.Name);
+END LOOP;
+</pre>
+</div>
+<p class="para">Notice that you access the <span class="fixed">ProfessorID</span> column of the current row in the <span class="fixed">cur_profs</span> cursor through the <span class="fixed">prof rowtype</span> variable as <span class="fixed">prof.ProfessorID</span>. You can access the columns in the implicit cursor using the same syntax (but without the need for a <span class="fixed">rowtype</span> variable):</p>
+<div class="informalexample">
+<pre class="literallayout">
+c1.Name
+</pre>
+</div>
+<p class="para">The output from this example is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Prof. Dawson
+
+   Anna Wolff
+   John Jones
+   Julia Picard
+   ----------------
+   Prof. Williams
+   Bruce Lee
+   ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="593"></a><a name="ch09lev3sec14"></a>DB2</h4>
+<p class="first-para">This example is a little trickier in DB2 for a number of reasons. The first is purely practical&#8212;DB2 doesn't provide an easy way of writing directly to the Command Center output. In DB2, <span class="fixed">DECLARE CURSOR</span> isn't valid outside stored procedures, so you need to define a stored procedure for the example. So, what you'll do is construct a long string that contains the names of the professors and students and then pass this as an output parameter. True, this does seem a bit contrived, but it <a name="594"></a><a name="IDX-245"></a>demonstrates the cursor syntax just as well as if you were printing to Command Center directly!</p>
+<p class="para">The next problem is that DB2 doesn't provide a convenient attribute of the cursor that tells you when the end of the cursor has been reached. To get around this, you need to define a "continue handler" that will execute when a particular SQL state occurs (in this case, the SQL state 02000):</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE CONTINUE HANDLER FOR SQLSTATE '02000'
+   SET eof = 1;
+</pre>
+</div>
+<p class="para">When the end of the cursor is reached, SQL state 02000 will be signaled, your continue handler will execute, and the stored procedure will continue to execute. Within the continue handler, you just set the value of a flag to <span class="fixed">1</span>.</p>
+<p class="para">You'll look at SQL states in more detail shortly, when you learn about error handling in stored procedures.</p>
+<div class="example">
+<span class="example-title">USING CURSORS (DB2)</span><a name="595"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Create and build this procedure using Development Center:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE GetClassAttendees (
+                        OUT AllClassAttendees VARCHAR(1000))
+P1: BEGIN
+DECLARE ProfID   INT;
+DECLARE ProfName VARCHAR(50);
+DECLARE tmp_msg  VARCHAR(1000) DEFAULT '';
+DECLARE eof      SMALLINT       DEFAULT 0;
+DECLARE cur_profs CURSOR FOR
+   SELECT ProfessorID, Name FROM Professor;
+DECLARE CONTINUE HANDLER FOR SQLSTATE '02000'
+   SET eof = 1;
+OPEN cur_profs;
+WHILE eof = 0
+DO
+   FETCH cur_profs INTO ProfID, ProfName;
+   SET tmp_msg = tmp_msg || ProfName || ': ';
+   FOR cur_students AS SELECT DISTINCT Name FROM Student s
+                     INNER JOIN Enrollment e
+                     ON s.StudentID = e.StudentID<a name="596"></a><a name="IDX-246"></a>
+                     INNER JOIN Class c
+                     ON e.ClassID = c.ClassID
+                  WHERE c.ProfessorID = ProfID
+   DO
+       SET tmp_msg = tmp_msg || Name || ', ';
+   END FOR;
+END WHILE;
+CLOSE cur_profs;
+SET AllClassAttendees = LEFT(tmp_msg, LENGTH(tmp_msg) &#8211; 2);
+END P1
+</pre>
+</div>
+<p class="para">Again, let's look at the outer loop first:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE cur_profs CURSOR FOR
+   SELECT ProfessorID, Name FROM Professor;
+DECLARE CONTINUE HANDLER FOR SQLSTATE '02000'
+   SET eof = 1;
+OPEN cur_profs;
+WHILE eof = 0
+DO
+   FETCH cur_profs INTO ProfID, ProfName;
+   SET tmp_msg = tmp_msg || ProfName || ': ';
+END WHILE;
+CLOSE cur_profs;
+</pre>
+</div>
+<p class="para">Here you declare the cursor and the continue handler. You then open the cursor and continue fetching rows into it and adding the professor names to a string variable that you use to build the output message until no more rows are found. At this point, the SQL state 02000 is signaled, the continue handler runs and sets the <span class="fixed">eof</span> flag to <span class="fixed">1</span>, and the <span class="fixed">WHILE</span> loop terminates.</p>
+<p class="para">The inner loop uses an implicit cursor and looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FOR cur_students AS SELECT DISTINCT Name FROM Student s
+                  INNER JOIN Enrollment e
+                  ON s.StudentID = e.StudentID
+                     INNER JOIN Class c
+                     ON e.ClassID = c.ClassID
+                  WHERE c.ProfessorID = ProfID
+DO
+   SET tmp_msg = tmp_msg || Name || ', ';
+END FOR;
+<a name="597"></a><a name="IDX-247"></a>
+</pre>
+</div>
+<p class="para">This simply loops through each row in the <span class="fixed">Student</span> table and adds the <span class="fixed">Name</span> for any students taught by the current professor to your <span class="fixed">tmp_msg</span> variable.</p>
+<p class="para">You can run the procedure in Command Center using this statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CALL GetClassAttendees(?);
+</pre>
+</div>
+<p class="para">The output from this is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Value of output parameters
+
+   --------------------------
+   Parameter Name  : ALLCLASSATTENDEES
+   Parameter Value : Prof. Dawson: Anna Wolff, John Jones,
+   Julia Picard, Prof. Williams: Bruce Lee ...
+   Return Status = 0
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0051.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0053.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

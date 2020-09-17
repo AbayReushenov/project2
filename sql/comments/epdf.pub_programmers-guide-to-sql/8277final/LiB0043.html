@@ -1,0 +1,42 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Chapter 8: Hiding Complex SQL with Views</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0042.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0044.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch08"></a>
+<h1 class="chapter-title"><span class="chapter-titlelabel">Chapter 8: </span>Hiding Complex SQL with Views</h1><a name="472"></a><a name="IDX-193"></a>
+<p class="para">Sofar, when you've wanted to restructure data with calculated columns or extract data from multiple tables based on comparisons between column values, you've had to resort to relatively complex SQL statements. Typically, though, you'll want to obtain data in this modified form more than once. Certain tasks, such as getting the name of the customer associated with an order, will be performed so often that it can seem awkward to have to query multiple tables all the time.</p>
+<p class="para">To get around this, SQL allows you to create <i class="emphasis">views</i> in a database, which provide (semi)permanent reshaping of data from tables in a database that you can access with queries as an alternative to accessing tables directly. This has the advantage of providing an additional layer of abstraction to the user, which can mean that you can format data in a more consistent way and even enhance security by providing access only to views, not to the underlying data. Views are sometimes referred to as <i class="emphasis">virtual tables</i>.</p>
+<div class="section">
+<h2 class="sect2-title">
+<a name="473"></a><a name="ch08lev1sec1"></a>Overview of SQL Views</h2>
+<p class="first-para">A view is basically the set of rows you'd receive should you execute a given query. This set of rows looks exactly like any other table to a user of the database although all the data it contains is in fact stored in other tables.</p>
+<p class="para">This can be extremely useful for restricting access to certain data. Instead of giving users access to the actual tables in the database, you can instead give them access to a view of the table, which might not contain all of the available data. In addition, modifying data through a view is usually not possible, so you can provide a simple, read-only version of the data that's accessible to low-privilege users.</p>
+<p class="para">Another great thing about views is that they're updated whenever their underlying data changes, without you having to do anything!</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">At the time of writing, views have not yet been implemented in MySQL or Microsoft Access, but they're available in SQL Server, Oracle, and DB2.</p>
+</td>
+</tr>
+</table>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0042.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0044.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

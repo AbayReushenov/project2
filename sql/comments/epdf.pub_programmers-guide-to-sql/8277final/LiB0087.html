@@ -1,0 +1,256 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Working with DB2 Triggers</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0086.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0088.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch13"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="903"></a><a name="ch13lev1sec4"></a>Working with DB2 Triggers</h2><p class="first-para">When creating triggers in DB2, you can set them to be <span class="fixed">NO CASCADE BEFORE</span>, <span class="fixed">AFTER</span>, and <span class="fixed">INSTEAD OF</span>.</p>
+<p class="para">Similarly to Oracle and SQL Server, <span class="fixed">AFTER</span> triggers execute after the intended SQL command executes; they always fire if the SQL command doesn't break any constraints existing on that data table. <span class="fixed">NO CASCADE BEFORE</span> and <span class="fixed">INSTEAD OF</span> triggers fire before the command executes (so before any constraints are checked), allowing you to perform changes on the actions originally intended by the user. In addition, the <span class="fixed">NO CASCADE BEFORE</span> trigger prevents the event that fired the trigger from executing any other triggers.</p>
+<p class="para">Like Oracle, DB2 supports row-level and statement-level triggers. Row-level triggers are applied once for each affected row, and statement-level triggers are applied once per statement (so even if a large number of rows is affected, the trigger is applied once).</p>
+<p class="para">You can also use the <span class="fixed">REFERENCING</span> clause to specify some temporary variables to store information about the row or table before and after the trigger has been processed. Old rows are specified using <span class="fixed">OLD AS <i class="emphasis">old_name</i></span>, and new rows are specified using the <span class="fixed">NEW AS <i class="emphasis">new_name</i></span>, as you'll see in the examples.</p>
+<a name="904"></a><a name="IDX-383"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="905"></a><a name="ch13lev2sec9"></a>Logging Table Activity using AFTER Triggers</h3>
+<p class="first-para">Again, let's create the <span class="fixed">FriendAudit</span> table, which you'll use to hold audit information:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE FriendAudit
+(FriendAuditID INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+ Operation VARCHAR(10),
+ RecordedOn DATE DEFAULT CURRENT_DATE,
+ OldName VARCHAR(50),
+ NewName VARCHAR(50),
+ OldPhone VARCHAR(15),
+ NewPhone VARCHAR(15));
+</pre>
+</div>
+<p class="para">Notice that, like SQL Server, you can use a standard built-in function for ensuring that your <span class="fixed">FriendAuditID</span> is always an automatically generated unique number. Also, you use the <span class="fixed">CURRENT_DATE</span> function to provide the default value for the <span class="fixed">RecordedOn</span> field.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="906"></a><a name="ch13lev3sec8"></a>Logging INSERT Operations</h4>
+<p class="first-para">Let's now create the trigger that runs when you insert values:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER InsFriendAuditTrig
+AFTER INSERT ON Friend
+REFERENCING NEW AS N
+FOR EACH ROW MODE DB2SQL
+BEGIN ATOMIC
+  INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+  VALUES ('Insert ', N.Name, N.PhoneNo);
+END
+</pre>
+</div>
+<p class="para">Take care to change the statement termination character in the command console before executing the statement.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Note that you must always specify <i class="emphasis"><span class="fixed">MODE DB2SQL</span></i>, even though <i class="emphasis"><span class="fixed">DB2SQL</span></i> is the only mode currently available.</p>
+</td>
+</tr>
+</table>
+<p class="para">It's time for a test. Run the following statements:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+<a name="907"></a><a name="IDX-384"></a>
+</pre>
+</div>
+<p class="para">Now query <span class="fixed">FriendAudit</span> to see the results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM FriendAudit;
+</pre>
+</div>
+<p class="para">You should see the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   FRIEND
+
+   AUDITID   OPERATION   RECORDEDON   OLDNAME   NEWNAME  OLDPHONE  NEWPHONE
+   -------   ---------   ----------   -------   -------  --------  ---------
+     1         Insert    03/10/2003      -        Jerry      -     001-Jerry
+     2         Insert    03/10/2003      -        Harrison   -     999-Harry
+     3         Insert    03/10/2003      -        Peter      -     223223223
+</pre>
+</div>
+<p class="para">You've created a trigger called <span class="fixed">InsFriendAuditTrig</span> (you're limited to 18-character names) that fires after an <span class="fixed">INSERT</span> is performed on the <span class="fixed">Friend</span> table. Again, because it's an <span class="fixed">AFTER</span> trigger, it's invoked only after all other constraints have been checked and the new row has been introduced.</p>
+<p class="para">In this example, you referenced new rows using the prefix <span class="fixed">N</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REFERENCING NEW AS N
+</pre>
+</div>
+<p class="para">This allows you to log the new information in the <span class="fixed">FriendAudit</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN ATOMIC
+  INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+  VALUES ('Insert ', N.Name, N.PhoneNo);
+END;
+<a name="908"></a><a name="IDX-385"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="909"></a><a name="ch13lev3sec9"></a>Applying Conditions for the Trigger</h4>
+<p class="first-para">Like Oracle, DB2 can use conditions to control whether the trigger is executed using the <span class="fixed">WHEN</span> parameter.</p>
+<p class="para">Note that to amend a trigger, you first need to drop the original and replace it with the new trigger. Start by dropping the first trigger you created:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP TRIGGER InsFriendAuditTrig;
+</pre>
+</div>
+<p class="para">Now create the following trigger. This trigger only logs <span class="fixed">INSERT</span> operations when the name to be inserted is Peter:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER InsFriendAuditTrig
+AFTER INSERT ON Friend
+REFERENCING NEW AS N
+FOR EACH ROW MODE DB2SQL
+WHEN (N.Name='Peter')
+BEGIN ATOMIC
+  INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+  VALUES ('Insert ', N.Name, N.PhoneNo);
+END
+</pre>
+</div>
+<p class="para">So, let's test this. Clear the two tables by running the following statements:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Friend;
+DELETE FROM FriendAudit;
+</pre>
+</div>
+<p class="para">Now execute the <span class="fixed">INSERT</span> statements again:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+</pre>
+</div>
+<p class="para">You'll see that only the last insert was logged into <span class="fixed">FriendAudit</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   FRIEND
+
+   AUDITID OPERATION RECORDEDON OLDNAME NEWNAME  OLDPHONE NEWPHONE
+   ------- --------- ---------- ------- -------- -------- ---------
+      4     Insert   03/10/2003     -     Peter      -    223223223
+<a name="910"></a><a name="IDX-386"></a>
+</pre>
+</div>
+<p class="para">Again, as you saw with Oracle, you only added one line to this trigger to restrict its functionality:</p>
+<div class="informalexample">
+<pre class="literallayout">
+WHEN (N.Name='Peter')
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="911"></a><a name="ch13lev3sec10"></a>Logging DELETEs and UPDATEs</h4>
+<p class="first-para">It's time to create triggers that handle deleting and updating data in the <span class="fixed">Friend</span> table. Before moving on, make sure you have the version of <span class="fixed">InsFriendAuditTrigger</span> that logs all inserts, not just the ones for Peter. If you need to drop the trigger to recreate it, use the following statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP TRIGGER InsFriendAuditTrig;
+</pre>
+</div>
+<p class="para">Now let's create a trigger that handles updates as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER UpdFriendAuditTrig
+AFTER UPDATE ON Friend
+REFERENCING OLD AS O NEW AS N
+FOR EACH ROW MODE DB2SQL
+BEGIN ATOMIC
+  INSERT INTO FriendAudit (Operation, OldName, OldPhone, NewName, NewPhone)
+  VALUES ('Update ', O.Name, O.PhoneNo, N.Name, N.PhoneNo);
+END
+</pre>
+</div>
+<p class="para">And add a trigger to handle deletions as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER DelFriendAuditTrig
+AFTER DELETE ON Friend
+REFERENCING OLD AS O
+FOR EACH ROW MODE DB2SQL
+BEGIN
+  INSERT INTO FriendAudit (Operation, OldName, OldPhone)
+  VALUES ('Delete ', O.Name, O.PhoneNo);
+END
+</pre>
+</div>
+<p class="para">Now, clear all data from the two tables as before:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Friend;
+DELETE FROM FriendAudit;
+<a name="912"></a><a name="IDX-387"></a>
+</pre>
+</div>
+<p class="para">You're ready to run some test statements. Enter the following and then check the result in the <span class="fixed">FriendAudit</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+UPDATE Friend SET PhoneNo = 'Unknown';
+DELETE FROM Friend;
+</pre>
+</div>
+<p class="para">Performing a simple <span class="fixed">SELECT</span> against <span class="fixed">FriendAudit</span> should produce the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   FRIEND
+
+   AUDITID  OPERATION  RECORDEDON   OLDNAME   NEWNAME    OLDPHONE    NEWPHONE
+   -------  ---------  -----------  -------   --------   ---------   ---------
+      8       Insert    03/10/2003     -        Jerry       -        001-Jerry
+      9       Insert    03/10/2003     -        Harrison    -        999-Harry
+     10       Insert    03/10/2003     -        Peter       -        223223223
+     11       Update    03/10/2003   Jerry      Jerry     001-Jerry  Unknown
+     12       Update    03/10/2003   Harrison   Harrison  999-Harry  Unknown
+     13       Update    03/10/2003   Peter      Peter     223223223  Unknown
+     14       Delete    03/10/2003   Jerry       -        Unknown      -
+     15       Delete    03/10/2003   Harrison    -        Unknown      -
+     16       Delete    03/10/2003   Peter       -        Unknown      -
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">For SQL Server and Oracle, you also saw how to temporarily enable and disable a trigger. DB2 doesn't have built-in support for this feature, but a few workarounds do exist. They're explained in the article "How to Temporarily Disable Triggers in DB2 Universal Database," located at <a target="_top" class="url" href="http://www7b.software.ibm.com/dmdd/library/techarticle/0211yip/0211yip.html"><i class="emphasis">http://www7b.software.ibm.com/dmdd/library/techarticle/0211yip/0211yip.html</i></a>.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0086.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0088.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

@@ -1,0 +1,91 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>The Power of SQL</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0010.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0012.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch01"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="91"></a><a name="ch01lev1sec3"></a>The Power of SQL</h2><p class="first-para">You've covered a fair bit of ground in this chapter, so let's try to round things up by discussing what all this means for the SQL programmer. Mostly, it's good <a name="92"></a><a name="IDX-26"></a>news. As you've seen, SQL statements (including queries) are written in plain text and don't need to be compiled, unlike programming languages (although they'll be parsed in the database to make sure the syntax is correct). The keywords in SQL make it possible for SQL statements to read almost like English, which makes it relatively easy to quickly understand a SQL statement you haven't seen before&#8212;when you've grasped the basic syntax.</p>
+<p class="para">The fact that you're able to establish sophisticated relationships between your tables means that you can write a single SQL query that extracts and uses data from several tables. You can pull together all of the data you need from the various tables and present it all in a single "report."</p>
+<p class="para">In the examples used in this book (based on an <span class="fixed">InstantUniversity</span> database), you'll see many examples of one-to-many and many-to-many relationships between the tables, and you'll look at example SQL code to extract related data from these and other tables throughout the book. In fact, <a href="LiB0089.html#915" target="_parent" class="chapterjump">Chapter 14</a>, "Case Study: Building a Product Catalog," describes a complete product catalog case study. You'll create basic data structures to hold information about products and about their categories and departments, and you'll also see other techniques to gather reports containing related data from your tables.</p>
+<p class="para">If you find yourself using the DDL portion of SQL, then, again, you'll find that the syntax is easy to grasp. For example, the following code creates a simple <span class="fixed">Course</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Course (
+   CourseID INT NOT NULL PRIMARY KEY,
+   Name     VARCHAR(50),
+   Credits  INT);
+</pre>
+</div>
+<p class="para">As you can see, you've created three columns: <span class="fixed">CourseID</span>, <span class="fixed">Name</span>, and <span class="fixed">Credits</span>. You've specified that <span class="fixed">CourseID</span> will hold integer data types and is a <span class="fixed">PRIMARY KEY </span>column, so each value in this column must be unique. You've specified that the <span class="fixed">Name</span> column (the name of the course) will hold character data of varying length but with a maximum for 50 characters. Finally, you've specified that the <span class="fixed">Credits </span>column will hold integer data types.</p>
+<p class="para">Of course, if you're charged with making the decisions as to how to actually store the data, what tables must be created, how they're related, what data types to use, and so on, then a lot of careful thought needs to go into this before you start executing the SQL. Your choices can dramatically impact the integrity of your data and the performance of the applications that rely on your data.</p>
+<p class="para">If you're responsible for controlling access to the data in your database, then you need to have a good understanding of the DCL portion of the language. We haven't covered the SQL statements that fall in this category in this chapter, but you can learn about them in <a href="LiB0062.html#720" target="_parent" class="chapterjump">Chapter 11</a>, "Users and Security," and then see them in action in <a href="LiB0097.html#1046" target="_parent" class="chapterjump">Chapter 15</a>, "Case Study: Implementing Role-Based Security."</p>
+<a name="93"></a><a name="IDX-27"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="94"></a><a name="ch01lev2sec8"></a>Getting Started</h3>
+<p class="first-para">Okay, before you really get your hands dirty with SQL, you need to ensure that you're ready to start entering SQL statements and that you have a sample database from which to work. To this end, we've included two appendixes in this book that you'll find useful for these tasks:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="para">
+<b><a href="LiB0104.html#1167" target="_parent" class="chapterjump">Appendix A</a>, "Executing SQL Statements":</b> This appendix describes how to get each of the RDBMS platforms used in this book (SQL Server, DB2, Oracle, MySQL, and Access) up and running and ready to execute SQL statements.</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b><a href="LiB0106.html#1207" target="_parent" class="chapterjump">Appendix B</a>, "Setting Up the InstantUniversity Database":</b> This appendix describes the sample application you'll use throughout the book, the <span class="fixed">InstantUniversity</span> database. This appendix describes how to create the database structure and populate it with data.</p>
+</li>
+</ul>
+<p class="last-para">You can download the sample code for each database platform from the Downloads section of the Apress Web site (<a target="_top" class="url" href="http://www.apress.com"><span class="fixed">http://www.apress.com</span></a>).</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="95"></a><a name="ch01lev2sec9"></a>A Note on SQL Scripts and Comments</h3>
+<p class="first-para">In <a href="LiB0106.html#1207" target="_parent" class="chapterjump">Appendix B</a>, "Setting Up the InstantUniversity Database," you'll see the basic code you need to create and populate the database tables. However, these processes are RDBMS specific in many cases, so what we've done in the code download is provide separate <i class="emphasis">scripts</i> for each database.</p>
+<p class="para">A script is simply a document (say, a Notepad document, usually with a <span class="fixed">.sql</span> identifier) that gathers all of the necessary SQL statements required to perform a certain action. Therefore, you'll have all the SQL statements you need for each platform, gathered into separate scripts.</p>
+<p class="para">A useful technique when coding SQL in general, and especially when putting together scripts containing lots of SQL statements, is to clearly <i class="emphasis">comment</i> your SQL code so that the intent of the code is apparent. A comment is simply some text entered by the creator of the script that doesn't get interpreted as a SQL statement; in fact, RDBMSs ignore comments when processing the SQL statements. As with programming languages, different SQL dialects use different comment syntax; that is, they use different character strings to denote that a block of text is a comment and shouldn't be interpreted as a SQL statement. You'll meet these from time to time as you work through the book, so you'll quickly see how to structure them here.</p>
+<a name="96"></a><a name="IDX-28"></a>
+<p class="para">All RDMBSs, except for Access, use a double dash (<span class="fixed">--</span>) to indicate a comment:</p>
+<div class="informalexample">
+<pre class="literallayout">
+-- This is a comment in RDBMSs other than Access
+</pre>
+</div>
+<p class="para">Note, however, that comments marked with <span class="fixed">--</span> must be followed by a space to avoid any possible confusion.</p>
+<p class="para">In Microsoft Access, you use a single quote (') at the start of a line of text, and everything else on that line is ignored:</p>
+<div class="informalexample">
+<pre class="literallayout">
+' This is a comment in Access
+</pre>
+</div>
+<p class="para">Some RDBMSs also use other syntaxes; for example, SQL Server allows you to use C++ style <span class="fixed">/*</span> and <span class="fixed">*/</span> delimiters, which enable you to write comments that span several lines. Everything between these delimiters is ignored, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+/*
+   This is a comment in SQL Server...
+
+   ...it can span multiple lines!
+*/
+</pre>
+</div>
+<p class="last-para">Finally, it's worth noting that older versions of MySQL only support <span class="fixed">#</span> to mark a line as being a comment. Although more modern implementations of MySQL also support this syntax, they also implement the <span class="fixed">--</span> method.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0010.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0012.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

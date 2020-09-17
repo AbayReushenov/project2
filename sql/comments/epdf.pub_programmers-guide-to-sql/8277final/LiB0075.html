@@ -1,0 +1,98 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Altering Database Tables</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0074.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0076.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="808"></a><a name="ch12lev1sec4"></a>Altering Database Tables</h2><p class="first-para">Once a data table has been created, you can change it by adding, deleting, or modifying columns, constraints, and so on. The actual syntax for doing this differs slightly from database to database, so we won't cover all the details here.</p>
+<p class="para">The <span class="fixed">ALTER TABLE</span> command, along with its many options, allows you to make structural changes to existing data tables. If you want to add a new column named <span class="fixed">Address</span> to the <span class="fixed">Friend</span> table, this query does the trick:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend ADD Address VARCHAR(50);
+<a name="809"></a><a name="IDX-341"></a>
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The table must be empty if you want to add <i class="emphasis"><span class="fixed">NOT NULL</span></i> columns!</p>
+</td>
+</tr>
+</table>
+<p class="para">You can also add more columns with a single <span class="fixed">ALTER TABLE</span> statement, which looks like this in Oracle and MySQL:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend ADD (EMail VARCHAR(25), ICQ VARCHAR(15));
+</pre>
+</div>
+<p class="para">For SQL Server and Access, you don't enclose the new columns in parentheses:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend ADD EMail varchar(25), ICQ varchar(15);
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">DB2 doesn't support adding more than one column to a table in a single <i class="emphasis"><span class="fixed">ALTER TABLE</span></i> statement.</p>
+</td>
+</tr>
+</table>
+<p class="para">If you want to remove the <span class="fixed">PhoneNo</span> column, use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend DROP COLUMN PhoneNo;
+</pre>
+</div>
+<p class="para">You can use <span class="fixed">ALTER TABLE</span> to add or remove not only columns but also primary keys, foreign keys, or other kinds of constraints.</p>
+<p class="para">The following code snippet demonstrates how you can drop a <span class="fixed">UNIQUE</span> constraint and add a primary key to an already existing table. As this example shows, you also provide a name for the <span class="fixed">PRIMARY KEY</span> constraint:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name VARCHAR(50) NOT NULL,
+   PhoneNo VARCHAR(15),
+   CONSTRAINT unq_name UNIQUE(Name));
+
+ALTER TABLE Friend DROP CONSTRAINT unq_name;
+ALTER TABLE Friend ADD CONSTRAINT PK_FriendName PRIMARY KEY (Name);
+</pre>
+</div>
+<p class="para">You can only create a <span class="fixed">PRIMARY KEY</span> constraint on a table if the key column doesn't contain any duplicate or <span class="fixed">NULL</span> values (and, of course, if there isn't already a primary key on that table).</p>
+<p class="para">This will work with SQL Server, Oracle, DB2, and Access. However, the syntax for MySQL is a little different. You can only use the <span class="fixed">ADD</span>/<span class="fixed">DROP CONSTRAINT</span> syntax with foreign keys. To add or drop a primary key, you use the syntax <span class="fixed">ADD</span>/<span class="fixed">DROP PRIMARY KEY</span>, and to add or drop an index (including a <span class="fixed">UNIQUE</span> index), you use <a name="810"></a><a name="IDX-342"></a><span class="fixed">ADD/DROP INDEX &lt;<i class="emphasis">column_name</i> &gt;</span>. In both cases, if you're adding an index or primary key, you need to include the key column(s) in parentheses at the end of the statement. So, to drop the <span class="fixed">UNIQUE</span> constraint and add a primary key in MySQL, you would use this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend DROP INDEX Name;
+ALTER TABLE Friend ADD PRIMARY KEY (Name);
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">You can also use <i class="emphasis"><span class="fixed">ALTER TABLE</span></i> to change the details of an individual column, such as the data type or whether it can accept <i class="emphasis"><span class="fixed">NULL</span></i>s.</p>
+</td>
+</tr>
+</table>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0074.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0076.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

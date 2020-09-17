@@ -1,0 +1,241 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Understanding Simple Retrieval</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0013.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0015.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="101"></a><a name="ch02lev1sec1"></a>Understanding Simple Retrieval</h2><p class="first-para">To extract data from a database using SQL, you use a <span class="fixed">SELECT</span> statement. All <span class="fixed">SELECT</span> statements start in the same way, using the <span class="fixed">SELECT</span> keyword. The rest of the statement varies but generally includes the names of the columns in which you're interested and the name of the table from which you want to extract data. The following sections focus on how to retrieve data for every row of every column of a table and how to limit your queries to a specific column (or columns).</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="102"></a><a name="ch02lev2sec1"></a>Returning all Columns</h3>
+<p class="first-para">On the rare occasion that you need to obtain all data from all columns in the table, you can achieve it using the following syntax:</p>
+<a name="103"></a><a name="IDX-30"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM <i class="emphasis">Table</i>;
+</pre>
+</div>
+<p class="para">Here, <span class="fixed">SELECT</span> and <span class="fixed">FROM</span> are SQL keywords, <span class="fixed">*</span> is a wildcard that means "all columns," and <i class="emphasis"><span class="fixed">Table</span></i> is the name of the table that contains the data you want.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">Some RDBMSs will add a semicolon to the end of your SQL automatically if you don't include it. In some cases, if you're executing SQL statements from an application through a data access technology such as ActiveX Data Objects (ADO) or Open Database Connectivity (ODBC), the driver may add a semicolon automatically so an error would be caused if you add one manually.</p>
+</td>
+</tr>
+</table>
+<p class="para">So, to retrieve every row of data from every column of a table called <span class="fixed">Customers</span>, you could use the following SQL query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Customers;
+</pre>
+</div>
+<p class="para">This statement would work when executed against any database that contained a table called <span class="fixed">Customers</span>. It's a good idea to try out some simple <span class="fixed">SELECT *</span> queries against the <span class="fixed">InstantUniversity</span> database. For example, try executing the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Student;
+</pre>
+</div>
+<p class="para">You should see results that look something like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID    Name
+
+   ----------- ----------------
+   1            John Jones
+   2            Gary Burton
+   3            Emily Scarlett
+   4            Bruce Lee
+   ...          ...
+</pre>
+</div>
+<p class="para">Notice that the column header given to each column in this result set is simply the name of the column as it exists in the database table. The columns are returned in the order they were created in the database.</p>
+<a name="104"></a><a name="IDX-31"></a>
+<p class="last-para">It's important to note that although this simple <span class="fixed">SELECT *...</span> syntax is easy to use, it's rarely the best way to go about things. When you use the <span class="fixed">*</span> wildcard, you actually end up putting far more of a strain on an RDBMS than using one of the methods examined later in this chapter. This is because the RDBMS must examine the table itself to find out how many columns there are and what they're called. Moreover, you can't predict in what order the columns will be returned. As a general rule of thumb, you should only use the <span class="fixed">*</span> syntax given here for testing.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="105"></a><a name="ch02lev2sec2"></a>Specifying the Target Database</h3>
+<p class="first-para">You may have noted that, so far, you haven't specified a particular database to use in these queries. This implies that you're executing your statements against, for example, the <span class="fixed">Customer</span> table in the database (or schema in the case of Oracle) to which you're directly connected.</p>
+<p class="para">SQL Server and Access also allow you to specify the database to find the table in by prefixing the database name followed by two dots to the table name:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM pubs..authors;     -- SQL Server
+</pre>
+</div>
+<p class="para">With Access, the database name will be the path and filename of the <span class="fixed">.mdb</span> file:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM C:\NWind.mdb..Employees;
+</pre>
+</div>
+<p class="para">MySQL has similar functionality but uses only one dot instead of two:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM InstantUniversity.Student;
+</pre>
+</div>
+<p class="para">In SQL Server, Oracle, and DB2, if you want to access a table in a different schema from the one used to connect to the database, you can prefix the schema name to the table name using the syntax <span class="fixed">Schema.Table</span>. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM scott.EMP;
+SELECT * FROM db2admin.Employee;
+</pre>
+</div>
+<p class="para">This will, of course, only work if you're currently connected under a user account that has access rights to this table (for example, if you're connected as a database administrator). <a href="LiB0062.html#720" target="_parent" class="chapterjump">Chapter 11</a>, "Users and Security," covers security in more detail.</p>
+<a name="106"></a><a name="IDX-32"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="107"></a><a name="ch02lev2sec3"></a>A Note on Table and Column Naming</h3>
+<p class="first-para">Occasionally, because of poor initial data design, you may find that you need to access a table or column that contains spaces. If such a situation occurs, then some RDBMSs require you to enclose the names in either square brackets or quotes. In SQL Server and Access, you use square brackets; in Oracle and DB2 (and in MySQL running in ANSI mode), you use double quotes. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM [Valued Customers]; -- SQL Server or Access
+</pre>
+</div>
+<p class="para">Or, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM "Valued Customers"; -- DB2 or Oracle
+</pre>
+</div>
+<p class="para">Be aware, though, that using the double-quote syntax of Oracle and DB2 means that the table or column name will be treated as case sensitive. Therefore, the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM "Valued Customers";
+</pre>
+</div>
+<p class="para">is a different query from this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM "valued customers";
+</pre>
+</div>
+<p class="para">You may also need to use the double-quote or square-bracket syntax if a table or column name is identical to a SQL keyword or a word that your database vendor has "reserved." Again, this is bad design and should be avoided whenever possible, but you may be caught out by future expansions to SQL or by expansions in your database vendor's list of reserved words.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Reserved words have special meaning to the database and can't be redefined. Therefore, they can't be used to name database objects. For example, Oracle doesn't permit the name of the pseudo-column <i class="emphasis"><span class="fixed">ROWID</span></i> to be used as a column or table name.</p>
+</td>
+</tr>
+</table>
+<a name="108"></a><a name="IDX-33"></a>
+<p class="para">Say, for example, that you are accessing a table called <span class="fixed">Language</span> and then, at a later date, your vendor adds <span class="fixed">Language</span> to its list of reserved words. You could still use the table in your queries by using the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM [Language];    -- SQL Server or Access
+</pre>
+</div>
+<p class="para">or using the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM "LANGUAGE"; -- DB2 or Oracle
+</pre>
+</div>
+<p class="last-para">Note the use of capital letters for the table name in the second example. If the <span class="fixed">Language</span> table was created without using the double-quote syntax, both DB2 and Oracle would create it as <span class="fixed">LANGUAGE</span>, so chances are that the previous query would succeed but that something such as <span class="fixed">SELECT * FROM "Language";</span> would fail. Conversely, if the table was created as <span class="fixed">"Language"</span> (with quotes), attempting to access it using the statement <span class="fixed">SELECT * FROM "LANGUAGE";</span> would fail.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="109"></a><a name="ch02lev2sec4"></a>Returning a Single Column</h3>
+<p class="first-para">With a simple modification to the <span class="fixed">SELECT *</span> query used previously, you can obtain all the values from a single-named column. The syntax is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">Column </i>FROM <i class="emphasis">Table;</i>
+</pre>
+</div>
+<p class="para">Here, <span class="fixed">Column</span> is the name of the column you're interested in from <span class="fixed">Table</span>. You can write this column name in several different ways. The simplest is to include just the name as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerName FROM Customers;
+</pre>
+</div>
+<p class="para">To see this working in practice, try executing the following command against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Professor;
+</pre>
+</div>
+<p class="para">The results are as follows:</p>
+<a name="110"></a><a name="IDX-34"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Name
+
+   ----------------
+   Prof. Dawson
+   Prof. Williams
+   Prof. Ashby
+   Prof. Patel
+   Prof. Jones
+   Prof. Hwa
+</pre>
+</div>
+<p class="para">You can also enclose the column name within delimiters. The same arguments apply to the use of square-bracket or double-quote delimiters with column names that apply to table names:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT [Language] FROM Countries; -- SQL Server or Access
+SELECT "LANGUAGE" FROM Countries; -- Oracle or DB2
+</pre>
+</div>
+<p class="para">Sometimes it's useful to include information as to what table the column can be found in, as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Customers.CustomerName FROM Customers;
+</pre>
+</div>
+<p class="last-para">Although this is a bit pointless in this example because only the <span class="fixed">Customers</span> table is being queried, it can be invaluable in more complex scenarios. In later chapters, you'll see how you can extract data from multiple tables simultaneously, and in this case the syntax shown previously serves two purposes. First, it makes it easier for you to see at a glance what information comes from which table. Second, it allows you to differentiate between columns in different tables that have the same name.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="111"></a><a name="ch02lev2sec5"></a>Returning Multiple Columns</h3>
+<p class="first-para">Getting data from more than one column is just as easy. Rather than specifying simply a column name, you specify multiple column names separated by commas:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i>, <i class="emphasis">ColumnC</i> FROM <i class="emphasis">Table</i>
+<a name="112"></a><a name="IDX-35"></a>
+</pre>
+</div>
+<p class="para">Here <i class="emphasis"><span class="fixed">ColumnA</span></i>, <i class="emphasis"><span class="fixed">ColumnB</span></i>, and <i class="emphasis"><span class="fixed">ColumnC</span></i> are the names of three columns you want from <i class="emphasis"><span class="fixed">Table</span></i>.</p>
+<p class="para">For example, the following query gets the ID for each student and the ID and comments for each exam they took from the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, ExamID, Comments FROM StudentExam;
+</pre>
+</div>
+<p class="para">The first four records in the result set are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   ExamID    Comments
+
+   ---------   --------  ------------------------------------------
+   1           1         Satisfactory
+   1           2         Good result
+   2           3         Scraped through
+   2           5         Failed, and will need to retake this one
+                         later...
+   ...         ...       ...
+</pre>
+</div>
+<p class="last-para">Note that the columns are returned in the order you specify them&#8212;although in practice this may not be an issue because when you manipulate data such as this in your own application code, you can ignore such structure and impose your own.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0013.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0015.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

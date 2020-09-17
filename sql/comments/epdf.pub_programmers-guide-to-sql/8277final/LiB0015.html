@@ -1,0 +1,82 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Using Aliases</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0014.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0016.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="113"></a><a name="ch02lev1sec2"></a>Using Aliases</h2><p class="first-para">You've now seen how to select specific columns from a table and how to control the order in which those columns are retrieved. In addition, you can supply <i class="emphasis">aliases</i> for columns or tables. In other words, you can refer to columns in your returned data set by your own names, not the ones that exist in the database.</p>
+<p class="para">This can be useful in making your <span class="fixed">SELECT</span> statements and the data they return easier to read and understand and in getting data into a form that's more appropriate for your application. In particular, where multiple tables have columns with identical names, you might provide aliases to make it easier for you to differentiate between them.</p>
+<a name="114"></a><a name="IDX-36"></a>
+<p class="para">To do this, you use the <span class="fixed">AS</span> keyword to provide an alias for a name:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i> AS <i class="emphasis">A</i>, <i class="emphasis">ColumnB</i> AS <i class="emphasis">B</i>, <i class="emphasis">ColumnC</i> AS <i class="emphasis">C</i>
+FROM <i class="emphasis">Table</i> AS <i class="emphasis">T</i>;
+</pre>
+</div>
+<p class="para">Here you're providing aliases for every name used: <i class="emphasis"><span class="fixed">A</span></i> is used for <i class="emphasis"><span class="fixed">ColumnA</span></i>, <i class="emphasis"><span class="fixed">B</span></i> for <i class="emphasis"><span class="fixed">ColumnB</span></i>, and so on. These aliases will appear in the results returned by the query. This is another useful technique for combating situations where you have multiple columns with the same name because you can provide an easily identifiable alternative.</p>
+<p class="para">When you provide an alias for a table name, you can use that alias within the same SQL statement, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT T<i class="emphasis">.ColumnA</i> AS <i class="emphasis">A</i>, <i class="emphasis">T.ColumnB</i> AS <i class="emphasis">B</i>, <i class="emphasis">T.ColumnC</i> AS <i class="emphasis">C</i>
+FROM <i class="emphasis">Table</i> AS <i class="emphasis">T</i>;
+</pre>
+</div>
+<p class="para">Where there are more complicated queries from multiple tables with lengthy names, this can make SQL queries a lot more readable and take up much less space!</p>
+<p class="para">The ANSI specification for SQL-99 allows you to omit this <span class="fixed">AS</span> keyword:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT T.ColumnA A, T.ColumnB B, T.ColumnC C
+FROM <i class="emphasis">Table T</i>;
+</pre>
+</div>
+<p class="para">This format is supported by most database systems (although not by Access) and in fact is the only format supported by older versions of Oracle. However, the current versions of all the RDBMSs used to test the code in the book support <span class="fixed">AS</span>, so you'll use this syntax throughout. It also makes for clearer, more readable SQL.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">SQL Server also allows the use of the <i class="emphasis"><span class="fixed">=</span></i> operator instead of <i class="emphasis"><span class="fixed">AS</span></i>, with the positions of the alias and column reversed. For example, it allows <i class="emphasis"><span class="fixed">NewColumnName = ExistingColumn</span></i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">As before, you can see how this works in practice by executing the following SQL query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name AS StudentName, StudentID AS ID FROM Student;
+<a name="115"></a><a name="IDX-37"></a>
+</pre>
+</div>
+<p class="para">This query should produce the following results (only the first four records are shown):</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName      ID
+
+   ---------------- ----
+   John Jones       1
+   Gary Burton      2
+   Emily Scarlett   3
+   Bruce Lee        4
+   ...              ...
+</pre>
+</div>
+<p class="last-para">In the database, these two columns are called <span class="fixed">Name</span> and <span class="fixed">StudentID</span>. In the result set, you have given them the aliases <span class="fixed">StudentName</span> and <span class="fixed">ID</span>, respectively.</p>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0014.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0016.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

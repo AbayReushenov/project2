@@ -1,0 +1,1078 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Retrieving Catalog Information</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0092.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0094.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch14"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="952"></a><a name="ch14lev1sec4"></a>Retrieving Catalog Information</h2><p class="first-para">Okay, after populating the data tables, it's time to do some querying against your data.</p>
+<p class="para">You'll start with some simple queries on the <span class="fixed">Product</span> table. You'll continue by seeing how to associate products with their categories using the <span class="fixed">ProductCategory</span> junction table, and finally you'll see how to associate the products with their departments.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="953"></a><a name="ch14lev2sec9"></a>What About the Products?</h3>
+<p class="first-para">In the following sections, you'll look at queries that involve the <span class="fixed">Product</span> table alone, not relating it to <span class="fixed">Category</span> or <span class="fixed">Department</span>. Let's start with one of the simplest meaningful queries that you can make of your database.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="954"></a><a name="ch14lev3sec1"></a>Getting the Entire List of Products Ordered by Name</h4>
+<p class="first-para">A single <span class="fixed">SELECT</span> statement combined with the <span class="fixed">ORDER BY</span> clause does the trick in this case; this query should work the same for any existing relational database software:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description FROM Product ORDER BY Name;
+</pre>
+</div>
+<p class="last-para">As a result of this query, you should see the product names and descriptions you typed earlier when populating the <span class="fixed">Product</span> table.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="955"></a><a name="ch14lev3sec2"></a>Getting the List of Products that are on Catalog Promotion</h4>
+<p class="first-para">This isn't much more complicated than the previous query. This time, you filter the results based on the <span class="fixed">OnCatalogPromotion</span> field, which needs to have a value of <span class="fixed">1</span>. Here's the query:</p>
+<a name="956"></a><a name="IDX-407"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE OnCatalogPromotion=1
+ORDER BY Name;
+</pre>
+</div>
+<p class="para">Note that Access will store the <span class="fixed">OnCatalogPromotion</span> value as <span class="fixed">-1</span>, so you'll need to alter the <span class="fixed">WHERE</span> clause appropriately to match the required records.</p>
+<p class="para">Based on your sample data, this query should return the following data:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                  Description
+
+   --------------------- -------------------------------------
+   Beast Mask            Red-eyed and open-mouthed scary mask
+                          guaranteed to scare!
+   Devil Horn Boppers    These red glitter boppers are
+                          guaranteed to attract attention. They
+                          will soon be under your spell!
+   Vampire Disguise      Vampire Set consisting of wicked wig,
+                          fangs, and fake blood. Spinechilling!
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="957"></a><a name="ch14lev3sec3"></a>Getting the Five Most Expensive Products</h4>
+<p class="first-para">For this query, you need to use the <span class="fixed">ORDER BY</span> clause to order the list of products by <span class="fixed">Price</span> in descending order:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Price FROM Product ORDER BY Price DESC;
+</pre>
+</div>
+<p class="para">Note that you can use multiple criteria with the <span class="fixed">ORDER BY</span> clause. If, say, you want the products with the same price to be sorted by name in ascending order, you'd add a few bits to the query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Price FROM Product ORDER BY Price DESC, <b class="bold">Name ASC</b>;
+</pre>
+</div>
+<p class="para">The <span class="fixed">ASC</span> keyword is optional because ascending is the default order anyway.</p>
+<p class="para">Now let's see how you get only the top five most expensive products. In practice, you need to limit the results you get from the previous query. This isn't handled in the same way by each RDBMS, so let's see how you can do that with each of them. In any case, you expect to get this list of results:</p>
+<a name="958"></a><a name="IDX-408"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                                       Price
+
+   ----------------------------------- ----------------
+   Miss Santa                               49.9900
+   Cleopatra Kit                            14.9900
+   Vampire Disguise                          9.9900
+   Horned Devil Mask                         5.9900
+   Beast Mask                                 5.9900
+</pre>
+</div>
+<p class="para">You may be wondering what would happen if you had asked for the top four most expensive items because you have two items priced at $5.99. Well, the way we've written the following queries, one of the $5.99 items would simply be omitted from the list. We're not going to worry too much about that here, but the way to get around this problem is described in detail, for each database, in <a href="LiB0027.html#216" target="_parent" class="chapterjump">Chapter 4</a>, "Summarizing and Grouping Data."</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="959"></a><a name="ch14lev4sec1"></a>SQL Server</h5>
+<p class="first-para">SQL Server and Access support the <span class="fixed">TOP</span> clause. To get the top five most expensive products, you need this command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <b class="bold">TOP 5</b> Name, Price
+FROM Product
+ORDER BY Price DESC, Name ASC;
+</pre>
+</div>
+<p class="para">With SQL Server, you can alternatively use <span class="fixed">SET ROWCOUNT</span> to limit the number of returned rows. Here's an example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET ROWCOUNT 5;
+SELECT Name, Price
+FROM Product
+ORDER BY Price DESC, Name ASC;
+</pre>
+</div>
+<p class="para">Also, you can limit by specifying what percent of the result set to return. The following command returns the top 15 percent of most expensive products:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <b class="bold">TOP 15 PERCENT</b> Name, Price
+FROM Product
+ORDER BY Price DESC, Name ASC;
+<a name="960"></a><a name="IDX-409"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="961"></a><a name="ch14lev4sec2"></a>MySQL</h5>
+<p class="first-para">MySQL has the <span class="fixed">LIMIT</span> keyword that has similar functionality. The following is the MySQL command that returns the first five most expensive products:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Price
+FROM Product
+ORDER BY Price DESC, Name ASC
+LIMIT 0,5;
+</pre>
+</div>
+<p class="last-para">As you can see, the <span class="fixed">LIMIT</span> clause has two parameters. The first one specifies the index of the first returned record (starting with zero), and the second specifies how many rows to return.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="962"></a><a name="ch14lev4sec3"></a>Oracle</h5>
+<p class="first-para">With Oracle, you use the <span class="fixed">ROWNUM</span> pseudocolumn to limit the number of returned rows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Price FROM
+      (SELECT Name, Price
+       FROM Product
+       ORDER BY Price DESC, Name ASC)
+WHERE ROWNUM&lt;=5<b class="bold">;</b>
+</pre>
+</div>
+<p class="para">This technique works only when you restrict the query for a <span class="fixed">ROWNUM</span> that starts with one (such as <span class="fixed">ROWNUM &lt;=5</span>). If you try to restrict using another range, such as <span class="fixed">ROWNUM BETWEEN m and n</span>, where <span class="fixed">m</span> is greater than one, the query will return no results. You'll see a workaround to this limitation in the next exercise.</p>
+<p class="para">
+<span class="fixed">ROWNUM</span> is a pseudocolumn that associates a row number to each record returned by a query. What's important to note here is that <span class="fixed">ROWNUM</span> values are assigned <i class="emphasis">before</i> the <span class="fixed">ORDER BY</span> clause executes. For this reason, you need to use a subselect instead of simply limiting by <span class="fixed">ROWNUM</span> in the first place, like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Price
+FROM Product
+WHERE ROWNUM&lt;=5
+ORDER BY Price DESC, Name ASC
+</pre>
+</div>
+<p class="para">This query doesn't return the expected results because the <span class="fixed">WHERE</span> filter is applied first and takes the first five rows (in a random order). These rows are then ordered by <span class="fixed">Price</span> and <span class="fixed">Name</span> (which isn't what you intended to do).</p>
+<a name="963"></a><a name="IDX-410"></a>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="964"></a><a name="ch14lev4sec4"></a>DB2</h5>
+<p class="first-para">Using DB2, you can list the top five most expensive products using <span class="fixed">FETCH FIRST <i class="emphasis">n </i>ROWS ONLY</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Price
+FROM Product
+ORDER BY Price DESC, Name ASC
+FETCH FIRST 5 ROWS ONLY;
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="965"></a><a name="ch14lev3sec4"></a>Browsing Through Products</h4>
+<p class="first-para">In real-world scenarios, you frequently need to present the user with lists of products, categories, and so on. When the list is long enough, a typical practice is to present a number of products at a time (five in these examples) and let the user browse the list using Next 5 Products and Previous 5 Products buttons.</p>
+<p class="para">In this exercise, you'll see how to retrieve the rows <i class="emphasis"><span class="fixed">m</span></i> to <i class="emphasis"><span class="fixed">n</span></i> (say, five to 10) in an ordered list of products. This time you'll order the products by their IDs.</p>
+<p class="para">At the first sight, it may seem that you can simply get the required products with a simple command such as this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Product WHERE ProductID BETWEEN 5 AND 10
+</pre>
+</div>
+<p class="para">However, this method isn't reliable because you aren't guaranteed to have the <span class="fixed">ProductID</span>s in sequential order, so you aren't guaranteed to get five products back. Additionally, this method is useless if the user wants the list of products sorted by any other column than <span class="fixed">ProductID</span>.</p>
+<p class="para">For the purpose of these examples, you'll ask for the second group of five products (products size to 10), but because currently you have only eight products, this is what you should get:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ProductID   Name
+
+   ------------- -------------------------------------------
+   6                   Sequinned Devil Horns
+   7                   Devil Horn Boppers
+   8                   Bug Eyed Glasses
+<a name="966"></a><a name="IDX-411"></a>
+</pre>
+</div>
+<p class="para">Let's see how you can ask your databases to give you a specific portion of an ordered list of products. The solution is different for each RDBMS, so let's analyze each one individually.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="967"></a><a name="ch14lev4sec5"></a>MySQL</h5>
+<p class="first-para">With MySQL, this problem turns out to be a piece of cake. With MySQL, you use the <span class="fixed">LIMIT</span> keyword, just like in the previous example but using different parameters this time:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, Name
+FROM Product
+ORDER BY ProductID
+LIMIT 5,5;
+</pre>
+</div>
+<p class="last-para">This time you specified <span class="fixed">5</span> as the first parameter (instead of <span class="fixed">0</span>), mentioning that you want retrieve rows starting with the sixth record in the result set (remember that the row number is zero-based). The second parameter specifies how many rows you want to retrieve.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="968"></a><a name="ch14lev4sec6"></a>Oracle</h5>
+<p class="first-para">With Oracle, you use a command similar to the one you saw in the previous example. However, there's a catch&#8212;you can't limit the result set based on the <span class="fixed">ROWNUM</span> pseudocolumn being between <i class="emphasis"><span class="fixed">m</span></i> and <i class="emphasis"><span class="fixed">n</span></i> if <span class="fixed"><i class="emphasis">m</i>&gt;1</span>. If you execute the following query, no rows will be returned:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, Name FROM
+     (SELECT ProductID, Name
+      FROM Product
+      ORDER BY ProductID)
+WHERE ROWNUM BETWEEN 6 AND 10<b class="bold">;</b>
+</pre>
+</div>
+<p class="para">The workaround to this problem is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, Name FROM
+     (SELECT ProductID, Name, <b class="bold">ROWNUM AS rn</b> FROM
+          (SELECT ProductID, Name
+           FROM Product
+           ORDER BY ProductID)
+     ) <b class="bold">inner</b>
+WHERE <b class="bold">inner.rn</b> BETWEEN 6 AND 10;
+<a name="969"></a><a name="IDX-412"></a>
+</pre>
+</div>
+<p class="para">Here you "saved" the <span class="fixed">ROWNUM</span> values in a new row of the subquery, so you could filter correctly the results in the outer query.</p>
+<p class="para">Alternatively, and more elegantly, you can use the <span class="fixed">RANK</span> analytic function, as described in <a href="LiB0027.html#216" target="_parent" class="chapterjump">Chapter 4</a>, "Summarizing and Grouping Data":</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, Name FROM
+(
+SELECT RANK() OVER (ORDER BY ProductID) As Ranking, ProductID, Name
+FROM Product
+ORDER BY PRODUCTID
+)
+WHERE Ranking BETWEEN 6 AND 8;
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="970"></a><a name="ch14lev4sec7"></a>SQL Server</h5>
+<p class="first-para">SQL Server doesn't provide you with a simple way to achieve your goal. The <span class="fixed">TOP</span> clause works well as long as you're only interested in the top records of a query. There are a number of workarounds for this limitation.</p>
+<p class="para">Let's discuss the most obvious solution first. This uses the SQL-99 syntax (so with some tweaking it works with other databases as well) and uses correlated subqueries (correlated subqueries were discussed in <a href="LiB0035.html#376" target="_parent" class="chapterjump">Chapter 6</a>, "Combining SQL Queries"):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, Name
+FROM Product AS P1
+WHERE
+  (SELECT COUNT(*) FROM Product AS P2
+   WHERE P1.ProductID &gt;= P2.ProductID) BETWEEN 6 AND 10
+ORDER BY ProductID;
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">This method only works if the list of products is ordered by a unique column.You can't use it, for example, if the products are ordered by price and if there's more than one product with the same price.</p>
+</td>
+</tr>
+</table>
+<a name="971"></a><a name="IDX-413"></a>
+<p class="para">Remember that a correlated subquery executes once for every record of the outer query. In this example, for each product returned by the outer query, the subquery calculates how many products have a lower ID. You're looking for products for which that number is between six and 10.</p>
+<p class="para">The second method uses the <span class="fixed">TOP</span> function. The idea is simple, but the SQL code will look a bit awkward at first. If you want to retrieve products between six and 10, here's a working strategy:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">First, you get the <span class="fixed">TOP 10</span> products, ordered by <span class="fixed">ProductID</span> (ascending). The products you're interested in are the bottom of this list.</p>
+</li>
+<li class="listitem">
+<p class="first-para">You order the resulting list in descending order by <span class="fixed">ProductID</span> (so the rows you're interested in will be at the <span class="fixed">TOP</span>).</p>
+</li>
+<li class="listitem">
+<p class="first-para">You get the <span class="fixed">TOP 5</span> products from list.</p>
+</li>
+<li class="listitem">
+<p class="first-para">You finally sort the remaining products in ascending order by <span class="fixed">ProductID</span>.</p>
+</li>
+</ul>
+<p class="para">By using subqueries, you can implement all these steps in a single SQL command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, Name
+FROM
+  (SELECT TOP 5 ProductID, Name
+   FROM
+     (SELECT TOP 10 ProductID, Name
+      FROM Product
+      ORDER BY ProductID) AS P1
+   ORDER BY ProductID DESC) AS P2
+ORDER BY ProductID
+</pre>
+</div>
+<p class="para">The last technique I'll present for SQL Server consists of using a temporary table with an <span class="fixed">IDENTITY</span> column. This solution is versatile so that it can also be implemented for other databases as well. For more information about temporary tables and <span class="fixed">IDENTITY</span> columns, please read <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>. The code for this solution, presented below, is self-explanatory:</p>
+<div class="informalexample">
+<pre class="literallayout">
+/* Create a temporary table named #Product, having an IDENTITY column */
+CREATE TABLE #Product
+(RowNumber SMALLINT NOT NULL IDENTITY(1,1),
+ ProductID INT,
+ Name VARCHAR(50))<a name="972"></a><a name="IDX-414"></a>
+/* Populate the temporary table with records from the table we browse through.
+   The RowNumber column will generate consecutive numbers for each product.
+   We're free to order the list of products by any criteria. */
+INSERT INTO #Product (ProductID, Name)
+SELECT ProductID, Name
+FROM Product
+ORDER BY Price DESC
+
+/* Retrieve the requested group or records from the temporary table */
+SELECT ProductID, Name
+FROM #Product
+WHERE RowNumber BETWEEN 6 and 10
+
+/* Drop the temporary table */
+DROP TABLE #Product
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="973"></a><a name="ch14lev4sec8"></a>DB2</h5>
+<p class="first-para">The first query that was presented for SQL Server (using correlated subqueries) works with no modifications with DB2. Here it is again, for reference:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, Name
+FROM Product AS P1
+WHERE
+  (SELECT COUNT(*) FROM Product AS P2
+   WHERE P1.ProductID &gt;= P2.ProductID) BETWEEN 6 AND 10
+ORDER BY ProductID;
+</pre>
+</div>
+<p class="para">The second solution is DB2 specific. It uses the <span class="fixed">ROWNUMBER</span> function in a sub-query to generate a "rownumber" fabricated column, which is then used to filter and retrieve the specified range of products:</p>
+<div class="informalexample">
+<pre class="literallayout">
+WITH temp AS
+  (SELECT ProductID, Name,
+           ROWNUMBER() OVER(ORDER BY ProductID) AS row
+   FROM Product)
+SELECT ProductID, Name FROM temp <b class="bold">WHERE row&gt;5 and row&lt;=10</b>
+</pre>
+</div>
+<p class="last-para">
+<span class="fixed">ROWNUMBER</span>, <span class="fixed">RANK</span>, and <span class="fixed">DENSERANK</span> are three analytical functions supported by DB2 that come in handy when you need to perform tasks that imply record numbering or ranking. The functions <span class="fixed">RANK</span> and <span class="fixed">DENSE_RANK</span> are also supported by <a name="974"></a><a name="IDX-415"></a>Oracle, along with several others. (<a href="LiB0027.html#216" target="_parent" class="chapterjump">Chapter 4</a>, "Summarizing and Grouping Data," demonstrates how to use the <span class="fixed">RANK</span> function.) You'll also see them in action again, later in this case study. For detailed information about the analytic functions supported and how they work, please refer to your vendor's SQL reference manual.</p>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="975"></a><a name="ch14lev2sec10"></a>Associated Products and Categories</h3>
+<p class="first-para">In the previous exercises, you asked for products without associating them with the existing categories or departments. In reality, most of your queries regarding products will also involve the categories to which they belong.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="976"></a><a name="ch14lev3sec5"></a>Selecting Products that Belong to a Specific Category</h4>
+<p class="first-para">In real-world scenarios, it's likely that you'll need to gather a list of products that belong to a specific category. In this case, the category of interest will always be identified by its ID (its primary key). You're interested in getting both the <span class="fixed">Name</span> and <span class="fixed">Description</span> of the products that belong to a specific category.</p>
+<p class="para">If you want only the IDs of the products associated with a specific <span class="fixed">Category</span>, a simple query like this on <span class="fixed">ProductCategory</span> solves the problem:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID FROM ProductCategory WHERE CategoryID=3;
+</pre>
+</div>
+<p class="para">However, to get the <span class="fixed">Name</span> and <span class="fixed">Description</span>, you need to perform an <span class="fixed">INNER JOIN</span> between <span class="fixed">Product</span> and <span class="fixed">ProductCategory</span>. You learned how to join tables in <a href="LiB0039.html#418" target="_parent" class="chapterjump">Chapter 7</a>, "Querying Multiple Tables." This query returns all the products that belong to the category with an ID of <span class="fixed">3</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name
+FROM Product INNER JOIN ProductCategory
+ON Product.ProductID = ProductCategory.ProductID
+WHERE ProductCategory.CategoryID = 3;
+</pre>
+</div>
+<p class="para">As an alternative syntax, you could use the <span class="fixed">WHERE</span> clause to join your two tables:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name
+FROM Product, ProductCategory
+WHERE Product.ProductID = ProductCategory.ProductID
+AND ProductCategory.CategoryID = 3;
+<a name="977"></a><a name="IDX-416"></a>
+</pre>
+</div>
+<p class="para">The results of the query look like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name
+
+   ---------------------
+   Beast Mask
+   Cleopatra Kit
+   Horned Devil Mask
+   Sequinned Devil Horns
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="978"></a><a name="ch14lev3sec6"></a>Selecting Categories that Contain a Specific Product</h4>
+<p class="first-para">Compared to the previous query, this section covers the opposite scenario. Now you know the product, and you need to find the categories associated with it. Here's the query that lists the categories that contain the product with <span class="fixed">ProductID</span> of <span class="fixed">6</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Category.CategoryID, Name
+FROM Category INNER JOIN ProductCategory
+ON Category.CategoryID = ProductCategory.CategoryID
+AND ProductCategory.ProductID = 6;
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">Access doesn't like this join syntax because it's a bit more picky about how joins are constructed (see <a href="LiB0039.html#418" target="_parent" class="chapterjump">Chapter 7</a>, "Querying Multiple Tables" for more information). Instead of using the <i class="emphasis"><span class="fixed">JOIN</span></i> syntax, you should use the alternative subquery method supplied here or alter the join appropriately.</p>
+</td>
+</tr>
+</table>
+<p class="para">You can achieve the same result using subqueries. The subquery returns the IDs of categories associated with the product you want, and using these results you get the names and descriptions you're interested in:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CategoryID, Name
+FROM Category
+WHERE CategoryID IN
+    (SELECT CategoryID
+     FROM ProductCategory
+     WHERE ProductCategory.ProductID = 6);
+<a name="979"></a><a name="IDX-417"></a>
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">Remember that MySQL doesn't support subqueries. None of the examples that include subqueries will run in MySQL.</p>
+</td>
+</tr>
+</table>
+<p class="para">Based on the sample data, there are two matching categories for the product for which you were looking:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   CategoryID           Name
+
+   -------------- --------------------
+   3                    Masks
+   4                    Sweet Stuff
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="980"></a><a name="ch14lev3sec7"></a>What Products Belong to the Same Categories as Another Product?</h4>
+<p class="first-para">This kind of query is useful in situations where you want to find out which products are similar to a specified product. So how do you find out what products belong to the same categories as another product (remember that a product can belong to more than one category)?</p>
+<p class="para">After having run the previous two exercises, this should be fairly straightforward. First, remember how you extracted the products that belong to a category:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name
+FROM Product INNER JOIN ProductCategory
+ON Product.ProductID = ProductCategory.ProductID
+AND ProductCategory.CategoryID = 3;
+</pre>
+</div>
+<p class="para">Now you need to determine which products belong to one or more categories, so you'll need to do something like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name
+FROM Product INNER JOIN ProductCategory
+ON Product.ProductID = ProductCategory.ProductID
+WHERE ProductCategory.CategoryID IN (&lt;<i class="emphasis">list of categories</i>&gt;)
+</pre>
+</div>
+<p class="para">All you need to do is substitute <span class="fixed">&lt;<i class="emphasis">list of categories</i>&gt;</span> for the list of categories in which you're interested.</p>
+<p class="para">Here's the query that alphabetically lists all the products that belong to the same categories as the product with the ID of <span class="fixed">6</span>:</p>
+<a name="981"></a><a name="IDX-418"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT Product.ProductID, Product.Name
+FROM Product INNER JOIN ProductCategory
+ON Product.ProductID = ProductCategory.ProductID
+WHERE ProductCategory.CategoryID IN
+   (SELECT Category.CategoryID
+   FROM Category INNER JOIN ProductCategory
+   ON Category.CategoryID = ProductCategory.CategoryID
+   WHERE ProductCategory.ProductID = 6)
+ORDER BY Name;
+</pre>
+</div>
+<p class="para">Here are the results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ProductID      Name
+
+   ----------- ---------------------
+   1              Beast Mask
+   2              Cleopatra Kit
+   7              Devil Horn Boppers
+   3              Horned Devil Mask
+   6              Sequinned Devil Horns
+</pre>
+</div>
+<p class="para">Note that you use <span class="fixed">SELECT DISTINCT</span> to guard against duplicate results. You need this because the subquery might return more categories, and the products that belong to more than one of them would be listed more than once (because, remember, a product can belong to more than one category!).</p>
+<p class="para">Unfortunately, the previous statement won't execute on MySQL because MySQL doesn't support nested queries. Access also doesn't like this particular syntax, but in just a moment, you'll see an alternative syntax that does work on Access.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="982"></a><a name="ch14lev4sec9"></a>Getting the Same Results using Table Joins</h5>
+<p class="first-para">The solution presented earlier is probably the most commonly used. However, as anticipated, you can obtain the same results using joins, with a much more elegant query. This solution also works with MySQL, which doesn't support subqueries:</p>
+<a name="983"></a><a name="IDX-419"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT P1.ProductID, P1.Name
+FROM Product P1
+  INNER JOIN ProductCategory PC1
+    ON P1.ProductID = PC1.ProductID
+  INNER JOIN ProductCategory PC2
+    ON PC1.CategoryID = PC2.CategoryID
+WHERE PC2.ProductID = 6
+ORDER BY Name;
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Referring to <a href="LiB0091.html#931" target="_parent" class="chapterjump">Figure 14-6</a> will help you construct join queries. Just follow the path of the table joins in the figure, and everything will become clearer.</p>
+</td>
+</tr>
+</table>
+<p class="para">Notice that, in this example, we've used some table aliases to make the SQL code a bit shorter (<span class="fixed">ProductCategory</span> is, after all, quite a long word to type!).</p>
+<p class="para">This is the same query, written with the alternate syntax (which works on Access):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT DISTINCT P1.ProductID, P1.Name
+FROM Product P1, ProductCategory PC1, ProductCategory PC2
+WHERE P1.ProductID = PC1.ProductID
+  AND PC1.CategoryID = PC2.CategoryID
+  AND PC2.ProductID = 6
+ORDER BY Name;
+</pre>
+</div>
+<p class="para">Wow, you have just joined three tables! And, to add to the confusion, you used two instances of the <span class="fixed">ProductCategory</span> table. The action of joining two instances of the same table is called a <i class="emphasis">self-join</i>, and it works just as if they were two separate tables.</p>
+<p class="para">Joining the two <span class="fixed">ProductCategory</span> instances on the <span class="fixed">CategoryID</span> field generates a list of <span class="fixed">ProductID</span>/<span class="fixed">ProductID</span> pairs, containing products associated with the same category.</p>
+<p class="para">Now that you have this list of products, which are related by their category, the rest is simple: In the right side of the list, you filtered according to the <span class="fixed">ProductID</span> that you were looking for (<span class="fixed">6</span> in this case). In this manner, in the left side of the list there remained only the products related to the product with an ID of <span class="fixed">6</span>. Finally, in the left side of the list you joined with the <span class="fixed">Product</span> table in order to get the names and descriptions of the resulted products.</p>
+<p class="para">Note that you still need the <span class="fixed">DISTINCT</span> keyword to filter duplicate records from products that belong to more than one of the resulting categories.</p>
+<a name="984"></a><a name="IDX-420"></a>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="985"></a><a name="ch14lev3sec8"></a>Getting a List of Categories and Their Products</h4>
+<p class="first-para">Because you're expert in table joins by now, let's look at another simple exercise: Say you want to get a list containing categories and their products, like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Category Name                       Product Name
+
+   --------------------------------- -----------------------
+   Exotic Costumes                     Cleopatra Kit
+   Exotic Costumes                     Miss Santa
+   Masks                               Horned Devil Mask
+   Masks                               Cleopatra Kit
+   Masks                               Sequinned Devil Horns
+   Scary Costumes                      Vampire Disguise
+   Scary Stuff                         Bug Eyed Glasses
+   Sweet Stuff                         Sequinned Devil Horns
+   Sweet Stuff                         Devil Horn Boppers
+</pre>
+</div>
+<p class="para">If you need to associate categories with products, the path followed by joins is quite clear. You have the <span class="fixed">ProductCategory</span> table, which contains the IDs of associated categories and products. You join this table on its left and right sides to get the category and product names associated with the IDs. Here's the query that does this for you:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT C.Name as "Category Name", P.Name as "Product Name"
+FROM Product P
+INNER JOIN ProductCategory PC ON P.ProductID = PC.ProductID
+INNER JOIN Category C ON PC.CategoryID = C.CategoryID
+ORDER BY C.Name, P.Name;
+</pre>
+</div>
+<p class="para">The same query, rewritten using <span class="fixed">WHERE</span> statements instead of <span class="fixed">JOIN</span> statements, looks like this (and works on Access):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT C.Name as "Category Name", P.Name as "Product Name"
+FROM Product P, ProductCategory PC, Category C
+WHERE P.ProductID = PC.ProductID AND PC.CategoryID = C.CategoryID
+ORDER BY C.Name, P.Name;
+<a name="986"></a><a name="IDX-421"></a>
+</pre>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="987"></a><a name="ch14lev4sec10"></a>Getting the Same Results using Correlated Subqueries</h5>
+<p class="first-para">This method is less obvious, but it's good to know that there are multiple ways to get the same results with SQL. In this particular scenario, the solution using table joins is likely to be faster, but in practice remember that only a good set of tests can show you what's the best solution for your database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT C.Name as "Category Name", Product.Name as "Product Name"
+FROM Product, <b class="bold">Category C</b>
+WHERE Product.ProductID IN
+  (SELECT ProductID FROM ProductCategory
+   WHERE ProductCategory.CategoryID = C.CategoryID)
+ORDER BY C.Name, Product.Name;
+</pre>
+</div>
+<p class="para">This query is a bit more complicated than the previous ones&#8212;if you have problems understanding it, please reread the section on correlated subqueries in <a href="LiB0035.html#376" target="_parent" class="chapterjump">Chapter 6</a>, "Combining SQL Queries."</p>
+<p class="para">What you did was to ask from the start for a category name and product name without specifying anything about the linking table, <span class="fixed">ProductCategory</span>. In the outer query, you asked only for the columns you were interested in without specifying how they're related. However, for each category, the <span class="fixed">WHERE</span> clause uses the correlated subquery to filter out only the products that are associated with it.</p>
+<p class="para">Remember that correlated subqueries execute for each record of the main query. In this case, for each category returned by the outer query, the correlated subquery executes and returns the products associated with that category. The outer query gets the results back and uses them to compose the list containing category and product names.</p>
+<p class="para">The important detail to understand is the way the categories from the outer query are used in the subquery:</p>
+<div class="informalexample">
+<pre class="literallayout">
+WHERE ProductCategory.CategoryID = <b class="bold">C.CategoryID</b>)
+</pre>
+</div>
+<p class="last-para">This line does the whole trick: The category of the outer query (<span class="fixed">C.CategoryID</span>) is used in a table join in the correlated subquery. The category ID from the outer query is referenced through the <span class="fixed">C</span> alias defined for <span class="fixed">Category</span>.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="988"></a><a name="ch14lev3sec9"></a>Getting the Most Expensive Products in Each Category</h4>
+<p class="first-para">Say you want to get a list containing all existing categories, along with the most expensive two products for each category. Based on the data you have, the list should contain the following products:</p>
+<a name="989"></a><a name="IDX-422"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Category                Product                       Price
+
+   --------------------- -----------------------------  ---------
+   Exotic Costumes         Miss Santa                   49.9900
+   Exotic Costumes         Cleopatra Kit                14.9900
+   Masks                   Cleopatra Kit                14.9900
+   Masks                   Beast Mask                    5.9900
+   Scary Costumes          Vampire Disguise              9.9900
+   Scary Stuff             Bug Eyed Glasses              2.7500
+   Sweet Stuff             Sequinned Devil Horns         3.7500
+   Sweet Stuff             Devil Horn Boppers            2.5000
+</pre>
+</div>
+<p class="para">Let's see how to obtain this list with SQL Server, Oracle, and DB2.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="990"></a><a name="ch14lev4sec11"></a>SQL Server</h5>
+<p class="first-para">For SQL Server, here's the query that does the trick. You get the top two products for each category using a correlated subquery:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT C.Name AS "Category", Product.Name AS "Product",
+        Product.Price as "Price"
+FROM Product, <b class="bold">Category C</b>
+WHERE Product.ProductID IN
+  (SELECT <b class="bold">TOP 2</b> ProductID FROM ProductCategory
+   WHERE ProductCategory.CategoryID = C.CategoryID
+   ORDER BY Price DESC)
+ORDER BY C.Name, Product.Price DESC;
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="991"></a><a name="ch14lev4sec12"></a>DB2</h5>
+<p class="first-para">DB2 doesn't allow you to use <span class="fixed">FETCH FIRST <i class="emphasis">n</i> ROWS ONLY</span> in subqueries, so you can't simply translate the SQL Server version (which uses <span class="fixed">TOP</span>) to a DB2 equivalent.</p>
+<p class="para">The DB2 solution uses the <span class="fixed">ROWNUMBER</span> function, which you already saw in an earlier example. However, this time you use <span class="fixed">PARTITION BY</span> in combination with <span class="fixed">ORDER BY</span> to create a ranking for each product in descending order of its price, for each category in part:</p>
+<div class="informalexample">
+<pre class="literallayout">
+WITH tmp (CategoryName, ProductName, ProductPrice, rank)
+AS
+    (SELECT C.Name, P.Name, P.Price,
+            ROWNUMBER() OVER (PARTITION BY C.Name ORDER BY P.Price DESC)
+            AS rank<a name="992"></a><a name="IDX-423"></a>
+    FROM Product P
+    JOIN ProductCategory PC ON P.ProductID = PC.ProductID
+    JOIN Category C ON C.CategoryID = PC.CategoryID)
+
+SELECT CategoryName, ProductName, ProductPrice
+FROM tmp
+WHERE rank &lt;= 2
+ORDER BY CategoryName
+</pre>
+</div>
+<p class="para">
+<span class="fixed">PARTITION BY C.Name</span> specifies that you want the products ranking created separately for each category. <span class="fixed">ORDER BY P.Price DESC</span> specifies that, for each category, you want the products sorted in descending order of their price.</p>
+<p class="last-para">
+<span class="fixed">ROWNUMBER</span> (or <span class="fixed">ROW_NUMBER</span>) always returns a unique number for each returned row. DB2 also supports two similar functions, <span class="fixed">RANK</span> and <span class="fixed">DENSERANK</span> (or <span class="fixed">DENSE_RANK</span>). <span class="fixed">RANK</span> and <span class="fixed">DENSERANK</span> return the same value for records that are equal in respect to the <span class="fixed">ORDER BY</span> criterion&#8212;in this case, if two or more products of a category have the same price, they'll receive the same ranking. The difference between <span class="fixed">RANK</span> and <span class="fixed">DENSERANK</span> is that <span class="fixed">RANK</span> leaves gaps in rankings when two or more products have the same ranking. Say, for example, if the first three most expensive products have the same price, they'll all receive a ranking of <span class="fixed">1</span>. The following product in the list will have a <span class="fixed">RANK</span> of <span class="fixed">4</span> but a <span class="fixed">DENSERANK</span> of <span class="fixed">2</span> because <span class="fixed">DENSERANK</span> leaves no gaps.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="993"></a><a name="ch14lev4sec13"></a>Oracle</h5>
+<p class="first-para">With Oracle, you apply a similar method as for DB2, except that the syntax is a little different. Oracle supports <span class="fixed">RANK</span> and <span class="fixed">DENSE_RANK</span> just like DB2, but it doesn't support <span class="fixed">ROW_NUMBER</span>. For this reason the Oracle query will not be guaranteed to retrieve a maximum of two products for each category:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CategoryName, ProductName, ProductPrice
+  FROM
+    (SELECT C.Name as CategoryName,
+             P.Name as ProductName,
+             P.Price as ProductPrice,
+             RANK() OVER (PARTITION BY C.Name ORDER BY P.Price DESC)
+             AS rank
+     FROM Product P
+     JOIN ProductCategory PC ON P.ProductID = PC.ProductID
+     JOIN Category C ON C.CategoryID = PC.CategoryID)
+WHERE rank &lt;= 2
+ORDER BY CategoryName;
+<a name="994"></a><a name="IDX-424"></a>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="995"></a><a name="ch14lev2sec11"></a>What About Products and Their Departments?</h3>
+<p class="first-para">Here you take things one step further and analyze how you can get different product listings based on the departments to which they belong. The queries become a bit more complicated because a fourth table, <span class="fixed">Department</span>, comes into play.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="996"></a><a name="ch14lev3sec10"></a>Selecting Products that Belong to a Specific Department</h4>
+<p class="first-para">Say you know the ID of a department, and you want to get all the products that belong to it.</p>
+<p class="para">In the previous exercises, you learned how to extract the products in a specific category. Now, instead of looking for the products in a category, you're looking for the products that belong to a list of categories (more specifically, the list of categories in the department for which you're looking).</p>
+<p class="para">Using subqueries, you use the <span class="fixed">IN</span> keyword to filter the results based on a list of category IDs. Here's the SQL query that does the trick for you:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Product.ProductID, Product.Name
+FROM Product INNER JOIN ProductCategory
+ON Product.ProductID = ProductCategory.ProductID
+WHERE ProductCategory.CategoryID IN
+   (SELECT CategoryID
+    FROM Category
+    WHERE DepartmentID = 1)
+ORDER BY Product.Name;
+</pre>
+</div>
+<p class="para">This query outputs these records:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ProductID                   Name
+
+   ---------------------- ---------------------
+   2                         Cleopatra Kit
+   4                         Miss Santa
+   5                         Vampire Disguise
+</pre>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="997"></a><a name="ch14lev4sec14"></a>Getting the Same Results using Table Joins</h5>
+<p class="first-para">Using table joins, you need to join the <span class="fixed">Product</span>, <span class="fixed">ProductCategory</span>, and <span class="fixed">Category</span> tables. You don't need to also join the <span class="fixed">Department</span> table because you don't need <a name="998"></a><a name="IDX-425"></a>anything from it (its name or description). You filter the results based on the <span class="fixed">DepartmentID</span> field of the <span class="fixed">Category</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Product.ProductID, Product.Name
+FROM Product
+   INNER JOIN ProductCategory
+   ON Product.ProductID = ProductCategory.ProductID
+   INNER JOIN Category
+   ON ProductCategory.CategoryID = Category.CategoryID
+WHERE Category.DepartmentID = 1
+ORDER BY Product.Name;
+</pre>
+</div>
+<p class="para">The same query, without using <span class="fixed">JOIN</span>, looks like this (note that this form will work on Access and pre-9i versions of Oracle):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Product.ProductID, Product.Name
+FROM Product, ProductCategory, Category
+WHERE Product.ProductID = ProductCategory.ProductID
+   AND ProductCategory.CategoryID = Category.CategoryID
+   AND Category.DepartmentID = 1
+ORDER BY Product.Name;
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="999"></a><a name="ch14lev3sec11"></a>Getting a List of the Departments and Their Products</h4>
+<p class="first-para">Now, what if you want to see a list containing the departments and the products that belong to them: For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Department                         Product
+
+   --------------------        ---------------------
+   Costume Accessories         Beast Mask
+   Costume Accessories         Cleopatra Kit
+   Costume Accessories         Horned Devil Mask
+   Costume Accessories         Sequinned Devil Horns
+   Full Costumes               Cleopatra Kit
+   Full Costumes               Miss Santa
+   Full Costumes               Vampire Disguise
+   Jokes and Tricks            Bug Eyed Glasses
+   Jokes and Tricks            Devil Horn Boppers
+   Jokes and Tricks            Sequinned Devil Horns
+<a name="1000"></a><a name="IDX-426"></a>
+</pre>
+</div>
+<p class="para">This time, apart from the <span class="fixed">Product</span>, <span class="fixed">ProductCategory</span>, and <span class="fixed">Category</span> tables, you'll also need the <span class="fixed">Department</span> table. You need it to extract the department names.</p>
+<p class="para">Using table joins, you can extract this list using the following query. To get a list with products and departments, you make the usual trip starting with the <span class="fixed">Product</span> table and ending with <span class="fixed">Department</span>. This trip walks through the tables that have relationships: <span class="fixed">Product...ProductCategory...Category...Department</span>. If you follow this road, what the query does becomes quite obvious:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Department.Name AS "Department",
+        Product.Name AS "Product"
+FROM Department
+   INNER JOIN Category
+   ON Department.DepartmentID = Category.DepartmentID
+   INNER JOIN ProductCategory
+   ON Category.CategoryID = ProductCategory.CategoryID
+   INNER JOIN Product
+   ON ProductCategory.ProductID = Product.ProductID
+ORDER BY Department.Name, Product.Name;
+</pre>
+</div>
+<p class="para">You ordered departments by name, and for each department the products are also ordered by name.</p>
+<p class="para">Here is the same query using the alternate syntax that works on Access, as well as the other platforms:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Department.Name AS "Department",
+        Product.Name AS "Product"
+FROM Product, ProductCategory, Category, Department
+WHERE Product.ProductID = ProductCategory.ProductID
+  AND ProductCategory.CategoryID = Category.CategoryID
+  AND Category.DepartmentID = Department.DepartmentID
+ORDER BY Department.Name, Product.Name;
+</pre>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1001"></a><a name="ch14lev4sec15"></a>Getting the Same List with a Correlated Subquery</h5>
+<p class="first-para">If you prefer using correlated subqueries, this is the way to go:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT D.Name AS "Department", P.Name AS "Product"
+FROM Product P, Department D
+WHERE ProductID IN
+     (SELECT ProductID
+      FROM ProductCategory INNER JOIN Category
+      ON ProductCategory.CategoryID = Category.CategoryID
+      WHERE Category.DepartmentID = D.DepartmentID)
+ORDER BY D.Name, P.Name;
+<a name="1002"></a><a name="IDX-427"></a>
+</pre>
+</div>
+<p class="para">On the outer query, you only specify the fields in which you're interested and enforce the relationships between them using the subquery. The correlated (inner) subquery is called for each department returned by the outer query, and it returns the <span class="fixed">ProductID</span>s associated with that department.</p>
+<p class="para">Note that you have flexibility to write the subquery in any number of ways, including using another subquery instead of table joins, like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT D.Name AS "Department", Product.Name AS "Product"
+FROM Product, Department D
+WHERE ProductID IN
+     (SELECT ProductID from ProductCategory
+      WHERE ProductCategory.CategoryID IN
+             (SELECT CategoryID FROM Category
+              WHERE D.DepartmentID = DepartmentID))
+ORDER BY D.Name, Product.Name;
+</pre>
+</div>
+<p class="last-para">You'll rarely want to complicate your queries like this, but it demonstrates how flexible SQL can be.</p>
+
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1003"></a><a name="ch14lev3sec12"></a>What About Departments that Have No Products?</h4>
+<p class="first-para">In the previous queries, when you retrieved a list of departments and their products, you always assumed that each department had at least one product. Just for the fun of it, let's add a new department now:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Department (Name) VALUES ('Books');
+</pre>
+</div>
+<p class="para">With this new department in place, run the previous SQL queries again. Maybe you'll be surprised to see that the new department doesn't show up, but this behavior is quite correct.</p>
+<p class="para">If you want to have all the departments listed, regardless of whether they have products, you'll need to modify the first query to use outer joins instead of inner joins. <a href="LiB0039.html#418" target="_parent" class="chapterjump">Chapter 7</a>, "Querying Multiple Tables," presented outer joins. Here's the updated query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Department.Name AS "Department",
+        Product.Name AS "Product"
+FROM Department
+   LEFT JOIN Category
+   ON Department.DepartmentID = Category.DepartmentID
+   LEFT JOIN ProductCategory
+   ON Category.CategoryID = ProductCategory.CategoryID
+   LEFT JOIN Product
+   ON ProductCategory.ProductID = Product.ProductID
+ORDER BY Department.Name, Product.Name;
+<a name="1004"></a><a name="IDX-428"></a>
+</pre>
+</div>
+<p class="para">The result of this query is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Department                         Product
+
+   ----------------------          -----------------------
+   Books                              NULL
+   Costume Accessories                Beast Mask
+   Costume Accessories                Cleopatra Kit
+   Costume Accessories                Horned Devil Mask
+   Costume Accessories                Sequinned Devil Horns
+   Full Costumes                      Cleopatra Kit
+   Full Costumes                      Miss Santa
+   Full Costumes                      Vampire Disguise
+   Jokes and Tricks                   Bug Eyed Glasses
+   Jokes and Tricks                   Devil Horn Boppers
+   Jokes and Tricks                   Sequinned Devil Horns
+</pre>
+</div>
+<p class="para">You used left outer joins in this example to make sure all departments are returned. If you used right outer joins instead, you would have to make that all products were listed instead-&#8212;including the ones that don't belong to any department.</p>
+<p class="para">Remember that an outer join <i class="emphasis">always takes all the rows</i> in one side of the join (left or right) and tries to match with rows from the other side of the join. If no match is made, <span class="fixed">NULL</span> is assumed instead.</p>
+<p class="last-para">This is different from the inner join (the default type of join), which is exclusive&#8212;it only returns rows that have matches in both sides of the join. The opposite is the full join (<span class="fixed">FULL OUTER JOIN</span>), which includes all the rows in both sides of the join.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1005"></a><a name="ch14lev3sec13"></a>How Many Products Belong to Each Department?</h4>
+<p class="first-para">If you managed to find out how to get a list of products for each department, you're only one step away from counting how many products exist in each department. You do this using the <span class="fixed">GROUP BY</span> clause and using the <span class="fixed">COUNT</span> aggregate function:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Department.Name AS "Department",
+        COUNT(Product.Name) AS "Products"
+FROM Product
+   INNER JOIN ProductCategory
+   ON Product.ProductID = ProductCategory.ProductID<a name="1006"></a><a name="IDX-429"></a>
+   INNER JOIN Category
+   ON ProductCategory.CategoryID = Category.CategoryID
+   INNER JOIN Department
+   ON Category.DepartmentID = Department.DepartmentID
+GROUP BY Department.Name
+ORDER BY Department.Name;
+</pre>
+</div>
+<p class="para">Recall that we discussed the <span class="fixed">GROUP BY</span> clause and aggregate functions in <a href="LiB0027.html#216" target="_parent" class="chapterjump">Chapter 4</a>, "Summarizing and Grouping Data."</p>
+
+<p class="para">Here's the results list:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Department                        Products
+
+   --------------------            -----------
+   Costume Accessories                   4
+   Full Costumes                         3
+   Jokes and Tricks                      3
+</pre>
+</div>
+<p class="para">If you wanted to count only those products that are on promotion for each department, you'd simply need to filter the products:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Department.Name AS "Department",
+        COUNT(Product.Name) AS "Featured Products"
+FROM Product
+   INNER JOIN ProductCategory
+   ON Product.ProductID = ProductCategory.ProductID
+   INNER JOIN Category
+   ON ProductCategory.CategoryID = Category.CategoryID
+   INNER JOIN Department
+   ON Category.DepartmentID = Department.DepartmentID
+WHERE Product.OnDepartmentPromotion = 1
+GROUP BY Department.Name
+ORDER BY Department.Name;
+</pre>
+</div>
+<p class="para">The results should look like this:</p>
+<a name="1007"></a><a name="IDX-430"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Department                     Featured Products
+
+   --------------------            -----------------
+   Costume Accessories                     1
+   Full Costumes                           1
+   Jokes and Tricks                        1
+</pre>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1008"></a><a name="ch14lev4sec16"></a>Getting the Same List with Correlated Subqueries</h5>
+<p class="first-para">You can obtain the same results using correlated subqueries. There are two main ways you can rewrite the previous queries using correlated subqueries.</p>
+<p class="para">In the first example, you first group the products by department using <span class="fixed">GROUP BY</span> and perform a <span class="fixed">COUNT</span> for each group:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <b class="bold">D.Name</b> AS "Department", COUNT(P.Name) AS "Products"
+FROM Department D, Product P
+WHERE ProductID IN
+     (SELECT ProductID
+      FROM ProductCategory INNER JOIN Category
+      ON ProductCategory.CategoryID = Category.CategoryID
+      WHERE Category.DepartmentID = D.DepartmentID)
+GROUP BY <b class="bold">D.Name</b>
+ORDER BY <b class="bold">D.Name</b>;
+</pre>
+</div>
+<p class="para">In the second solution, you use a subquery to calculate the number of products for each department instead of using <span class="fixed">GROUP BY</span> to group by departments. Note that the subquery is still a correlated subquery, and it executes once for each department selected by the outer query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT D.Name AS "Department",
+     (SELECT COUNT(ProductID)
+      FROM ProductCategory INNER JOIN Category
+      ON ProductCategory.CategoryID = Category.CategoryID
+      WHERE Category.DepartmentID = D.DepartmentID) AS "Products"
+FROM Department D;
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1009"></a><a name="ch14lev3sec14"></a>What is the Average Price of Products in Each Department?</h4>
+<p class="first-para">Suppose you want to see the average price for all the products in each department. You can do this quickly now because it is similar to the query that counted the number of products in each department:</p>
+<a name="1010"></a><a name="IDX-431"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Department.Name AS "Department",
+        AVG(Product.Price) AS "Average Price"
+FROM Product
+   INNER JOIN ProductCategory
+   ON Product.ProductID = ProductCategory.ProductID
+   INNER JOIN Category
+   ON ProductCategory.CategoryID = Category.CategoryID
+   INNER JOIN Department
+   ON Category.DepartmentID = Department.DepartmentID
+GROUP BY Department.Name;
+</pre>
+</div>
+<p class="para">After executing this query, you see that the Full Costumes department has the most expensive products:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Department                     Average Price
+
+   --------------------        ---------------------
+   Costume Accessories               7.6800
+   Full Costumes                    24.9900
+   Jokes and Tricks                  3.0000
+</pre>
+</div>
+<p class="para">You can complicate things a bit more and ask, for example, for the average price in each department but only for those departments having at least three products. Also, you can request the results listed in descending order of the average department price:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Department.Name AS "Department",
+        COUNT(Product.Name) AS "Products",
+        AVG(Product.Price) AS "Average Price"
+FROM Product
+   INNER JOIN ProductCategory
+   ON Product.ProductID = ProductCategory.ProductID
+   INNER JOIN Category
+   ON ProductCategory.CategoryID = Category.CategoryID
+   INNER JOIN Department
+   ON Category.DepartmentID = Department.DepartmentID
+GROUP BY Department.Name
+HAVING COUNT(Product.Price)&gt;=3
+ORDER BY AVG(Product.Price) DESC;
+<a name="1011"></a><a name="IDX-432"></a>
+</pre>
+</div>
+<p class="para">Because all departments have at least three products, you'll receive all of them back; this time, they're listed in descending order of their average price:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Department                   Products           Average Price
+
+   --------------------        -----------     ---------------------
+   Full Costumes                   3                   24.9900
+   Costume Accessories             4                    7.6800
+   Jokes and Tricks                3                    3.0000
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0092.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0094.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

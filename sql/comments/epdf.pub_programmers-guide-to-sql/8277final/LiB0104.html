@@ -1,0 +1,216 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Appendix A: Executing SQL Statements</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0103.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0105.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="appendix">
+<a name="ap01"></a>
+<h1 class="appendix-title"><span class="chapter-titlelabel">Appendix A: </span>Executing SQL Statements</h1><a name="1168"></a><a name="IDX-499"></a>
+<p class="para">Throughout this Book, we've been assuming that you're entering and executing the example SQL statements in the simplest way possible&#8212;using the SQL editing tools provided by the database. These tools vary considerably in their complexity, and it's not the purpose of this book to examine them in detail; however, we do need to show how we're expecting you to execute the examples!</p>
+<div class="section">
+<h2 class="sect2-title">
+<a name="1169"></a><a name="ap01lev1sec1"></a>Entering SQL Statements</h2>
+<p class="first-para">Because each database vendor provides its own tools for entering and executing SQL statements on the fly, this appendix covers each of the systems in turn. It provides step-by-step instructions for connecting to the <span class="fixed">InstantUniversity</span> database and executing SQL statements. You'll examine the <span class="fixed">InstantUniversity</span> database in <a href="LiB0106.html#1207" target="_parent" class="chapterjump">Appendix B</a>, "Setting Up the InstantUniversity Database."</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1170"></a><a name="ap01lev2sec1"></a>SQL Server</h3>
+<p class="first-para">The easiest way to execute SQL statements against a SQL Server (7.0 or higher) database is using Query Analyzer. Open Query Analyzer from the Start menu (Programs <font face="wingdings">Ø</font> Microsoft SQL Server <font face="wingdings">Ø</font> Query Analyzer), and you'll be prompted to enter the connection details for the database server you want to connect to, as shown in <a class="internaljump" href="#ap01fig01">Figure A-1</a>.</p>
+<div class="figure">
+<a name="1171"></a><a name="ap01fig01"></a><span class="figuremediaobject"><a href="images/fig516%5F01%5F0%2Ejpg" NAME="IMG_46" target="_parent"><img src="images/fig516_01.jpg" height="189" width="248" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-1: </span>Connecting to SQL Server</span>
+</div>
+<a name="1172"></a><a name="IDX-500"></a>
+<p class="para">The SQL Server instances running on your network should all appear in the SQL Server drop-down box, so select the appropriate one (or type the name if it doesn't appear). Next, select the authentication mode used to connect to your server. Windows authentication uses the accounts of users on the domain or the local Windows computer to authenticate users, and SQL Server authentication uses special logon accounts created and managed by SQL Server itself.</p>
+<p class="para">If you select Windows authentication, SQL Server will use the username and password you're currently using to log on to Windows; otherwise, you'll need to enter a SQL Server login name and password.</p>
+<p class="para">Once you've entered the connection details, click OK, and Query Analyzer will open. Select the <span class="fixed">InstantUniversity</span> database from the drop-down box on the toolbar to ensure that queries are executed against this database. You can then type SQL queries directly into the Query window and execute them by clicking the green arrow to the left of the database drop-down list, as shown in <a class="internaljump" href="#ap01fig02">Figure A-2</a>.</p>
+<div class="figure">
+<a name="1173"></a><a name="ap01fig02"></a><span class="figuremediaobject"><a href="images/fig517%5F01%5F0%2Ejpg" NAME="IMG_47" target="_parent"><img src="images/fig517_01.jpg" height="207" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-2: </span>Executing queries in Query Analyzer</span>
+</div>
+<a name="1174"></a><a name="IDX-501"></a>
+<p class="para">Any results will be displayed in a new pane in the Query window, as shown in <a class="internaljump" href="#ap01fig03">Figure A-3</a>.</p>
+<div class="figure">
+<a name="1175"></a><a name="ap01fig03"></a><span class="figuremediaobject"><img src="images/fig517_02.jpg" height="216" width="294" alt="" border="0"></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-3: </span>The results from a SQL Server query</span>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1176"></a><a name="ap01lev2sec2"></a>Oracle</h3>
+<p class="first-para">The standard utility for entering queries against an Oracle database is SQL*Plus, which in appearance is a simple text editor, similar to a command prompt. When you open SQL*Plus, you're prompted to enter connection details, as shown in <a class="internaljump" href="#ap01fig04">Figure A-4</a>.</p>
+<div class="figure">
+<a name="1177"></a><a name="ap01fig04"></a><span class="figuremediaobject"><a href="images/fig518%5F01%5F0%2Ejpg" NAME="IMG_49" target="_parent"><img src="images/fig518_01.jpg" height="159" width="247" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-4: </span>Connecting to Oracle from SQL*Plus</span>
+</div>
+<a name="1178"></a><a name="IDX-502"></a>
+<p class="para">As well as the username and password for the user you want to log on as, you must supply the service name of the database to which you want to connect. If Oracle can't resolve the service name, you may need to supply a complete TNS descriptor for the database. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)
+(HOST=<i class="emphasis">servername</i>)(PORT=1521)))(CONNECT_DATA=
+(SERVICE_NAME=<i class="emphasis">servicename</i>)))
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">You can get the TNS descriptor from the General tab for the database in Oracle Enterprise Manager Console.</p>
+</td>
+</tr>
+</table>
+<p class="para">Once SQL*Plus has loaded, you can type queries directly into the editor; any results will appear immediately after the query, as shown in <a class="internaljump" href="#ap01fig05">Figure A-5</a>.</p>
+<div class="figure">
+<a name="1179"></a><a name="ap01fig05"></a><span class="figuremediaobject"><a href="images/fig519%5F01%5F0%2Ejpg" NAME="IMG_50" target="_parent"><img src="images/fig519_01.jpg" height="347" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-5: </span>Executing queries in SQL*Plus</span>
+</div>
+<a name="1180"></a><a name="IDX-503"></a>
+<p class="para">For single SQL statements, the query will execute as soon as you enter a line ending in the semicolon termination character. For multistatement queries (for example, <span class="fixed">CREATE PROCEDURE</span>), which can contain semicolons, you need to mark the end of the statement using the <span class="fixed">/</span> character:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN
+   -- Multiple SQL statements
+END;
+/
+<a name="1181"></a><a name="IDX-504"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1182"></a><a name="ap01lev2sec3"></a>DB2</h3>
+<p class="first-para">DB2 provides a number of tools that allow you to enter and execute SQL statements, but for this book, we'll assume you're using Command Center.</p>
+<p class="para">Command Center has two tabs where you can enter SQL statements, the Interactive and Script tabs. The Script tab allows you to save multiquery scripts, and the SQL window is more generously proportioned, so we'll use that, as shown in <a class="internaljump" href="#ap01fig06">Figure A-6</a>.</p>
+<div class="figure">
+<a name="1183"></a><a name="ap01fig06"></a><span class="figuremediaobject"><a href="images/fig520%5F01%5F0%2Ejpg" NAME="IMG_51" target="_parent"><img src="images/fig520_01.jpg" height="333" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-6: </span>The Script tab in DB2 Command Center</span>
+</div>
+<a name="1184"></a><a name="IDX-505"></a>
+<p class="para">Because Command Center doesn't prompt you for connection details when it loads, you need to execute a <span class="fixed">CONNECT</span> statement before you can access the database. You'll see the precise format of this command later in this appendix, but the basic syntax is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT TO <i class="emphasis">database</i> USER <i class="emphasis">username</i> USING <i class="emphasis">password</i>;
+</pre>
+</div>
+<p class="para">You execute statements in the Script window by selecting Script <font face="wingdings">Ø</font> Execute from the main menu. You don't need to provide a <span class="fixed">USING</span> clause for the <span class="fixed">CONNECT</span> statement. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT TO InstSql USER DB2ADMIN;
+</pre>
+</div>
+<p class="para">If you don't provide a password, DB2 will prompt you to enter one, as shown in <a class="internaljump" href="#ap01fig07">Figure A-7</a>.</p>
+<div class="figure">
+<a name="1185"></a><a name="ap01fig07"></a><span class="figuremediaobject"><img src="images/fig521_01.jpg" height="190" width="244" alt="" border="0"></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-7: </span>Providing a password to connect to DB2</span>
+</div>
+<p class="para">Any output from <span class="fixed">SELECT</span> statements, stored procedures, and so on appears in the pane below the SQL pane, as shown in <a class="internaljump" href="#ap01fig08">Figure A-8</a>.</p>
+<div class="figure">
+<a name="1186"></a><a name="ap01fig08"></a><span class="figuremediaobject"><a href="images/fig522%5F01%5F0%2Ejpg" NAME="IMG_53" target="_parent"><img src="images/fig522_01.jpg" height="372" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-8: </span>Viewing output in DB2 Command Center</span>
+</div>
+<a name="1187"></a><a name="IDX-506"></a>
+<p class="para">By default, Command Center will assume that any semicolons it encounters mark the end of a statement. If you want to execute multistatement queries (for example, in a <span class="fixed">BEGIN ATOMIC...END</span> block), you need to change the default statement termination character to something else so Command Center will send the whole query, not just the part up to the first semicolon. You can do this in the Tools <font face="wingdings">Ø</font> Tools Settings dialog box, as shown in <a class="internaljump" href="#ap01fig09">Figure A-9</a>.</p>
+<div class="figure">
+<a name="1188"></a><a name="ap01fig09"></a><span class="figuremediaobject"><a href="images/fig523%5F01%5F0%2Ejpg" NAME="IMG_54" target="_parent"><img src="images/fig523_01.jpg" height="229" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-9: </span>The Tool Settings dialog box</span>
+</div>
+<a name="1189"></a><a name="IDX-507"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1190"></a><a name="ap01lev2sec4"></a>MySQL</h3>
+<p class="first-para">MySQL doesn't, by default, come with any specific editors for entering SQL queries (although many third-party management products are available for MySQL). Instead, you use the <span class="fixed">mysql</span> command-line tool.</p>
+<p class="para">This utility allows you to specify many command-line options, but the key ones are as follows:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">-u <i class="emphasis">username</i>, --username=<i class="emphasis">username</i></span>: This is the username to use to log on to the database. Notice that you don't specify the <span class="fixed">@hostname</span> part of the username because this is supplied automatically.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">--password=<i class="emphasis">password</i></span>: This is the password to use to log on to the database. If no password is provided in the <span class="fixed">mysql</span> command-line instruction, <span class="fixed">mysql</span> will prompt you for one.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The database name: You supply this after any other options.</p>
+</li>
+</ul>
+<p class="para">For example, to log on to the <span class="fixed">InstantUniversity</span> database as <span class="fixed">Alice@localhost</span> using the password <span class="fixed">simplepassword</span>, you could use this command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+mysql -u Alice --password=simplepassword InstantUniversity
+<a name="1191"></a><a name="IDX-508"></a>
+</pre>
+</div>
+<p class="para">Once you've logged on to MySQL, you can just type SQL statements at the command prompt, and they'll execute immediately. Any output appears directly in the command window, as shown in <a class="internaljump" href="#ap01fig10">Figure A-10</a>.</p>
+<div class="figure">
+<a name="1192"></a><a name="ap01fig10"></a><span class="figuremediaobject"><a href="images/fig524%5F01%5F0%2Ejpg" NAME="IMG_55" target="_parent"><img src="images/fig524_01.jpg" height="199" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-10: </span>Viewing MySQL output in the command window</span>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1193"></a><a name="ap01lev2sec5"></a>Access</h3>
+<p class="first-para">To run queries against the Access version of the database, open the database by double-clicking the <span class="fixed">InstantUniversity.mdb</span> file in Windows. Access will display a list of the tables in the database, as shown in <a class="internaljump" href="#ap01fig11">Figure A-11</a>.</p>
+<div class="figure">
+<a name="1194"></a><a name="ap01fig11"></a><span class="figuremediaobject"><a href="images/fig525%5F01%5F0%2Ejpg" NAME="IMG_56" target="_parent"><img src="images/fig525_01.jpg" height="266" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-11: </span>The tables in Access</span>
+</div>
+<a name="1195"></a><a name="IDX-509"></a>
+<p class="para">To execute SQL statements against your database, you need to create a new query. To do this, select Insert <font face="wingdings">Ø</font> Query from the main menu. Access will ask you how you want to create the query, as shown in <a class="internaljump" href="#ap01fig12">Figure A-12</a>.</p>
+<div class="figure">
+<a name="1196"></a><a name="ap01fig12"></a><span class="figuremediaobject"><a href="images/fig525%5F02%5F0%2Ejpg" NAME="IMG_57" target="_parent"><img src="images/fig525_02.jpg" height="155" width="247" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-12: </span>Creating a new query in Access</span>
+</div>
+<p class="para">Ensure that the Design View option is highlighted, and click OK. Access will present the design view, which allows you to create queries visually rather than by writing the SQL statements by hand, as shown in <a class="internaljump" href="#ap01fig13">Figure A-13</a>.</p>
+<div class="figure">
+<a name="1197"></a><a name="ap01fig13"></a><span class="figuremediaobject"><a href="images/fig526%5F01%5F0%2Ejpg" NAME="IMG_58" target="_parent"><img src="images/fig526_01.jpg" height="265" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-13: </span>The design view in Access</span>
+</div>
+<a name="1198"></a><a name="IDX-510"></a>
+<p class="para">However, this is a SQL book, so you don't want to do that! Select View <font face="wingdings">Ø</font> SQL View from the main menu. Access generates the skeleton of a simple <span class="fixed">SELECT</span> statement, based on the table highlighted when you inserted the query, as shown in <a class="internaljump" href="#ap01fig14">Figure A-14</a>.</p>
+<div class="figure">
+<a name="1199"></a><a name="ap01fig14"></a><span class="figuremediaobject"><a href="images/fig526%5F02%5F0%2Ejpg" NAME="IMG_59" target="_parent"><img src="images/fig526_02.jpg" height="186" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-14: </span>The skeleton <i class="emphasis"><span class="fixed">SELECT</span></i> statement generated by Access</span>
+</div>
+<p class="para">Replace this with the query you want to execute and click the ! icon on the toolbar. Access replaces the current window with the results from the query, as shown in <a class="internaljump" href="#ap01fig15">Figure A-15</a>.</p>
+<div class="figure">
+<a name="1200"></a><a name="ap01fig15"></a><span class="figuremediaobject"><img src="images/fig527_01.jpg" height="286" width="270" alt="" border="0"></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure A-15: </span>The results from an Access query</span>
+</div>
+<a name="1201"></a><a name="IDX-511"></a>
+<p class="last-para">When you close the results window, you'll be asked if you want to save the query. If you select Yes, this query will be available to execute as a stored query.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0103.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0105.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

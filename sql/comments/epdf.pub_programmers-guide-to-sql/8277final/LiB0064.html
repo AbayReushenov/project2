@@ -1,0 +1,118 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Understanding Database Security and SQL</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0063.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0065.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch11"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="730"></a><a name="ch11lev1sec2"></a>Understanding Database Security and SQL</h2><p class="first-para">For the authentication part, the SQL-99 standard doesn't provide you with any commands for managing user accounts. As a result, once again you're facing difficult territory, where each database has its own approach to the subject, even though the features they provide are quite similar. You'll see, for each database, how to create and remove users, assign passwords to them, and so on.</p>
+<p class="para">As for the authorization part, SQL-99 specifies two commands for managing permissions: <span class="fixed">GRANT</span> and <span class="fixed">REVOKE</span>. Most database systems support these two commands, but the syntax differs slightly between the implementations. You'll take a quick look at each of them before moving on to database specifics.</p>
+<p class="para">SQL-99 also specifies the <span class="fixed">CREATE ROLE</span>, <span class="fixed">SET ROLE</span>, and <span class="fixed">DROP ROLE</span> commands, which are about managing roles and associating them with users. However, out of the RDBMS platforms covered in this book, only Oracle implements these commands; the other databases have different commands for dealing with roles. For this reason, we'll discuss roles separately for each database.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Most databases ship with visual tools that allow administering security with mouse clicks instead of lengthy commands. MySQL doesn't ship with such tools, but you'll find many free ones provided by third parties. We'll leave these features for you to explore. The following sections cover how you can manage user accounts for each database system using command-line instructions.</p>
+</td>
+</tr>
+</table>
+<div class="section">
+<h3 class="sect3-title">
+<a name="731"></a><a name="ch11lev2sec4"></a>Using GRANT</h3>
+<p class="first-para">You use <span class="fixed">GRANT</span> to grant privileges to existing users. There are two main kinds of permissions: statement-level permissions and object-level permissions.</p>
+<p class="para">
+<i class="emphasis">Statement-level permissions</i> are about permitting users to perform certain actions that aren't related to a specific database object. Examples of statement-level permissions are <span class="fixed">CREATE DATABASE</span>, <span class="fixed">CREATE TABLE</span>, <span class="fixed">CREATE PROCEDURE</span>, and <span class="fixed">CREATE VIEW</span>. A user with the <span class="fixed">CREATE TABLE</span> permission has the right to create data <a name="732"></a><a name="IDX-305"></a>tables. For granting statement-level permissions, you use a command similar to the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT &lt;<i class="emphasis">privilege type</i>&gt; TO &lt;<i class="emphasis">username</i>&gt;
+</pre>
+</div>
+<p class="para">
+<i class="emphasis">Object-level permissions</i> control access to specific, existing database objects. The most obvious database object type you might want to limit access to is the data table. The typical rights that can be granted for data tables are <span class="fixed">INSERT</span>, <span class="fixed">UPDATE</span>, <span class="fixed">DELETE</span>, <span class="fixed">SELECT</span>, or a combination of all of these. As an example, a user can be allowed to read a data table but will not be allowed to modify it. Some databases permit restricting access on a column-level basis inside the table. For stored procedures, the typical privilege type that can be granted is <span class="fixed">EXECUTE</span>. When granting object-level permissions, you must also specify the object (resource):</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT &lt;<i class="emphasis">privilege type</i>&gt; ON &lt;<i class="emphasis">resource</i>&gt; TO &lt;<i class="emphasis">username</i>&gt;
+</pre>
+</div>
+<p class="para">By default, users have full access to the objects they create, but they don't have access to other users' objects. A user who creates a data table will have all possible rights on that table, including permissions to read, modify, and even drop it, and a user who creates a stored procedure will have the right to execute that stored procedure. However, if you want to access some other user's data, that user will have to grant you access to his or her objects.</p>
+<p class="para">With SQL Server, Oracle, and DB2, you can also use <span class="fixed">GRANT</span> to assign roles to existing users. You'll see examples of this later in the chapter.</p>
+<p class="para">The exact <span class="fixed">GRANT</span> options, privilege types, and supported resource types are database specific; you'll need to consult the documentation for your database for more details.</p>
+<p class="para">Here is the SQL-99 syntax for <span class="fixed">GRANT</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT { [ALL PRIVILEGES] }
+| SELECT
+| INSERT [(<i class="emphasis">column_name</i> [,...n])]
+| DELETE
+| UPDATE [(<i class="emphasis">column_name</i> [,...n])]
+| REFERENCES [(<i class="emphasis">column_name</i> [,...n])]
+| USAGE }[,...n]
+ON { [TABLE] <i class="emphasis">table_name</i>
+| DOMAIN <i class="emphasis">domain_name</i>
+| COLLATION <i class="emphasis">collation_name</i><a name="733"></a><a name="IDX-306"></a>
+| CHARACTER SET <i class="emphasis">charset_name</i>
+| TRANSLATION <i class="emphasis">translation_name</i> }
+TO (<i class="emphasis">granteee_name</i> | PUBLIC}
+[WITH GRANT OPTION]
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="734"></a><a name="ch11lev2sec5"></a>Using REVOKE</h3>
+<p class="first-para">You use <span class="fixed">REVOKE</span> to remove privileges that had previously been granted with <span class="fixed">GRANT</span> or deny permissions that users have by default (such as the rights users have over their own data).</p>
+<p class="para">
+<span class="fixed">REVOKE</span> also works supports a statement-level syntax and an object-level syntax. For dealing with statement-level permissions, you use it like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE &lt;<i class="emphasis">privilege type</i>&gt; FROM &lt;<i class="emphasis">username</i>&gt;
+</pre>
+</div>
+<p class="para">For object-level permissions, you also need to specify the resources you're revoking privileges from:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE &lt;<i class="emphasis">privilege type</i>&gt; ON &lt;<i class="emphasis">resource</i>&gt; FROM &lt;<i class="emphasis">username</i>&gt;
+</pre>
+</div>
+<p class="para">When all rights are revoked from a given user, the user and its objects (such as data tables) aren't deleted from the database. Instead, the user is simply forbidden to access them.</p>
+<p class="para">SQL-99 specifies the following <span class="fixed">REVOKE</span> syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE [GRANT OPTION FOR]
+{ ALL PRIVILEGES }
+| SELECT
+| INSERT
+| DELETE
+| UPDATE
+| REFERENCES
+| USAGE }[,...n]
+ON { [TABLE] <i class="emphasis">table_name</i>
+| DOMAIN <i class="emphasis">domain_name</i>
+| COLLATION <i class="emphasis">collation_name</i>
+| CHARACTER SET <i class="emphasis">charset_name</i>
+| TRANSLATION <i class="emphasis">translation_name</i> }
+FROM (<i class="emphasis">granteee_name</i> | PUBLIC} [,...n]
+{CASCADE | RESTRICT}
+
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0063.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0065.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

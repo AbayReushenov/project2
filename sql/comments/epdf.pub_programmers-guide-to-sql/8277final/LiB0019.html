@@ -1,0 +1,58 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Dealing with NULL Data</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0018.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0020.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="176"></a><a name="ch02lev1sec6"></a>Dealing with NULL Data</h2><p class="first-para">The final topic you're going to look at in this chapter is how to deal with columns that contain <span class="fixed">NULL</span> values&#8212;that is, columns that don't contain a value at all. This may occur by design but may also be the result of an error, such as a failure to enter the appropriate data into the database. </p>
+<p class="para">In general, RDBMSs allow you to specify whether columns allow <span class="fixed">NULL</span> values, which can make your life easier. If you say that a column can't contain a <span class="fixed">NULL</span> value, then an attempt to add a row without specifying a value for that column will result in an error. Furthermore, for tables that allow <span class="fixed">NULL</span> values in one or more columns, then you can't always rely on values being present when you perform <span class="fixed">SELECT</span> queries. Where <span class="fixed">NULL</span> values are allowed, you must be prepared to deal with them in your code; otherwise, unpredicted errors could occur.</p>
+<a name="177"></a><a name="IDX-64"></a>
+<p class="para">You can use the <span class="fixed">NULL</span> SQL keyword to test for <span class="fixed">NULL</span> values:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i> WHERE <i class="emphasis">ColumnC</i> IS NOT NULL;
+</pre>
+</div>
+<p class="para">Similarly, you could select only those rows with <span class="fixed">NULL</span> values:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i> WHERE <i class="emphasis">ColumnC</i> IS NULL;
+</pre>
+</div>
+<p class="para">Enforcing a non-null condition can be useful. For example, in the <span class="fixed">Exam</span> table in the <span class="fixed">InstantUniversity</span> database, the <span class="fixed">Comments</span> column contains a couple of <span class="fixed">NULL</span> values. Suppose you wanted to extract a list of only rows with no comments. You could use the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ExamID, CourseID, ProfessorID, SustainedOn FROM Exam WHERE Comments IS NULL;
+</pre>
+</div>
+<p class="para">This query produces the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ExamID      CourseID    ProfessorID  SustainedOn
+
+   ----------- ----------- ------------ -----------
+   4           4           3            03/18/2003
+   6           6           3            03/25/2003
+</pre>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0018.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0020.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

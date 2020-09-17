@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["packs/admin~packs/application~packs/exercise"],{"o+Db":function(n,s,c){"use strict";var e=function(){document.documentElement.classList.remove("no-js");document.documentElement.classList.add("js")};s["a"]=e}}]);

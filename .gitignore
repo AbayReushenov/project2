@@ -1,0 +1,82 @@
+# https://ru.hexlet.io/courses/git_base/lessons/git_gitignore/theory_unit
+
+# # комментарий — эта строка игнорируется
+# # не обрабатывать файлы, имя которых заканчивается на .a
+# *.a
+# # НО отслеживать файл lib.a, несмотря на то, что мы игнорируем все .a файлы с помощью предыдущего правила
+# !lib.a
+# # игнорировать только файл TODO находящийся в корневом каталоге, не относится к файлам вида subdir/TODO
+# /TODO
+# # игнорировать все файлы в каталоге build/
+# build/
+# # игнорировать doc/notes.txt, но не doc/server/arch.txt
+# doc/*.txt
+# # игнорировать все .txt файлы в каталоге doc/
+# doc/**/*.txt
+# Шаблон **/ доступен в Git, начиная с версии 1.8.2.
+
+# https://docs.github.com/en/github/using-git/ignoring-files
+
+# https://coderoad.ru/10744305/%D0%9A%D0%B0%D0%BA-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C-%D1%84%D0%B0%D0%B9%D0%BB-gitignore
+# Файл .gitignore по умолчанию не добавляется в репозиторий. Используйте vi или ваш любимый текстовый редактор, чтобы создать файл .gitignore, а затем выдать git add .gitignore , а затем git commit -m "message" .gitignore . Об этом позаботятся следующие команды.
+
+# > .gitignore
+# git add .gitignore
+# git commit -m "message" .gitignore
+
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+
+# Я попадал в эту ситуацию несколько раз, поэтому я сделал один лайнер , который я могу вставить в terminal в моем каталоге проекта:
+
+# touch .gitignore && echo "node_modules/" >> .gitignore
+
+node_modules/
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+node_modules/
+
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+**/node_modules

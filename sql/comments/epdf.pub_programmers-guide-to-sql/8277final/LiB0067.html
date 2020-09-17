@@ -1,0 +1,288 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Working with Oracle Security</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0066.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0068.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch11"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="753"></a><a name="ch11lev1sec5"></a>Working with Oracle Security</h2><a name="754"></a><a name="IDX-315"></a>
+<p class="para">In the following sections, you'll look at some of the same tricks you learned in the SQL Server section. You'll create a new user called Alice, see how you can change passwords, and then examine how you work with permissions in Oracle.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="755"></a><a name="ch11lev2sec11"></a>Working with Users</h3>
+<p class="first-para">Oracle comes with two users that are created by default: <span class="fixed">SYSTEM</span> and <span class="fixed">SYS</span>. In order to create new users, you log in using the <span class="fixed">SYSTEM</span> user because <span class="fixed">SYSTEM</span> has the required privileges.</p>
+<p class="para">To create a new Oracle user, you use the <span class="fixed">CREATE USER</span> command, which needs to be supplied with the username and its password. Here's how you create the Alice account in Oracle, with a default password of <span class="fixed">simplepassword</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE USER Alice IDENTIFIED BY simplepassword;
+</pre>
+</div>
+<p class="para">If you want to change the simple password of Alice to a complicated one, you need to use the <span class="fixed">ALTER USER</span> command. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER USER Alice IDENTIFIED BY complicatedpassword;
+</pre>
+</div>
+<p class="para">Alternatively, you can use the <span class="fixed">password</span> command in SQL*Plus, which doesn't display the passwords as you type them. When logged in as Alice, simply type <span class="fixed">password</span> and press Enter. When logged in as <span class="fixed">SYSTEM</span>, type <span class="fixed">password Alice</span> to change Alice's password.</p>
+<p class="para">You can remove users with the <span class="fixed">DROP USER</span> command. If you want to give Alice a nasty surprise, try this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP USER Alice;
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">With Oracle, you can assign profiles to user accounts via the <i class="emphasis"><span class="fixed">CREATE PROFILE</span></i> command. Using this command, you can set the lifetime of a password, the number of consecutive failed attempts allowed before the account is automatically locked and for how much time it will remain locked, and other similar parameters regarding passwords. Please look up the <i class="emphasis"><span class="fixed">CREATE PROFILE</span></i> command in the Oracle Alphabetical Reference for more information about this command.</p>
+</td>
+</tr>
+</table>
+<a name="756"></a><a name="IDX-316"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="757"></a><a name="ch11lev2sec12"></a>Assigning User Permissions</h3>
+<p class="first-para">Right now, although Alice does have a new account, she can't do many things with it. By default, a new user isn't even allowed to log in&#8212;all access rights must be explicitly defined. You'll use <span class="fixed">GRANT</span> and <span class="fixed">REVOKE</span> commands to adjust the permissions for each user.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="758"></a><a name="ch11lev3sec2"></a>The Predefined System Roles</h4>
+<p class="first-para">To let Alice connect to Oracle, you need to assign her the <span class="fixed">CONNECT</span> role. The <span class="fixed">CONNECT</span> role allows a user to connect to the database, but this right only becomes meaningful when combined with other permissions (such as permissions to access or modify existing data tables).</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">CONNECT</span></i>, <i class="emphasis"><span class="fixed">RESOURCE</span></i>, and <i class="emphasis"><span class="fixed">DBA</span></i> are the three standard roles in Oracle. The <i class="emphasis"><span class="fixed">CONNECT</span></i> role permits users to connect to the database. Users with the <i class="emphasis"><span class="fixed">RESOURCE</span></i> role are allowed to create their own tables, procedures, triggers, and other types of database objects, and the <i class="emphasis"><span class="fixed">DBA</span></i> role allows for unlimited access.</p>
+</td>
+</tr>
+</table>
+<p class="para">To assign Alice the <span class="fixed">CONNECT</span> and <span class="fixed">RESOURCE</span> roles, log in using a database administrator account (such as <span class="fixed">SYSTEM</span>) and execute the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT CONNECT, RESOURCE to Alice;
+</pre>
+</div>
+<p class="para">Note that the <span class="fixed">RESOURCE</span> role doesn't include the privileges supplied by <span class="fixed">CONNECT</span>. You can test this by providing Alice only with the <span class="fixed">RESOURCE</span> role (without <span class="fixed">CONNECT</span>) and then trying to connect to the database using the Alice account&#8212;the database won't let you in!</p>
+<p class="para">Be aware that a user who is granted the <span class="fixed">RESOURCE</span> role obtains many system-level privileges, including <span class="fixed">UNLIMITED TABLESPACE</span>, which allows the user to consume any amount of space in any tablespace. Don't haphazardly grant the <span class="fixed">RESOURCE</span> role to any user, and if you do use it, it's a good idea to revoke the <span class="fixed">UNLIMITED TABLESPACE</span> privilege.</p>
+<p class="para">
+<span class="fixed">REVOKE</span> has a similar format, except you use <span class="fixed">FROM</span> instead of <span class="fixed">TO</span>. Here's an example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE RESOURCE FROM Alice;
+</pre>
+</div>
+<p class="para">After revoking the <span class="fixed">RESOURCE</span> role from Alice, she won't be able to do anything with her account, except log in to the database. Give her the <span class="fixed">RESOURCE</span> role again so you can do some more tests.</p>
+<a name="759"></a><a name="IDX-317"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="760"></a><a name="ch11lev3sec3"></a>Granting and Revoking Object-Level Permissions</h4>
+<p class="first-para">To grant object-level permissions, you use the usual syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT &lt;<i class="emphasis">privilege type</i>&gt; ON &lt;<i class="emphasis">resource</i>&gt; TO &lt;<i class="emphasis">username</i>&gt;
+</pre>
+</div>
+<p class="para">The object-level permissions supported by Oracle are as follows:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">ALTER</span> allows the grantee to change the table definition using the <span class="fixed">ALTER</span> <span class="fixed">TABLE</span> command.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">DELETE</span>, <span class="fixed">INSERT</span>, <span class="fixed">SELECT</span>, and <span class="fixed">UPDATE</span> are the permissions that apply to data tables and views.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">INDEX</span> allows the grantee to create indexes on the mentioned data table.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">REFERENCES</span> allows a user to insert rows into a table that has a <span class="fixed">FOREIGN KEY</span> constraint to another table where the user doesn't have <span class="fixed">SELECT</span> permissions.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">EXECUTE</span> allows the user to run the specified function or stored procedure or to access any program object declared in the specification of a package.</p>
+</li>
+</ul>
+<p class="para">Let's look at a quick example to see how these work. First, connect to Oracle as Alice using a command similar to the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT Alice/complicatedpassword<i class="emphasis">@service name</i>;
+</pre>
+</div>
+<p class="para">where <i class="emphasis"><span class="fixed">@service name</span></i> is sometimes required by Oracle to connect to the database server.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">Note how you can use the <i class="emphasis"><span class="fixed">CONNECT</span></i> command to change the logged-in user; don't confuse the <i class="emphasis"><span class="fixed">CONNECT</span></i> command (which changes the current user) with the <i class="emphasis"><span class="fixed">CONNECT</span></i> role.</p>
+</td>
+</tr>
+</table>
+<p class="para">Second, when logged in as Alice, try to read data from the <span class="fixed">Student</span> table in the <span class="fixed">InstantUniversity</span> database. Note that when accessing some other user's objects you need to specify the owner username along with the object name:</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">In these examples we assume you created the <i class="emphasis"><span class="fixed">InstantUniversity</span></i> database while logged on with the <i class="emphasis"><span class="fixed">INSTSQL</span></i> account. If you created it using another account (for example, <i class="emphasis"><span class="fixed">SYSTEM</span></i>), please use that account instead.</p>
+</td>
+</tr>
+</table>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM INSTSQL.Student;
+<a name="761"></a><a name="IDX-318"></a>
+</pre>
+</div>
+<p class="para">When executing this command using Alice's account, you'll be told that <span class="fixed">INSTSQL.Student</span> doesn't exist. This is because Alice doesn't have <span class="fixed">SELECT</span> permissions on <span class="fixed">Students</span>.</p>
+<p class="para">To grant her access on <span class="fixed">Student</span>, you need to log in again as the administrator of the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT INSTSQL/password@service name;
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">You could run this command while logged on as <i class="emphasis"><span class="fixed">SYSTEM</span></i>, but as a general rule, you should always work with the least privileges necessary to perform a task; because you only need administrative privileges on the <i class="emphasis"><span class="fixed">InstantUniversity</span></i> database, you'll use the account that just has privileges for that database.</p>
+</td>
+</tr>
+</table>
+<p class="para">When logged in as <span class="fixed">INSTSQL</span>, execute the following <span class="fixed">GRANT</span> command, which grants Alice access to <span class="fixed">SELECT</span> and <span class="fixed">INSERT</span> data on the <span class="fixed">Student</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT, INSERT ON Student TO Alice;
+</pre>
+</div>
+<p class="para">Now connect again as Alice and perform two operations on the <span class="fixed">Student</span> table as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO INSTSQL.Student (StudentID, Name)
+VALUES (13, 'George Bush');
+SELECT * FROM INSTSQL.Student;
+</pre>
+</div>
+<p class="para">The results will show the rows inserted with both the <span class="fixed">INSTSQL</span> account that you've been using and the row added using the Alice account:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID           Name
+
+   ------------------ ----------------------
+   1                    John Jones
+   2                    Gary Burton
+   3                    Emily Scarlett
+   4                    Bruce Lee
+   5                    Anna Wolff
+   6                    Vic Andrews
+   7                    Steve Alaska<a name="762"></a><a name="IDX-319"></a>
+   8                    Julia Picard
+   9                    Andrew Foster
+   10                   Maria Fernandez
+   11                   Mohammed Akbar
+   12                   Isabelle Jonsson
+   13                   George Bush
+</pre>
+</div>
+<p class="para">Now, try to do an update (while still connected as Alice):</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE INSTSQL.Student
+SET StudentID = 555
+WHERE StudentID = 13;
+</pre>
+</div>
+<p class="para">If you try this, you'll be told you don't have enough privileges. This is true because Alice only has <span class="fixed">INSERT</span> and <span class="fixed">SELECT</span> privileges.</p>
+<p class="para">You can use <span class="fixed">GRANT</span> with the <span class="fixed">WITH GRANT OPTION</span> that gives the user the right to pass along the received privileges to other users. If you wanted Alice to have the rights to give <span class="fixed">INSERT</span> and <span class="fixed">SELECT</span> permissions on <span class="fixed">SomeTable</span> to other users, you need to execute something similar to this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT, INSERT ON Student TO Alice WITH GRANT OPTION;
+</pre>
+</div>
+<p class="para">To revoke the <span class="fixed">INSERT</span> permission on <span class="fixed">Student</span> from Alice, you use <span class="fixed">REVOKE</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE INSERT ON Student FROM Alice;
+</pre>
+</div>
+<p class="para">If you want to revoke the <span class="fixed">INSERT</span> permission on <span class="fixed">Student</span> from Alice and from all the other users who received this permission from Alice, you use the <span class="fixed">CASCADE</span> keyword. This only applies if Alice was provided the permission using <span class="fixed">WITH GRANT OPTION</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE INSERT ON Student FROM Alice CASCADE;
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="763"></a><a name="ch11lev2sec13"></a>Assigning Roles</h3>
+<p class="first-para">In Oracle, in addition to the three system roles mentioned earlier, you can create new roles using the <span class="fixed">CREATE ROLE</span> command. Oracle even supports associating passwords to roles.</p>
+<p class="para">While logged in with the <span class="fixed">SYSTEM</span> account, create a new role named <span class="fixed">TestRole</span>:</p>
+<a name="764"></a><a name="IDX-320"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE ROLE TestRole;
+</pre>
+</div>
+<p class="para">While you're still logged in as <span class="fixed">SYSTEM</span>, assign it to Alice:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT TestRole TO Alice;
+</pre>
+</div>
+<p class="para">When created, the role doesn't have any privileges. So, log back in as <span class="fixed">INSTSQL</span> and add the <span class="fixed">UPDATE</span> privilege on <span class="fixed">Student</span> to <span class="fixed">TestRole</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT UPDATE ON Student TO TestRole;
+</pre>
+</div>
+<p class="para">Now log in once again as Alice. While logged in as Alice, try to update <span class="fixed">Student</span>. Remember that before having the role, this was impossible. Now, the following command executes successfully:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE INSTSQL.Student
+SET StudentID = 555
+WHERE StudentID = 13;
+</pre>
+</div>
+<p class="para">To remove the granted role from Alice, you use <span class="fixed">REVOKE</span> while being logged in as <span class="fixed">SYSTEM</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE TestRole FROM Alice;
+</pre>
+</div>
+<p class="para">To finally drop the role, do the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP ROLE TestRole;
+</pre>
+</div>
+<p class="last-para">Don't forget to delete George Bush from the <span class="fixed">Student</span> table when you're done.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="765"></a><a name="ch11lev2sec14"></a>Setting Statement-Level Permissions</h3>
+<p class="first-para">
+<span class="fixed">GRANT</span> and <span class="fixed">REVOKE</span> also deal with statement-level permissions. With two exceptions, these rights allow the user to create new database objects. The list of statement-level permissions supported by Oracle is very long; please consult the <span class="fixed">GRANT</span> section (under "System Privileges and Roles") in the Oracle SQL Reference for complete details.</p>
+<p class="para">Typical statement-level permissions are <span class="fixed">CREATE DATABASE</span>, <span class="fixed">CREATE TABLE</span>, <span class="fixed">ALTER</span> <span class="fixed">TABLE</span>, <span class="fixed">DROP TABLE</span>, and so on. Statement-level permissions also can be granted using <span class="fixed">WITH GRANT OPTION</span>, in which case the grantee can grant the received privileges to other users.</p>
+<p class="last-para">Note that many of these permissions are included with the <span class="fixed">RESOURCE</span> role. For example, users having the <span class="fixed">RESOURCE</span> role have permissions to create their own <a name="766"></a><a name="IDX-321"></a>data tables. However, if you want to be restrictive about the permissions you grant to a user, you'll prefer to grant individual rights instead of assigning the <span class="fixed">RESOURCE</span> role.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0066.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0068.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

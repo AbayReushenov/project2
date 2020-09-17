@@ -1,0 +1,231 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Creating a View</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0043.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0045.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch08"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="474"></a><a name="ch08lev1sec2"></a>Creating a View</h2><a name="475"></a><a name="IDX-194"></a>
+<p class="para">To create a view, you use the following syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE VIEW <i class="emphasis">ViewName</i> AS <i class="emphasis">Query</i> [WITH CHECK OPTION]
+</pre>
+</div>
+<p class="para">Here, <i class="emphasis"><span class="fixed">Query</span></i> can be any query you like, which could involve any of the techniques you've seen in previous chapters.</p>
+<p class="para">For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE VIEW StudentSummary
+AS
+SELECT Student.StudentID, Student.Name,
+   COUNT(*) AS ExamsTaken
+FROM Student
+INNER JOIN StudentExam
+ON Student.StudentID = StudentExam.StudentID
+GROUP BY Student.StudentID, Student.Name
+</pre>
+</div>
+<p class="para">Here you create a view called <span class="fixed">StudentSummary</span>, which consists of a <span class="fixed">StudentID </span>column, a <span class="fixed">Name</span> column, and an <span class="fixed">ExamsTaken</span> column, which is a count of how many exams that student has taken. After doing this, it's possible to use the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Name, ExamsTaken FROM StudentSummary
+</pre>
+</div>
+<p class="para">This will return the desired order count information without having to use the clumsy syntax required to calculate this information.</p>
+<p class="para">You can use views wherever you might otherwise use tables in SQL statements, so you can query them, perform joins with them, and so on.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">You'll look at the <i class="emphasis"><span class="fixed">WITH CHECK OPTION</span></i> clause in just a moment when you learn about modifying data using views.</p>
+</td>
+</tr>
+</table>
+<a name="476"></a><a name="IDX-195"></a>
+<div class="example">
+<span class="example-title">CREATING A VIEW (SQL SERVER)</span><a name="477"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">For SQL Server, you should execute the following statement against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE VIEW ClassAttendees AS
+SELECT Class.ClassID, SUBSTRING(Professor.Name,
+   LEN(Professor.Name) - CHARINDEX(' ', REVERSE(Professor.Name)) + 2, 100)
+   + ', '
+   + LEFT(Professor.Name, LEN(Professor.Name)
+   - CHARINDEX(' ', REVERSE(Professor.Name)))
+   AS Name, 'Professor' AS Role
+FROM Professor
+   INNER JOIN Class ON Professor.ProfessorID =
+      Class.ProfessorID
+UNION
+SELECT Enrollment.ClassID, SUBSTRING(Student.Name,
+       LEN(Student.Name) - CHARINDEX(' ', REVERSE(Student.Name)) + 2, 100)
+       + ', '
+       + LEFT(Student.Name,
+              LEN(Student.Name) - CHARINDEX(' ', REVERSE(Student.Name)))
+       AS Name, 'Student'
+FROM Student
+   INNER JOIN Enrollment ON Student.StudentID =
+      Enrollment.StudentID
+</pre>
+</div>
+<p class="para">Oracle and DB2 will use a slightly different syntax for this example, as you'll see in a moment.</p>
+<p class="para">Then, execute the following statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID, Name, Role FROM ClassAttendees
+</pre>
+</div>
+<p class="para">You should see the following output (the first six rows are shown):</p>
+<a name="478"></a><a name="IDX-196"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   ClassID Name           Role
+
+   ------- -------------- ---------
+   1       Dawson, Prof.  Professor
+   1       Jones, John    Student
+   1       Picard, Julia  Student
+   1       Wolff, Anna    Student
+   2       Dawson, Prof.  Professor
+   2       Jones, John    Student
+   ...     ...            ...
+</pre>
+</div>
+<p class="last-para">In this example, you've used a modified version of the complicated string manipulation query from <a href="LiB0035.html#376" target="_parent" class="chapterjump">Chapter 6</a>, "Combining SQL Queries," to build a view called <span class="fixed">ClassAttendees</span>. This view shows who takes part in each class in the university, both students and professors.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">This is an ideal use of a view because you wouldn't want to use the whole lengthy query every time you wanted such information. You could refine the results by adding clauses into the <span class="fixed">SELECT</span> statement to filter the results, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID, Name, Role
+FROM ClassAttendees
+WHERE ClassID = 1;
+</pre>
+</div>
+<p class="para">This statement would return only the attendees of the first class on Monday morning.</p>
+<div class="example">
+<span class="example-title">CREATING A VIEW (ORACLE)</span><a name="479"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The main difference between the SQL Server implementation of this example and the Oracle implementation is that the code that modifies the names of the students and professors will be constructed differently, as you can see in the following code equivalent:</p>
+<a name="480"></a><a name="IDX-197"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE VIEW ClassAttendees AS
+SELECT Class.ClassID,
+   SUBSTR(Professor.Name, INSTR(Professor.Name, ' ') + 1)
+           || ', '
+           || SUBSTR(Professor.Name, 1,
+              INSTR(Professor.Name, ' ') - 1)
+   AS Name, 'Professor' AS Role
+FROM Professor
+   INNER JOIN Class ON Professor.ProfessorID =
+      Class.ProfessorID
+UNION
+SELECT Enrollment.ClassID,
+   SUBSTR(Student.Name, INSTR(Student.Name, ' ') + 1)
+           || ', '
+           || SUBSTR(Student.Name, 1,
+              INSTR(Student.Name, ' ') - 1)
+   AS Name, 'Student'
+FROM Student
+   INNER JOIN Enrollment ON Student.StudentID = Enrollment.StudentID;
+</pre>
+</div>
+<p class="last-para">This code will produce the same results as the SQL Server equivalent.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">Finally, let's quickly look at the change in syntax to implement the same view in DB2.</p>
+<div class="example">
+<span class="example-title">CREATING A VIEW (DB2)</span><a name="481"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Note that when using DB2, in addition to the string manipulation code being slightly different, each column must be explicitly named using the <span class="fixed">AS <i class="emphasis">Name</i></span> syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE VIEW ClassAttendees AS
+SELECT Class.ClassID AS ClassID,
+   SUBSTR(Professor.Name, POSSTR(Professor.Name, ' ') + 1)
+          || ', '
+          || SUBSTR(Professor.Name, 1,
+                POSSTR(Professor.Name, ' ') - 1)
+   AS Name, 'Professor' AS Role
+FROM Professor
+   INNER JOIN Class ON Professor.ProfessorID =
+      Class.ProfessorID<a name="482"></a><a name="IDX-198"></a>
+UNION
+SELECT Enrollment.ClassID AS ClassID,
+   SUBSTR(Student.Name, POSSTR(Student.Name, ' ') + 1) || ', ' ||
+   SUBSTR(Student.Name, 1, POSSTR(Student.Name, ' ') - 1)
+   AS Name, 'Student' AS Role FROM Student INNER JOIN Enrollment
+ON Student.StudentID = Enrollment.StudentID;
+</pre>
+</div>
+<p class="last-para">Again, this code will produce the same results as the implementations shown previously.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0043.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0045.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

@@ -1,0 +1,354 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Creating the Data Structures</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0090.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0092.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch14"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="930"></a><a name="ch14lev1sec2"></a>Creating the Data Structures</h2><p class="first-para">So here you are, starting to build the catalog. First, you should create a new database for your product catalog. Create a new database named <span class="fixed">ProductCatalog</span> on your favorite database server using the steps you learned in <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects."</p>
+<p class="para">Let's see again what tables you want to create. <a class="internaljump" href="#ch14fig06">Figure 14-6</a> was created with SQL Server Enterprise Manager.</p>
+<div class="figure">
+<a name="931"></a><a name="ch14fig06"></a><span class="figuremediaobject"><a href="images/fig411%5F01%5F0%2Ejpg" NAME="IMG_41" target="_parent"><img src="images/fig411_01.jpg" height="70" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 14-6: </span>The <i class="emphasis"><span class="fixed">ProductCatalog</span></i> database in Enterprise Manager</span>
+</div>
+<p class="para">None of the diagrams presented so far lists the data types (and other properties) for each column. Most of the times the decision of which data type to use will not be hard to make, and you'll deal with this when you create the tables. Still, there's an issue you should consider before starting to construct the tables: How should you generate new IDs for the primary key column(s) when inserting new data records to the tables? Here are the common solutions to this question:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">In many cases (as well as in this case study), you rely on the database to automatically generate new IDs values.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Another common solution is to get the maximum value for the ID column and add one unit in order to generate a new unique value. This solution is straightforward, but it's not a recommended one because problems can appear when multiple users try to add new rows at the same time (which could result in a failed attempt to insert two identical values for the primary key).</p>
+</li>
+<li class="listitem">
+<p class="first-para">Generate a new Globally Unique Identifier (GUID) every time. GUIDs are randomly generated values that are guaranteed to be unique across time and space. There are a number of scenarios (such as replication scenarios) where these prove to be helpful.</p>
+<a name="932"></a><a name="IDX-396"></a>
+</li>
+<li class="listitem">
+<p class="first-para">In some cases, you'll know beforehand the values for the primary key columns, such in the case of the junction table where, for each record, you need to add an existing product ID and an existing category ID (these two values forming the primary key).</p>
+</li>
+</ul>
+<p class="para">Except for the junction table, you'll use autonumbered columns on the primary key columns of your tables.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="933"></a><a name="ch14lev2sec1"></a>Creating the Department Table</h3>
+<p class="first-para">The <span class="fixed">Department</span> table has three columns:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">DepartmentID</span> (autonumbered)</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Name</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Description</span>
+</p>
+</li>
+</ul>
+<p class="para">Remember that there are different ways to implement autonumber functionality into the data table: You use <span class="fixed">IDENTITY</span> columns for SQL Server, <span class="fixed">AUTOINCREMENT</span> for Access, <span class="fixed">AUTO_INCREMENT</span> columns for MySQL, <span class="fixed">GENERATED AS IDENTITY</span> columns for DB2, and sequences for Oracle. We covered these in the previous chapters. Let's now create the <span class="fixed">Department</span> table.</p>
+<p class="para">With SQL Server, use the following command to create the <span class="fixed">Department</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Department (
+DepartmentID INT <b class="bold">IDENTITY</b> NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200) NULL);
+</pre>
+</div>
+<p class="para">This is the similar command for DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Department (
+DepartmentID INT <b class="bold">GENERATED ALWAYS AS IDENTITY</b> NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200));
+</pre>
+</div>
+<p class="para">Note that DB2 doesn't let you specify a default value of <span class="fixed">NULL</span> for the <span class="fixed">Description</span> field as you've done in the rest of these statements.</p>
+<p class="para">Access requires similar syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Department (
+DepartmentID <b class="bold">AUTOINCREMENT</b> NOT NULL PRIMARY KEY,<a name="934"></a><a name="IDX-397"></a>
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200) NULL);
+</pre>
+</div>
+<p class="para">With MySQL, you use the <span class="fixed">InnoDB</span> table type, which supports <span class="fixed">FOREIGN KEY</span> constraints (the default table type, <span class="fixed">MyISAM</span>, doesn't). Because of the way categories relate to departments, you'll need to add a <span class="fixed">FOREIGN KEY</span> constraint to <span class="fixed">Category</span> that will reference the <span class="fixed">DepartmentID</span> column in <span class="fixed">Department</span>. Even if only the <span class="fixed">Category</span> column has a <span class="fixed">FOREIGN KEY</span> constraint defined, both tables that take part in the relationship need to be <span class="fixed">InnoDB</span> tables. You'll see the other end of this relationship when you create the <span class="fixed">Category</span> table. Here's the code for creating the <span class="fixed">Department</span> table in MySQL:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Department (
+DepartmentID INT <b class="bold">AUTO_INCREMENT</b> NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200) NULL) <b class="bold">Type=InnoDB</b>;
+</pre>
+</div>
+<p class="para">Because Oracle doesn't have an out-of-the-box way to automatically generate unique numbers like the other platforms, you can't specify that <span class="fixed">DepartmentID</span> is an autonumbered column when creating it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Department (
+DepartmentID INT NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR(200) NULL);
+</pre>
+</div>
+<p class="para">Instead, you create a sequence and trigger that implements the autonumber functionality:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SEQUENCE DepartmentIDSeq;
+
+CREATE OR REPLACE TRIGGER DepartmentAutonumberTrigger
+BEFORE INSERT ON Department
+FOR EACH ROW
+BEGIN
+  SELECT DepartmentIDSeq.NEXTVAL
+  INTO :NEW.DepartmentID FROM DUAL;
+END;
+/
+</pre>
+</div>
+<p class="para">After creating the sequence and trigger, you'll be able to add new rows the same way as with MySQL and SQL Server.</p>
+<a name="935"></a><a name="IDX-398"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="936"></a><a name="ch14lev2sec2"></a>Creating the Category Table</h3>
+<p class="first-para">The <span class="fixed">Category</span> table is similar to <span class="fixed">Department</span> except that it has an additional column&#8212;<span class="fixed">DepartmentID</span>&#8212;that references the <span class="fixed">DepartmentID</span> column of the <span class="fixed">Department</span> table.</p>
+<p class="para">Here's how you create this table with SQL Server:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Category (
+CategoryID INT <b class="bold">IDENTITY</b> NOT NULL PRIMARY KEY,
+DepartmentID INT NOT NULL <b class="bold">FOREIGN KEY REFERENCES DEPARTMENT</b>,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200) NULL);
+</pre>
+</div>
+<p class="para">This is the command in Access:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Category (
+CategoryID <b class="bold">AUTOINCREMENT</b> NOT NULL PRIMARY KEY,
+DepartmentID INT NOT NULL,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200) NULL,
+CONSTRAINT fk_DepartmentID FOREIGN KEY (DepartmentID)
+                              REFERENCES Department (DepartmentID));
+</pre>
+</div>
+<p class="para">Notice that Access doesn't allow you to use the shorthand constraint syntax that you used for SQL Server.</p>
+<p class="para">This is the command that creates the table with DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Category (
+CategoryID INT <b class="bold">GENERATED ALWAYS AS IDENTITY</b> NOT NULL PRIMARY KEY,
+DepartmentID INT NOT NULL,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200),
+FOREIGN KEY (DepartmentID) REFERENCES Department (DepartmentID));
+</pre>
+</div>
+<p class="para">With MySQL, when adding <span class="fixed">FOREIGN KEY</span> constraints, apart from using the <span class="fixed">InnoDB</span> table type and defining the <span class="fixed">FOREIGN KEY</span> constraint, you also need to create an index on the <span class="fixed">FOREIGN KEY</span> column:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Category (
+CategoryID INT <b class="bold">AUTO_INCREMENT</b> NOT NULL PRIMARY KEY,
+DepartmentID INT NOT NULL,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200) NULL,
+FOREIGN KEY (DepartmentID) REFERENCES Department (DepartmentID),
+INDEX idxDepartmentID (DepartmentID)
+) Type=InnoDB;
+<a name="937"></a><a name="IDX-399"></a>
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">If you forget to specify <i class="emphasis"><span class="fixed">InnoDB</span></i> for <i class="emphasis"><span class="fixed">Category</span></i> or <i class="emphasis"><span class="fixed">Department</span></i>, no errors will be generated by MySQL when adding the foreign key. Instead, the <i class="emphasis"><span class="fixed">FOREIGN KEY</span></i> constraint will simply be ignored.</p>
+</td>
+</tr>
+</table>
+<p class="para">This is how you create the table on Oracle:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Category (
+CategoryID INT NOT NULL PRIMARY KEY,
+DepartmentID INT NOT NULL,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR (200) NULL,
+FOREIGN KEY (DepartmentID) REFERENCES Department (DepartmentID));
+</pre>
+</div>
+<p class="para">After creating the <span class="fixed">Category</span> table with Oracle, you implement the autonumbering functionality using the same method as before:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SEQUENCE CategoryIDSeq;
+
+CREATE OR REPLACE TRIGGER CategoryAutonumberTrigger
+BEFORE INSERT ON Category
+FOR EACH ROW
+BEGIN
+   SELECT CategoryIDSeq.NEXTVAL
+   INTO :NEW.CategoryID FROM DUAL;
+END;
+/
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="938"></a><a name="ch14lev2sec3"></a>Creating the Product Table</h3>
+<p class="first-para">With <span class="fixed">Product</span>, you have a few more values to store than with <span class="fixed">Department</span> or <span class="fixed">Category</span>.</p>
+<p class="para">You have the <span class="fixed">OnCatalogPromotion</span> and <span class="fixed">OnDepartmentPromotion</span> columns, which hold binary values, and you have a <span class="fixed">Price</span> column, which needs to store monetary values.</p>
+<p class="para">With SQL Server, for <span class="fixed">OnCatalogPromotion</span> and <span class="fixed">OnDepartmentPromotion</span> you use the <span class="fixed">BIT</span> data type, which stores zero or one. This is just fine for what you need. Also, you have a specialized <span class="fixed">MONEY</span> data type that stores monetary data with fixed precision:</p>
+<a name="939"></a><a name="IDX-400"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Product (
+ProductID INT IDENTITY NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR(1000) NOT NULL,
+Price <b class="bold">MONEY</b> NULL,
+ImagePath VARCHAR(50) NULL,
+OnCatalogPromotion <b class="bold">BIT</b> NULL,
+OnDepartmentPromotion <b class="bold">BIT</b> NULL);
+</pre>
+</div>
+<p class="para">Access uses similar syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Product (
+ProductID <b class="bold">AUTOINCREMENT</b> NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description <b class="bold">VARCHAR(255)</b> NOT NULL,
+Price MONEY NULL,
+ImagePath VARCHAR(50) NULL,
+OnCatalogPromotion BIT NULL,
+OnDepartmentPromotion BIT NULL);
+</pre>
+</div>
+<p class="para">Notice that the maximum field length for a <span class="fixed">VARCHAR</span> in Access is 255 characters.</p>
+
+<p class="para">The command you use for DB2 is slightly different here because DB2 doesn't have a <span class="fixed">MONEY</span> or <span class="fixed">BIT</span> data type, so you use <span class="fixed">DECIMAL</span> for the price and <span class="fixed">SMALLINT</span> for the two Boolean values:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Product (
+ProductID INT GENERATED ALWAYS AS IDENTITY NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR(1000) NOT NULL,
+Price <b class="bold">DECIMAL(7,2)</b>,
+ImagePath VARCHAR(50),
+OnCatalogPromotion <b class="bold">SMALLINT</b>,
+OnDepartmentPromotion <b class="bold">SMALLINT</b>);
+</pre>
+</div>
+<p class="para">With MySQL you record monetary data using the <span class="fixed">DECIMAL</span> data type. You record the description as a <span class="fixed">VARCHAR(255)</span> instead of <span class="fixed">VARCHAR(1000)</span> because MySQL doesn't support higher dimensions. The alternative would be to use <span class="fixed">BLOB</span> (binary large object) fields, which are usually best avoided because of the impact they have on performance:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Product (
+ProductID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description <b class="bold">VARCHAR(255)</b> NOT NULL,<a name="940"></a><a name="IDX-401"></a>
+Price <b class="bold">DECIMAL</b> NULL,
+ImagePath VARCHAR(50) NULL,
+OnCatalogPromotion <b class="bold">BIT</b> NULL,
+OnDepartmentPromotion <b class="bold">BIT</b> NULL) <b class="bold">Type=InnoDB</b>;
+</pre>
+</div>
+<p class="para">Oracle has the universal <span class="fixed">NUMBER</span> data type, which you'll use for <span class="fixed">Price</span>, <span class="fixed">OnCatalogPromotion</span>, and <span class="fixed">OnDepartmentPromotion</span> columns. For the binary values, you specify the minimum size for number length and number of decimal places to ensure you occupy the smallest space possible:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Product (
+ProductID INT NOT NULL PRIMARY KEY,
+Name VARCHAR(50) NOT NULL,
+Description VARCHAR(1000) NOT NULL,
+Price <b class="bold">NUMBER</b> NULL,
+ImagePath VARCHAR(50) NULL,
+OnCatalogPromotion <b class="bold">NUMBER(1,0)</b> NULL,
+OnDepartmentPromotion <b class="bold">NUMBER(1,0)</b> NULL);
+</pre>
+</div>
+<p class="para">Once again, you create the trigger and sequence:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SEQUENCE ProductIDSeq;
+
+CREATE OR REPLACE TRIGGER ProductAutonumberTrigger
+BEFORE INSERT ON Product
+FOR EACH ROW
+BEGIN
+   SELECT ProductIDSeq.NEXTVAL
+   INTO :NEW.ProductID FROM DUAL;
+END;
+/
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="941"></a><a name="ch14lev2sec4"></a>Creating the ProductCategory Table</h3>
+<p class="first-para">With <span class="fixed">ProductCategory</span>, the new challenge is to create the multivalued primary key. You also have two foreign keys that reference the primary keys of the <span class="fixed">Category</span> and <span class="fixed">Product</span> tables.</p>
+<p class="para">With SQL Server, Access, Oracle, and DB2, here's how you create the <span class="fixed">ProductCategory</span> table. Note that here you're using the shorter syntax, which doesn't give explicit names to the <span class="fixed">PRIMARY KEY</span> and <span class="fixed">FOREIGN KEY</span> constraints:</p>
+<a name="942"></a><a name="IDX-402"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE ProductCategory (
+ProductID INT NOT NULL,
+CategoryID INT NOT NULL,
+PRIMARY KEY (ProductID, CategoryID),
+FOREIGN KEY (ProductID) REFERENCES Product (ProductID),
+FOREIGN KEY (CategoryID) REFERENCES Category (CategoryID)
+);
+</pre>
+</div>
+<p class="para">Alternatively, with SQL Server you can create the foreign keys with the simpler syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE ProductCategory (
+ProductID INT NOT NULL FOREIGN KEY REFERENCES PRODUCT,
+CategoryID INT NOT NULL FOREIGN KEY REFERENCES CATEGORY,
+PRIMARY KEY (ProductID, CategoryID)
+);
+</pre>
+</div>
+<p class="para">With MySQL, you need to create indexes on the columns used in foreign keys and make sure the table type is <span class="fixed">InnoDB</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE ProductCategory (
+ProductID INT NOT NULL,
+CategoryID INT NOT NULL,
+PRIMARY KEY (ProductID, CategoryID),
+FOREIGN KEY (ProductID) REFERENCES Product (ProductID),
+INDEX idxProductID (ProductID),
+FOREIGN KEY (CategoryID) REFERENCES Category (CategoryID),
+INDEX idxCategoryID (CategoryID)
+) Type=InnoDB;
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0090.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0092.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

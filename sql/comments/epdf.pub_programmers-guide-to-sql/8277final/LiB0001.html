@@ -1,0 +1,105 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>The Programmer's Guide to SQL</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="backcover.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0002.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="book">
+<div class="bookinfo">
+<h1 class="title"><a>The Programmer's Guide to SQL</a></h1><div class="authorgroup">
+<div class="author">CRISTIAN  DARIE,</div>
+<div class="author">KARLI  WATSON</div>
+<div class="author">WITH  CHRIS  HART,</div>
+<div class="author">KEVIN  HOFFMAN,</div>
+<div class="author">JULIAN  SKINNER</div>
+</div>
+<div class="freemediaobject">
+<img src="images/fig01_01.jpg" height="31" width="122" alt="" border="0"></div>
+<p class="copyright">Copyright © <i class="emphasis"><a name="4"></a><a name="IDX-ii"></a></i>2003 by Cristian Darie, Karli Watson with Chris Hart, Kevin Hoffman, Julian Skinner</p>
+<div class="legalnotice">
+<p class="first-para">All rights reserved. No part of this work may be reproduced or transmitted in any form or by any means, electronic or mechanical, including photocopying, recording, or by any information storage or retrieval system, without the prior written permission of the copyright owner and the publisher.</p>
+</div>
+<span class="isbn">ISBN (pbk): 1-59059-218-2<br>
+</span>
+<div class="legalnotice">
+<p class="first-para">Printed and bound in the United States of America 10987654321</p>
+<p class="first-para">Trademarked names may appear in this book. Rather than use a trademark symbol with every occurrence of a trademarked name, we use the names only in an editorial fashion and to the benefit of the trademark owner, with no intention of infringement of the trademark.</p>
+<p class="first-para">
+<b class="bold">Technical Reviewers:</b> Cristof Falk, Slavomir Furman, Brad Maiani, Judith M. Myerson, Johan Normén, David Schultz</p>
+<p class="first-para">
+<b class="bold">Editorial Board:</b> Dan Appleman, Craig Berry, Gary Cornell, Steven Rycroft, Julian Skinner, Martin Streicher, Jim Sumser, Karen Watterson, Gavin Wray, John Zukowski</p>
+<p class="first-para">
+<b class="bold">Lead Editor:</b> Tony Davis</p>
+<p class="first-para">
+<b class="bold">Assistant Publisher:</b> Grace Wong</p>
+<p class="first-para">
+<b class="bold">Project Manager:</b> Darren Murphy</p>
+<p class="first-para">
+<b class="bold">Copy Editor:</b> Kim Wimpsett</p>
+<p class="first-para">
+<b class="bold">Production Manager:</b> Kari Brooks</p>
+<p class="first-para">
+<b class="bold">Production Editor:</b> Kelly Winquist</p>
+<p class="first-para">
+<b class="bold">Proofreader:</b> Thistle Hill Publishing Services</p>
+<p class="first-para">
+<b class="bold">Compositor:</b> Kinetic Publishing Services, LLC</p>
+<p class="first-para">
+<b class="bold">Indexer:</b> John Collin</p>
+<p class="first-para">
+<b class="bold">Artist:</b> Kinetic Publishing Services, LLC</p>
+<p class="first-para">
+<b class="bold">Cover Designer:</b> Kurt Krames</p>
+<p class="first-para">
+<b class="bold">Manufacturing Manager:</b> Tom Debolski</p>
+<p class="first-para">Distributed to the book trade in the United States by Springer-Verlag New York, Inc., 175 Fifth Avenue, New York, NY, 10010 and outside the United States by Springer-Verlag GmbH &amp; Co. KG, Tiergartenstr. 17, 69112 Heidelberg, Germany.</p>
+<p class="first-para">In the United States: phone 1-800-SPRINGER, email &lt;<a href="mailto:orders@springer-ny.com"><span class="fixed">orders@springer-ny.com</span></a>&gt;, or visit <a target="_top" class="url" href="http://www.springer-ny.com"><span class="fixed">http://www.springer-ny.com</span></a>. Outside the United States: fax +49 6221 345229, email &lt;<a href="mailto:orders@springer.de"><span class="fixed">orders@springer.de</span></a>&gt;, or visit <a target="_top" class="url" href="http://www.springer.de"><span class="fixed">http://www.springer.de</span></a>.</p>
+<p class="first-para">For information on translations, please contact Apress directly at 2560 Ninth Street, Suite 219, Berkeley, CA 94710. Phone 510-549-5930, fax 510-549-5939, email &lt;<a href="mailto:info@apress.com"><span class="fixed">info@apress.com</span></a>&gt;, or visit <a target="_top" class="url" href="http://www.apress.com"><span class="fixed">http://www.apress.com</span></a>.</p>
+<p class="first-para">The information in this book is distributed on an "as is" basis, without warranty. Although every precaution has been taken in the preparation of this work, neither the author(s) nor Apress shall have any liability to any person or entity with respect to any loss or damage caused or alleged to be caused directly or indirectly by the information contained in this work.</p>
+<p class="first-para">The source code for this book is available to readers at <a target="_top" class="url" href="http://www.apress.com">ht<span class="fixed">tp://www.apress.com</span></a> in the Downloads section.<a name="5"></a><a name="IDX-iii"></a><a name="6"></a><a name="IDX-iv"></a><a name="7"></a><a name="IDX-v"></a><a name="8"></a><a name="IDX-vi"></a><a name="9"></a><a name="IDX-vii"></a><a name="10"></a><a name="IDX-viii"></a><a name="11"></a><a name="IDX-ix"></a>
+</p>
+<p class="first-para">
+<b class="bold">About the Authors</b>
+</p>
+<p class="first-para">
+<div class="informalfigure">
+<span class="figuremediaobject"><img src="images/fig09_01.jpg" height="195" width="195" alt="" border="0"></span>
+</div>
+</p>
+<p class="first-para">
+<b class="bold">CRISTIAN DARIE</b> is an independent IT consultant specializing in Microsoft technologies. Having worked with computers since he was a child, he won his first prize at the age of 12 in the first programming contest he ever entered. He was actively involved with the former Wrox Press as a technical reviewer and author, having contributed the OOP parts of <I>Visual C# .NET: A Guide for VB6 Developers</I> and coauthored <I>Beginning ASP.NET E-Commerce with Visual Basic .NET and Visual Studio .NET</I>. He has authored MCAD preparation material and various SkillDrill tests, such as C# Programming, Microsoft COM+, and DB2 Development, which can be taken at <a target="_top" class="url" href="http://www.skilldrill.com"><span class="fixed">http://www.skilldrill.com</span></a>.</p>
+<p class="first-para">Cristian is at Politehnica University of Bucharest, studying automatic control and industrial informatics. He can be contacted through <a target="_top" class="url" href="http://www.ChristianDarie.ro"><span class="fixed">http://www.ChristianDarie.ro</span></a>.</p>
+<p class="first-para">My big thanks go to Dave, Julian, and Chris for being such great people to work with.</p>
+<p class="first-para">
+<div class="informalfigure">
+<span class="figuremediaobject"><img src="images/fig09_02.jpg" height="193" width="195" alt="" border="0"></span>
+</div>
+</p>
+<p class="first-para">
+<b class="bold">KARLI WATSON</b> is a freelance author and IT specialist with a penchant for multicolored clothing. He started out with the intention of becoming a world-famous nanotechnologist, so perhaps one day you might recognize his name as he receives a Nobel Prize. For now, though, Karli's computing interests include all things mobile and everything .NET. Karli is also a snowboarding enthusiast and wishes he had a cat.</p>
+<p class="first-para">
+<b class="bold">JULIAN SKINNER</b> studied Germanic etymology before joining the former Wrox Press. He has consequently spent most of the last four-and-a-half years reading, editing, and writing books about programming, focusing on Microsoft technologies and, in particular, on C# and the .NET Framework. He contributed many sections and code samples, and often entire chapters, for the books he worked on at Wrox, mostly hiding behind the relative anonymity of an "additional material" credit, but he is credited as a coauthor of, among other titles, <I>Professional ADO.NET</I>.</p>
+<a name="12"></a><a name="IDX-x"></a>
+<p class="first-para">
+<b class="bold">CHRIS HART</b> is a developer and author based in Birmingham (in the United Kingdom, not Alabama). Chris spent most of the last four years as a member of the technical editorial team at the former Wrox Press and has been programming on a variety of systems since the age of 10. She spends most of her time working with Microsoft technologies and has been heavily involved with .NET since it was first released as an early alpha preview. She's currently working for Business Post and is developing .NET Compact Framework/SQL CE applications and 2D barcode scanning components in Delphi.</p>
+<p class="first-para">
+<b class="bold">KEVIN HOFFMAN</b> started programming at the age of 10 when his grandfather gave him a Commodore VIC-20 that he refurbished, and he's been addicted to programming ever since. He has worked on everything from writing interfaces for scientific instruments to building e-commerce Web sites to providing second-tier technical support for Unix. He got hold of .NET when it was first handed out in early pre-beta form and has been coding with it ever since. He's currently employed in Houston, Texas, where he creates enterprise applications with the .NET Framework for a financial services company.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="backcover.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0002.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

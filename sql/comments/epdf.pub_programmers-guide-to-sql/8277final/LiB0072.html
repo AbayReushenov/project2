@@ -1,0 +1,72 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Creating and Dropping Databases</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0071.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0073.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="783"></a><a name="ch12lev1sec1"></a>Creating and Dropping Databases</h2><p class="first-para">Creating and dropping database objects is the first subject you'll examine in this chapter. Databases are complex animals, and each database product has its own way of managing and storing internal data. We'll touch on the most common <a name="784"></a><a name="IDX-330"></a>features and some specific product particularities, but for a closer look at them, you'll need an advanced, specialized book about your database product.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="785"></a><a name="ch12lev2sec1"></a>Creating Databases</h3>
+<p class="first-para">SQL Server, Oracle, MySQL, and DB2 enable you to create whole databases using a SQL statement. The following syntax will work on all of these database systems:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE DATABASE MyDatabase;
+</pre>
+</div>
+<p class="para">Each database system provides different options for <span class="fixed">CREATE DATABASE</span>, which gives you extra control over certain properties of the database. However, for most purposes, you simply need to specify a name, and then the server will make all the other decisions for you.</p>
+<p class="para">Having said this, creating a database is a sensitive task that shouldn't be done hastily. The database is a complex object, and when you create a database, you have many options to fine-tune its performance and behavior, depending on for what purpose you'll use it. In most cases, it's much easier to use the tools that ship with the database system because they can do many of the tasks for you.</p>
+<p class="para">For example, if you're using Oracle, the easiest way to create a new database is via the Oracle Installer utility (when installing Oracle). When installing Oracle, you have the option to create a new database. The installer creates a <i class="emphasis">create-database script</i>, which can be then used as a starting point for your own scripts. You can typically find the scripts created by the Installer utility in the <span class="fixed">dbs</span> subdirectory of the Oracle home directory.</p>
+<p class="para">If you're using Oracle, be careful because <span class="fixed">CREATE DATABASE</span> can easily delete an existing database if this isn't used with caution. It's common for Oracle instances to contain only one database (or for a single database to be spread over several instances) and to use schemas rather than databases to group related tables and other objects.</p>
+<p class="para">With SQL Server, you can use Enterprise Manager, which offers both a New Database command and a Create Database Wizard. These handy tools allow for the quick creation of databases.</p>
+<p class="para">You can create databases in DB2 either with the Control Center application or via SQL commands using Command Center. If you use Command Center, it's not possible to create a new database if you're already connected to an existing database.</p>
+<p class="para">Using an open connection to the database server, you connect to an existing database using the <span class="fixed">USE</span> command for SQL Server and MySQL like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+USE MyDatabase;
+<a name="786"></a><a name="IDX-331"></a>
+</pre>
+</div>
+<p class="para">On the other systems, you can reissue a <span class="fixed">CONNECT</span> command to connect to the new database.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">
+<a href="LiB0104.html#1167" target="_parent" class="chapterjump">Appendix A</a>, "Executing SQL Statements," covers the <i class="emphasis"><span class="fixed">CONNECT</span></i> command.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="787"></a><a name="ch12lev2sec2"></a>Dropping Databases</h3>
+<p class="first-para">Removing databases in SQL Server, MySQL, and DB2 is equally easy:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP DATABASE MyDatabase;
+</pre>
+</div>
+<p class="para">Oracle doesn't support the <span class="fixed">DROP DATABASE</span> command. If you want to drop a database in Oracle, use <span class="fixed">CREATE DATABASE</span>, specifying the name of the database you want to delete. You can also use the Oracle Database Assistant to drop databases.</p>
+<p class="last-para">Access doesn't support either of these commands. To create an Access database, use File <font face="wingdings">Ø</font> New in the Access application window. To delete an Access database, just delete the database's <span class="fixed">.mdb</span> file.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0071.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0073.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

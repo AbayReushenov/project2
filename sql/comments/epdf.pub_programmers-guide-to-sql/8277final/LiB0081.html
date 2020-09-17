@@ -1,0 +1,58 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Using Database Schemas</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0080.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0082.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="856"></a><a name="ch12lev1sec10"></a>Using Database Schemas</h2><p class="first-para">
+<i class="emphasis">Schemas</i> allow you to create tables and to view and grant permissions for objects in a single transaction. Schemas are supported by SQL Server, Oracle, and DB2, and they're created with the <span class="fixed">CREATE SCHEMA</span> command, which looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SCHEMA AUTHORIZATION &lt;<i class="emphasis">schema owner</i>&gt;
+&lt;<i class="emphasis">schema body</i>&gt;
+</pre>
+</div>
+<p class="para">The schema body can contain <span class="fixed">CREATE TABLE</span>, <span class="fixed">CREATE VIEW</span>, and <span class="fixed">GRANT</span> statements. If all statements in the body execute successfully, the transaction is committed. Otherwise, the changes are rolled back.</p>
+<a name="857"></a><a name="IDX-362"></a>
+<p class="para">The individual statements inside the schema body aren't separated by delimiters, such as semicolons. Here's a typical <span class="fixed">CREATE SCHEMA</span> statement, which creates two data tables for the user Chris and grants access to them to the user Mike:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SCHEMA AUTHORIZATION Chris
+CREATE TABLE Friend (
+   FriendID INT PRIMARY KEY NOT NULL, Name VARCHAR(50))
+CREATE VIEW FriendsNames AS SELECT Name FROM Friend
+GRANT SELECT ON FriendsNames TO Alice;
+</pre>
+</div>
+<p class="para">Within a schema, the created objects don't have to appear in logical order. To ensure this is true, drop the <span class="fixed">Friend</span> table and the <span class="fixed">FriendsNames</span> view and reverse the order of the statements inside the schema body:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SCHEMA AUTHORIZATION System
+GRANT SELECT ON FriendsNames TO Alice
+CREATE VIEW FriendsNames AS SELECT Name FROM Friend
+CREATE TABLE Friend (
+   FriendID INT PRIMARY KEY NOT NULL, Name VARCHAR(50));
+</pre>
+</div>
+<p class="last-para">This executes correctly, even though these statements would have generated errors if executed from within a trigger or a stored procedure; you grant access on a view that wasn't created yet, and you create the view "before" creating the table.</p>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0080.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0082.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

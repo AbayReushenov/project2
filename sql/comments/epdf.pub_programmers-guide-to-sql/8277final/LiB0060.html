@@ -1,0 +1,709 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Moving onto Advanced Topics</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0059.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0061.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch10"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="681"></a><a name="ch10lev1sec4"></a>Moving onto Advanced Topics</h2><p class="first-para">Having experimented with some simple transactions, we're now going to present further issues involved in writing advanced transaction code. The basics of transactions that you've looked at so far form the foundation for what you'll be looking at here as you consider the wider implications of executing transactions in the real world.</p>
+<p class="para">We'll discuss the different <i class="emphasis">transaction isolation levels</i> that you can use. These define certain rules that govern the degree of "interaction" between multiple transactions acting on the same data. We'll also discuss the use of database <i class="emphasis">locks</i>&#8212;one of the mechanisms by which you can control concurrent access to shared resources in the database.</p>
+<a name="682"></a><a name="IDX-285"></a>
+<p class="para">There are several different isolation levels and many different types of lock that can be applied, depending on your specific RDBMS. It's way beyond the scope of this chapter to provide a definitive guide to transactions and locking for each RDBMS. Instead, we aim to provide a good general understanding of the requirements that apply to each level, how you often have to use locks to meet those requirements, and the potential performance consequences of locking database resources.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="683"></a><a name="ch10lev2sec9"></a>Concurrency and Transaction Isolation Levels</h3>
+<p class="first-para">It's a fact that, most of the time, you can't guarantee that transactions will execute one at a time&#8212;on the contrary, in complex databases it's likely that many transactions will run concurrently. This leads to potential <i class="emphasis">concurrency problems</i>, which occur when many transactions try to interact with the same database object (access the same data) at the same time. The nature of the interaction depends on the actions each transaction performs: from simply reading data to inserting, updating, or deleting data.</p>
+<p class="para">You need to consider these issues because they're directly related to the isolation property of transactions, which dictates that changes made by a transaction shouldn't be visible to other concurrently running transactions. If a transaction modifies information in a data table, should other transactions be able to access that data table? If yes, in what way? What if the transaction only reads from the data table without modifying it?</p>
+<p class="para">The answer to these questions depends on the <i class="emphasis">transaction isolation level</i>. You can manually set the isolation level for each transaction, and this establishes the way transactions behave when they're trying to access the same piece of data.</p>
+<p class="para">Transactions ask for ownership of a particular piece of data by placing <i class="emphasis">locks</i> on it. There are many different types of locks, and they differ in the way they limit access to database resources. For example, a row can be locked in such a way that other transactions can't access it in any way or can read it but not modify it. Also, depending on the lock granularity, the resource they apply to can be an entire database, a data table, a row or a number of rows, and so on.</p>
+<p class="para">It's important to understand the difference between locks and the transaction isolation level. Locks limit access to database objects, and the transaction isolation level specifies how the active transaction places locks on the resources with which it works.</p>
+<p class="para">SQL-99 specifies four transaction isolation levels. With each level, a different balance is struck between the level of data integrity protection offered and the performance penalties imposed.</p>
+<p class="para">The four transaction isolation levels, listed from the one that offers the best performance to the one that offers the best protection, are as follows:</p>
+<a name="684"></a><a name="IDX-286"></a>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">READ UNCOMMITTED</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">READ COMMITTED</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">REPEATABLE READ</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">SERIALIZABLE</span>
+</p>
+</li>
+</ul>
+<p class="para">The SQL-99 standard also categorizes transactions into <i class="emphasis">read-only</i> transactions and <i class="emphasis">read-write</i> transactions. Read-only transactions are a special kind of transaction, and you'll learn about them in a moment.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The isolation levels mentioned previously can only be applied to read-write transactions.</p>
+</td>
+</tr>
+</table>
+<p class="para">The SQL-99 command for setting the transaction type is <span class="fixed">SET TRANSACTION</span>. The complete syntax is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET [LOCAL] TRANSACTION { { READ ONLY | READ WRITE } [,...]
+| ISOLATION LEVEL
+   { READ COMMITTED
+   | READ UNCOMMITTED
+   | REPEATABLE READ
+   | SERIALIZABLE } [,...]
+| DIAGNOSTIC SIZE INT };
+</pre>
+</div>
+<p class="para">Therefore, to choose between read-only and read-write transactions, the syntax is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET TRANSACTION [READ ONLY|READ WRITE]
+</pre>
+</div>
+<p class="para">To set a transaction level, you can use a command such as the following. Note that setting the transaction isolation level automatically assumes a read-write transaction:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET TRANSACTION ISOLATION LEVEL &lt;<i class="emphasis">isolation level name</i>&gt;
+</pre>
+</div>
+<p class="para">The default transactional mode in all databases covered in this book is <span class="fixed">READ COMMITTED</span>.</p>
+<a name="685"></a><a name="IDX-287"></a>
+<div class="section">
+<h4 class="sect4-title">
+<a name="686"></a><a name="ch10lev3sec9"></a>Read-Only Transactions</h4>
+<p class="first-para">Read-only transactions are so named because they can't contain any data modification statements&#8212;only plain <span class="fixed">SELECT</span> statements are allowed.</p>
+<p class="para">The default state for read-write transactions is <i class="emphasis">statement-level consistency</i>. In other words, if, within the scope of a transaction, the same record is read twice, different values may be retrieved each time if the record was modified between readings.</p>
+<p class="para">Read-only transaction mode solves this problem by establishing <i class="emphasis">transaction-level read consistency</i>. In a read-only transaction, all queries can only see the changes committed before the transaction began.</p>
+<p class="para">To set a transaction as being read-only, you type the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET TRANSACTION READ ONLY;
+</pre>
+</div>
+<p class="last-para">Read-only transactions aren't supported by SQL Server, DB2, or MySQL. They are supported, however, by Oracle.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="687"></a><a name="ch10lev3sec10"></a>READ UNCOMMITTED Isolation Level</h4>
+<p class="first-para">This is the first and most dangerous isolation level, but it's also the one that offers the best performance. The following command sets the <span class="fixed">READ UNCOMMITTED</span> isolation level for the next transaction:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+</pre>
+</div>
+<p class="para">The <span class="fixed">READ UNCOMMITTED</span> isolation level isn't supported by Oracle but is supported by SQL Server, DB2, and MySQL.</p>
+<p class="para">When the transaction is in <span class="fixed">READ UNCOMMITTED</span> mode, its isolation property isn't enforced in any way, and the transaction is able to read uncommitted changes from other concurrently running transactions (effectively breaking the isolation property of the ACID rules).</p>
+<p class="para">With <span class="fixed">READ UNCOMMITTED</span> mode, the transaction is susceptible to <i class="emphasis">dirty reads </i>and many other existing kinds of consistency problems.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="688"></a><a name="ch10lev4sec1"></a>Data Consistency Problem: Dirty Reads</h5>
+<p class="first-para">Dirty reads happen when a transaction reads data that was modified by another transaction but that hasn't yet been committed. If the other transaction rolls back, the first transaction ends up reading values that, theoretically, never existed in the database.</p>
+<a name="689"></a><a name="IDX-288"></a>
+<p class="para">To understand dirty reads, imagine two concurrent transactions that work with the <span class="fixed">Student</span> table. One transaction calculates the total number of students from that table, and the second removes or adds students to the table, as shown in <a class="internaljump" href="#ch10table01">Table 10-1</a>.</p>
+<a name="690"></a><a name="ch10table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 10-1: </span>Sequence of Actions That Demonstrate Dirty Reads</span>
+</caption>
+<thead>
+<tr valign="middle">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Time</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 1</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 2</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="middle">
+<td class="td" align="left">
+<p class="table-para">T1</p>
+</td><td class="td" align="left">
+<p class="table-para">The transaction starts.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+<tr valign="middle">
+<td class="td" align="left">
+<p class="table-para">T2</p>
+</td><td class="td" align="left">
+<p class="table-para">Removes or adds records from/to the <span class="fixed">Student</span> table.</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction starts.</p>
+</td>
+</tr>
+<tr valign="middle">
+<td class="td" align="left">
+<p class="table-para">T3</p>
+</td><td class="td" align="left"> </td><td class="td" align="left">
+<p class="table-para">Calculates the total number of students based on the uncommitted results of Transaction 1.</p>
+</td>
+</tr>
+<tr valign="middle">
+<td class="td" align="left">
+<p class="table-para">T4</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction rolls back.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+</tbody>
+</table>
+<p class="para">If Transaction 2 works with the <span class="fixed">READ UNCOMMITTED</span> isolation level, it can read the uncommitted changes from Transaction 1. In this example, because Transaction 1 finally rolls back, Transaction 2 ends up calculating an erroneous number of students. This is a dirty read.</p>
+<p class="para">Another scenario of a dirty read would be if Transaction 1 changed the data of a student (say, the name), then Transaction 2 read that uncommitted data, and finally Transaction 1 rolled back.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Oracle doesn't support the <i class="emphasis"><span class="fixed">READ UNCOMMITTED</span></i> isolation level. Oracle always reads the last-committed values, even if the data is being changed by other ongoing transactions.</p>
+</td>
+</tr>
+</table>
+<p class="para">You can avoid dirty reads by forbidding data that's being modified by other transactions from being read.</p>
+<p class="para">However, there are certain situations in which you might want to allow dirty reads, the most common of which is when you want to get quick reports or statistics from your database, where it isn't critical to get very accurate data. In such situations, setting an isolation mode of <span class="fixed">READ UNCOMMITTED</span> can help you because it locks fewer resources and results in better performance than the other isolation levels.</p>
+<p class="last-para">The default transaction isolation level, <span class="fixed">READ COMMITTED</span>, doesn't permit dirty reads, so you explicitly need to set the isolation level to <span class="fixed">READ UNCOMMITTED</span> in situations where you want to allow dirty reads. The other isolation levels (<span class="fixed">REPEATABLE</span> <a name="691"></a><a name="IDX-289"></a><span class="fixed">READ</span> and <span class="fixed">SERIALIZABLE</span>) are even more stringent about enforcing data consistency, and they don't permit dirty reads either.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="692"></a><a name="ch10lev3sec11"></a>READ COMMITTED Isolation Level</h4>
+<p class="first-para">The second isolation level in terms of enforcing transaction isolation is <span class="fixed">READ COMMITTED</span>, which is the default mode for most database systems.</p>
+<p class="para">When in <span class="fixed">READ COMMITTED</span> mode, all resources modified by the transaction are locked until the transaction is completed&#8212;in other words, any updated, inserted, or deleted records won't be visible to other transactions (or will be only visible to their last-committed values), until (and unless) you commit the transaction. Transactions that run in <span class="fixed">READ UNCOMMITTED</span> mode are the exception to this rule because they can uncommitted changes from other transactions.</p>
+<p class="para">Also, other transactions aren't allowed to modify the rows that are being modified by your transaction but are able to modify the rows that are simply read by your transaction.</p>
+<p class="para">When in <span class="fixed">READ COMMITTED</span> mode, no dirty reads will happen in your current transaction because you can't see or modify data that is being updated by other transactions. However, the <span class="fixed">READ COMMITTED</span> mode doesn't guard against <i class="emphasis">unrepeatable reads.</i>
+</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="693"></a><a name="ch10lev4sec2"></a>Data Consistency Problem: Unrepeatable Reads</h5>
+<p class="first-para">An unrepeatable read happens when you read some data twice in a transaction and you get different values because it has been modified in the meantime by another transaction.</p>
+<p class="para">When in <span class="fixed">READ COMMITTED</span> mode, other transactions are allowed to modify data that has only been accessed for reading by your transaction. So, if you start a transaction, read a record, do some other things, and then read the same record again, you might read a different value.</p>
+<p class="para">If this is acceptable and no serious problems can occur because of unrepeatable reads, it's best to stick with the <span class="fixed">READ COMMITTED</span> isolation mode. Additionally, in some cases, you can avoid unrepeatable reads by saving pieces of information in variables or temporary tables and using the saved data instead of querying the database again.</p>
+<p class="para">Before moving on to the next transaction isolation level (which prevents unrepeatable reads), you'll see an example demonstrating unrepeatable reads (see <a class="internaljump" href="#ch10table02">Table 10-2</a>). In this example, Transaction 1 tries to calculate the average mark for all students by summing up all their marks and then dividing by the number of students.</p>
+<a name="694"></a><a name="ch10table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 10-2: </span>Sequence of Actions That Demonstrate Unrepeatable Reads</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Time</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 1</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 2</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T1</p>
+</td><td class="td" align="left">
+<p class="table-para">The transaction starts. (<span class="fixed">READ COMMITTED</span>)</p>
+</td><td class="td" align="left"> </td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T2</p>
+</td><td class="td" align="left">
+<p class="table-para">Sums up the students' marks.</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction starts.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T3</p>
+</td><td class="td" align="left">
+<p class="table-para">(Waits for Transaction 2 to release locks.)</p>
+</td><td class="td" align="left">
+<p class="table-para">Deletes one student, locking the <span class="fixed">Student</span> table.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T4</p>
+</td><td class="td" align="left">
+<p class="table-para">(Waits for Transaction 2 to release locks.)</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction commits, releases locks.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T5</p>
+</td><td class="td" align="left">
+<p class="table-para">Retrieves number of students.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T6</p>
+</td><td class="td" align="left">
+<p class="table-para">Calculates average mark by dividing the two numbers calculated earlier.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+</tbody>
+</table>
+<p class="para">For the purposes of this example, assume the mark of each student is stored in the <span class="fixed">Student</span> table (so working with marks implies working with <span class="fixed">Student</span>).</p>
+<a name="695"></a><a name="IDX-290"></a>
+<p class="para">Transaction 1 ends up calculating a wrong average mark because the students' data changes while the transaction is running. The students' data can be modified by other transactions because Transaction 1 is only reading it and doesn't place any locks on it.</p>
+<p class="para">In fact, after Transaction 2 updates the <span class="fixed">Student</span> table (placing locks on it), Transaction 1 needs to wait until Transaction 2 finishes in order to calculate the number of students.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Oracle would behave as before, reading the last-committed values from the <i class="emphasis"><span class="fixed">Student</span></i> table without blocking Transaction 1 until Transaction 2 finishes executing.</p>
+</td>
+</tr>
+</table>
+<p class="last-para">If you don't find any solutions to avoid unrepeatable reads, SQL-99 has an isolation level that does the work for you, guarding against unrepeatable reads and dirty reads: the <span class="fixed">REPEATABLE READ</span> isolation level.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="696"></a><a name="ch10lev3sec12"></a>REPEATABLE READ Isolation Level</h4>
+<p class="first-para">This transaction isolation mode provides an extra level of concurrency protection by preventing not only dirty reads but also unrepeatable reads.</p>
+<p class="para">The way most databases (again, not Oracle) enforce repeatable reads is to place <i class="emphasis">shared read locks</i> on rows that are being read by the transaction, not just on the ones that are being updated (as the <span class="fixed">READ COMMITTED</span> isolation mode does). This way, as soon as one record is read, you can guarantee you'll get the same value if you read it again during the same transaction.</p>
+<a name="697"></a><a name="IDX-291"></a>
+<p class="para">Having a shared lock on a record permits other transactions to read the record but not to modify it. In the previous example, setting the first transaction to <span class="fixed">REPEATABLE READ</span> would prevent the second transaction from removing the student, ensuring the calculated average mark is correct. <a class="internaljump" href="#ch10table03">Table 10-3</a> shows the same transactions running, but this time the first transaction runs in <span class="fixed">REPEATABLE READ</span> mode.</p>
+<a name="698"></a><a name="ch10table03"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 10-3: </span>Sequence of Actions That Explain the <i class="emphasis"><span class="fixed">REPEATABLE READ</span></i> Isolation Mode</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Time</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 1</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 2</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T1</p>
+</td><td class="td" align="left">
+<p class="table-para">The transaction starts in <span class="fixed">REPEATABLE READ</span> mode.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T2</p>
+</td><td class="td" align="left">
+<p class="table-para">Sums up the students' marks (placing shared locks on the rows in the <span class="fixed">Student</span> table).</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction starts.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T3</p>
+</td><td class="td" align="left">
+<p class="table-para">Retrieves number of students.</p>
+</td><td class="td" align="left">
+<p class="table-para">Tries to delete one student but finds the table locked.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T4</p>
+</td><td class="td" align="left">
+<p class="table-para">Calculates average mark by dividing the two numbers calculated earlier.</p>
+</td><td class="td" align="left">
+<p class="table-para">(Waits.)</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T5</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction completes executing, releases locks.</p>
+</td><td class="td" align="left">
+<p class="table-para">(Waits.)</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T6</p>
+</td><td class="td" align="left"> </td><td class="td" align="left">
+<p class="table-para">Deletes student.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">You get the right answer this time, but because other transactions need to wait for your transaction to finish processing before getting to the requested data, this can result in important performance penalties for your applications. The longer your transaction lasts, the longer the locks will be held, practically not allowing other transactions to perform any modifications on them.</p>
+<p class="para">With the <span class="fixed">REPEATABLE READ</span> isolation level, you can be sure unrepeatable reads will be avoided. However, there's still one more concurrency-related problem that can happen: <i class="emphasis">phantoms.</i>
+</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="699"></a><a name="ch10lev4sec3"></a>Data Consistency Problem: Phantoms</h5>
+<p class="first-para">
+<i class="emphasis">Phantoms</i> are similar to repeatable reads, except they also take into account the case where new records are being introduced to a data table by another transaction while the current transaction is working with the table.</p>
+<p class="para">Let's imagine another scenario, similar to the previous example, but this time Transaction 2 inserts a new student rather than removing an existing one. <a class="internaljump" href="#ch10table04">Table 10-4</a> shows the actions performed by the two transactions.</p>
+<a name="700"></a><a name="ch10table04"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 10-4: </span>Sequence of Actions That Demonstrate Phantoms</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Time</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 1</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Transaction 2</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T1</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction starts in <span class="fixed">REPEATABLE READ</span> mode.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T2</p>
+</td><td class="td" align="left">
+<p class="table-para">Sums up the students' marks (placing shared locks on the rows in the <span class="fixed">Student</span> table).</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction starts.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T3</p>
+</td><td class="td" align="left">
+<p class="table-para">Tries to count the number of students, but Transaction 2 has a lock on the newly created student.</p>
+</td><td class="td" align="left">
+<p class="table-para">Inserts one student (placing a lock on the new created record).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T4</p>
+</td><td class="td" align="left">
+<p class="table-para">(Waits.)</p>
+</td><td class="td" align="left">
+<p class="table-para">Transaction commits, releases locks.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T5</p>
+</td><td class="td" align="left">
+<p class="table-para">Calculates the total number of students.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">T6</p>
+</td><td class="td" align="left">
+<p class="table-para">Calculates average mark by dividing the two numbers calculated earlier.</p>
+</td><td class="td" align="left"> </td>
+</tr>
+</tbody>
+</table>
+<a name="701"></a><a name="IDX-292"></a>
+<p class="last-para">Transaction 2 is allowed to insert new records to the <span class="fixed">Student</span> table because it doesn't affect any of the existing rows in <span class="fixed">Student</span> (on which Transaction 1 has set shared locks). Phantoms refer to the situation when other transactions insert new records that meet one of the <span class="fixed">WHERE</span> clauses of any previous statement in the current transaction. The <span class="fixed">SERIALIZABLE</span> isolation level guards your transaction against phantoms, as well as the previously presented concurrency-related problems.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="702"></a><a name="ch10lev3sec13"></a>SERIALIZABLE Isolation Level</h4>
+<p class="first-para">The <span class="fixed">SERIALIZABLE</span> isolation level guarantees the transactions will run as if they were serialized&#8212;with other words, they're guaranteed not to interfere, and they execute as if they were run in sequence.</p>
+<p class="para">When you set the transaction isolation level to <span class="fixed">SERIALIZABLE</span>, you're guaranteed that other transactions cannot modify (with <span class="fixed">UPDATE</span>, <span class="fixed">INSERT</span>, or <span class="fixed">DELETE</span>) any data that meets the <span class="fixed">WHERE</span> clause of any statement in your transaction.</p>
+
+<p class="para">The <span class="fixed">SERIALIZABLE</span> transaction isolation level is a dangerous one when it comes to performance. It does provide the highest level of consistency&#8212;indeed, transactions works the same as if they were executed one at a time.</p>
+<p class="para">However, while increasing consistency, you get much lower concurrency because other transactions are restricted in the actions they can do with database objects already used in other transactions&#8212;they need to wait one after the other to get access to shared data.</p>
+<a name="703"></a><a name="IDX-293"></a>
+<p class="last-para">If Transaction 1 was set to <span class="fixed">SERIALIZABLE</span> in the example presented in <a class="internaljump" href="#ch10table04">Table 10-4</a>, Transaction 2 couldn't have inserted a new record to the <span class="fixed">Student</span> table before Transaction 1 finished executing.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="704"></a><a name="ch10lev3sec14"></a>RDBMS-Specific Transaction Support</h4>
+<p class="first-para">So far we've presented the SQL-99 features regarding a transaction's isolation level. Now you'll take a closer look at how they're supported by SQL Server, Oracle, MySQL, and DB2.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="705"></a><a name="ch10lev4sec4"></a>SQL Server</h5>
+<p class="first-para">SQL Server supports the four specified isolation levels, but it doesn't support read-only transactions. After setting the transaction isolation level, it remains set as such for that connection, unless explicitly changed. The default isolation level is <span class="fixed">READ COMMITTED</span>.</p>
+<p class="para">Here's the syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET TRANSACTION ISOLATION LEVEL
+    { READ COMMITTED
+    | READ UNCOMMITTED
+    | REPEATABLE READ
+    | SERIALIZABLE
+    }
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="706"></a><a name="ch10lev4sec5"></a>Oracle</h5>
+<p class="first-para">Oracle supports read-only transactions, but it doesn't support the <span class="fixed">READ UNCOMMITTED</span> and <span class="fixed">REPEATABLE READ</span> isolation levels. The default isolation level is <span class="fixed">READ COMMITTED</span>.</p>
+<p class="para">With Oracle, <span class="fixed">SET TRANSACTION</span> affects only the current transaction&#8212;not other users, connections or other transactions. Here's its syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET TRANSACTION
+{ { READ ONLY | READ WRITE }
+  | ISOLATION LEVEL
+    { READ COMMITTED
+    | SERIALIZABLE } };
+</pre>
+</div>
+<p class="para">To change the default transaction isolation level for all the transactions on the current session, you use the <span class="fixed">ALTER SESSION</span> command. Here's an example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER SESSION SET ISOLATION_LEVEL SERIALIZABLE;
+<a name="707"></a><a name="IDX-294"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="708"></a><a name="ch10lev4sec6"></a>MySQL</h5>
+<p class="first-para">MySQL supports transaction isolation levels with InnoDB tables. Here's the syntax for setting the transaction isolation level:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET [GLOBAL | SESSION]
+TRANSACTION ISOLATION LEVEL
+{ READ UNCOMMITTED | READ COMMITTED |
+  REPEATABLE READ | SERIALIZABLE }
+</pre>
+</div>
+<p class="para">By default, in MySQL, <span class="fixed">SET TRANSACTION</span> affects only the next (not yet started) transaction.</p>
+<p class="para">The <span class="fixed">SESSION</span> optional parameter changes the default transaction level for all the transactions on the current session.</p>
+<p class="last-para">The <span class="fixed">GLOBAL</span> optional parameter changes the default transaction isolation level for all new connections created from that point on.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="709"></a><a name="ch10lev4sec7"></a>DB2</h5>
+<p class="first-para">DB2 supports transaction isolation levels, but the way that the isolation levels are implemented is quite different in DB2 compared to the other RDBMS implementations. In DB2, you can set the isolation level for a transaction on each statement that you use, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE <i class="emphasis">table name</i>
+SET assignment clause
+WHERE search condition
+WITH <i class="emphasis">isolation level</i>
+</pre>
+</div>
+<p class="para">where <b class="bold"><i class="emphasis">isolation level</i></b> can be one of the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">RR</span>: <span class="fixed">REPEATABLE READ</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">RS</span>: Read Stability (similar to <span class="fixed">REPEATABLE READ</span>&#8212;locks all rows being read and modified but doesn't completely isolate the application process, leaving it vulnerable to phantoms)</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CS</span>: Cursor Stability (similar to <span class="fixed">READ COMMITTED</span>)</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">UR</span>: Uncommitted Read</p>
+</li>
+</ul>
+<p class="para">The default isolation level of any statement relates to the isolation level of the package containing the statement.</p>
+<a name="710"></a><a name="IDX-295"></a>
+<p class="para">For example, referring back to an example you saw in <a href="LiB0021.html#181" target="_parent" class="chapterjump">Chapter 3</a>, "Modifying Data" (where you added some new professors to the university but without titles), you could use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Professor
+SET Name = 'Prof. ' || Name
+   WHERE ProfessorID &gt; 6;
+   WITH RS
+</pre>
+</div>
+<p class="last-para">This method of applying an isolation level also applies to other SQL statements, for example, <span class="fixed">SELECT INTO</span>, <span class="fixed">INSERT INTO</span>. For more information, please refer to the DB2 documentation.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="711"></a><a name="ch10lev3sec15"></a>Playing Concurrency</h4>
+<p class="first-para">Let's do a short exercise now and test how the database enforces consistency, depending on how you set the transaction isolation level.</p>
+<p class="para">For this you'll need to open two connections to the same database. If you're running DB2, please first uncheck the Automatically Commit SQL Statements checkbox in the Command Center <font face="wingdings">Ø</font> Options <font face="wingdings">Ø</font> Execution window of Command Center. This way you'll start multistatement transactions just like with Oracle (which works in automatic-transactions mode).</p>
+<p class="para">For the purpose of this exercise you'll use the default isolation level, <span class="fixed">READ COMMITTED</span>, for both transactions. This means that you don't need <span class="fixed">SET TRANSACTION</span> statements to explicitly set the transaction isolation level.</p>
+<p class="para">First, you need to start new transactions on the two connections. If you're using Oracle or DB2, no additional statements are required. Use <span class="fixed">BEGIN TRANSACTION</span> for SQL Server or <span class="fixed">BEGIN</span> for MySQL.</p>
+<p class="para">Then, add a new record to the <span class="fixed">Student</span> table on the first connection:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Student (StudentID, Name) VALUES (115, 'Cristian');
+</pre>
+</div>
+<p class="para">After executing this command, while still in the first connection, test that the row was indeed successfully added:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Student
+</pre>
+</div>
+<p class="para">The results show the newly added student:</p>
+<a name="712"></a><a name="IDX-296"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   Name
+
+   ----------- ---------------------------------------
+   1            John Jones
+   2            Gary Burton
+   3            Emily Scarlett
+   ...          ...
+   12           Isabelle Jonsson
+   115          Cristian
+</pre>
+</div>
+<p class="para">Now, while the first transaction is still active, switch to the second connection and read the <span class="fixed">Student</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Student
+</pre>
+</div>
+<p class="para">Because the first transaction is in <span class="fixed">READ COMMITTED</span> mode, it doesn't allow other transactions to <span class="fixed">READ UNCOMMITTED</span> changes in order to prevent dirty reads. However, the databases implement this protection differently.</p>
+<p class="para">With Oracle and MySQL, the second transaction simply ignores the changes made by the first one (which is still running because it wasn't committed or rolled back yet). The list of students will be returned:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   Name
+
+   ----------- ---------------------------------------
+   1            John Jones
+   2            Gary Burton
+   3            Emily Scarlett
+   ...          ...
+   12           Isabelle Jonsson
+</pre>
+</div>
+<p class="para">DB2 and SQL Server, on the other hand, have a different approach: They don't allow the second transaction to read the entire <span class="fixed">Student</span> table until the first <a name="713"></a><a name="IDX-297"></a>one decides to commit or roll back. The <span class="fixed">SELECT</span> in the second transaction will be blocked until the first transaction (which keeps the <span class="fixed">Student</span> table locked) finishes.</p>
+<p class="para">Note that a <span class="fixed">SELECT</span> statement in the second transaction that refers strictly to rows that weren't added, modified, or deleted by the first transaction isn't affected in any way by that transaction (for example, it isn't blocked until the first transaction finishes, in SQL Server and DB2). An example of such a statement is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Student WHERE StudentID=10
+</pre>
+</div>
+<p class="para">Or even:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Student WHERE StudentID&lt;100
+</pre>
+</div>
+<p class="para">Note that with SQL Server and MySQL, on the second connection you can set the transaction isolation level to <span class="fixed">READ UNCOMMITTED</span>. This way, when you read the <span class="fixed">Student</span> table, you'll see even the row that was inserted by the first transaction, even though that transaction hasn't been committed:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+SELECT StudentID, Name FROM Student WHERE StudentID&gt;1200;
+</pre>
+</div>
+<p class="para">Now let's roll back the first transaction to get the database to its original form:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ROLLBACK;
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="714"></a><a name="ch10lev3sec16"></a>Transaction Best Practices and Avoiding Deadlocks</h4>
+<p class="first-para">Transactions are, in a way, a necessary evil in database programming. They provide the functionality you need to ensure data consistency, but they reduce concurrency. The more consistency a transaction isolation level provides, the less concurrency you have and hence the greater performance penalties for concurrently running transactions.</p>
+<p class="para">The higher the isolation level you set, the more the users accessing the database at the same time are affected. For this reason, it's important to always use the lowest possible transaction isolation level:</p>
+<a name="715"></a><a name="IDX-298"></a>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">The lowest isolation level, <span class="fixed">READ UNCOMMITTED</span>, doesn't provide any concurrency protection, and it should be avoided except for the times when you don't require the data you read to be very accurate.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The default isolation level, <span class="fixed">READ COMMITTED</span>, is usually the best choice, because it protects you from dirty reads, which are the most common concurrency problem.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The higher isolation protection levels, <span class="fixed">REPEATABLE READ</span> and <span class="fixed">SERIALIZABLE</span>, can and should usually be avoided. Apart from hurting performance, they also increase the probability of <i class="emphasis">deadlocks</i>.</p>
+</li>
+</ul>
+<p class="para">A deadlock is a situation when two or more transactions started processing, locked some resources, and they both end up waiting for each other to release the locks in order to complete execution. When this happens, there can be only one that can win the battle and finish processing. The database server you use will choose one of the transactions (named a <i class="emphasis">deadlock victim</i>) and roll it back, so the other one can finish execution.</p>
+<p class="para">Deadlocks can rarely be entirely eliminated from a complex database system, but there are certain steps you can make to lower the probability of their happening. Of course, most of the times the rules depend on your particular system, but here are a few general rules to keep in mind:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Use the lowest possible transaction isolation level.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Keep the transactions as short as possible.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Inside transactions, access database objects in the same order.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Don't keep transactions open while waiting for user input (okay, this is common sense, but it had to be mentioned).</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="716"></a><a name="ch10lev2sec10"></a>Distributed Transactions and the Two-Phase Commit</h3>
+<p class="first-para">It's not unusual these days for companies to have, say, SQL Server, Oracle, and MySQL installations on their servers. This leads to the need of conducting transactions that spread over more databases (say, a transaction that needs to update information on three different database servers).</p>
+<p class="para">This situation is a bit problematic because all you've studied so far is about transactions that apply to a single database server only. Distributed transactions are possible through specific protocols (depending on the platform) that use a two-phase commit protocol system. The database originating the distributed transaction is called a <i class="emphasis">Commit Coordinator</i>, and it coordinates the transaction.</p>
+<a name="717"></a><a name="IDX-299"></a>
+<p class="para">The first phase in the two phase-commit is when the Commit Coordinator instructs all participating databases to perform the required actions. The participating databases start individual transactions, and when they're ready to commit, they send a "ready to commit" signal to the Commit Coordinator.</p>
+<p class="last-para">After all participating databases send a "ready to commit" signal, the Commit Coordinator instructs all of them to commit the operations, and the distributed transaction is committed. If any of the participating databases report a failure, the Commit Coordinator instructs all the other databases to roll back and cancels the transaction.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0059.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0061.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

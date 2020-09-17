@@ -1,0 +1,283 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Creating Temporary Tables</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0075.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0077.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="811"></a><a name="ch12lev1sec5"></a>Creating Temporary Tables</h2><p class="first-para">
+<i class="emphasis">Temporary tables</i> are tables that exist for a limited period of time or are limited to the current session or transaction. They're particularly useful in triggers or stored procedures when you need to quickly create a table for various tasks. For example, you can use temporary tables when you need to compare a set of data with the current data in the database. If you're thinking of using a cursor but could use a temporary table instead, then it's generally a good idea to use a temporary table (because cursors are bad for performance).</p>
+<p class="para">Let's quickly look at a simple example. You'll create a temporary table and fill it with the names of all the students and the average mark they scored over all their exams. You'll then query this table to find the students who did particularly well or particularly badly.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="812"></a><a name="ch12lev2sec10"></a>SQL Server</h3>
+<p class="first-para">In SQL Server, you create temporary tables just like normal tables except that they have names beginning with <span class="fixed">#</span> or <span class="fixed">##</span>. You use <span class="fixed">#</span> for local temporary tables (which are visible only to the connection that created them) or <span class="fixed">##</span> for global temporary tables (which are visible to all connections).</p>
+<p class="para">SQL Server temporary tables are always created in the <span class="fixed">tempdb</span> system database. If a temporary table isn't dropped explicitly by the connection that created it, it's usually dropped automatically as soon as the connection is closed.</p>
+<a name="813"></a><a name="IDX-343"></a>
+<div class="example">
+<span class="example-title">USING TEMPORARY TABLES (SQL SERVER)</span><a name="814"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter and execute the following lines in Query Analyzer:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE #tmp (StudentName VARCHAR(50), AverageMark INT);
+INSERT INTO #tmp
+   SELECT Student.Name AS StudentName,
+          AVG(Mark) AS AverageMark
+   FROM StudentExam
+      INNER JOIN Student
+      ON StudentExam.StudentID = Student.StudentID
+   GROUP BY StudentName;
+
+SELECT StudentName, AverageMark FROM #tmp
+   WHERE AverageMark &lt; 50;
+SELECT StudentName, AverageMark FROM #tmp
+   WHERE AverageMark &gt; 70;
+</pre>
+</div>
+<p class="para">Here you create a temporary table called <span class="fixed">#tmp</span> and populate it using the <span class="fixed">INSERT INTO</span> syntax you saw in <a href="LiB0021.html#181" target="_parent" class="chapterjump">Chapter 3</a>, "Modifying Data." You then run two queries against this table, exactly as you would against a normal table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName      AverageMark
+
+   ---------------  ------------
+   Gary Burton      48
+   StudentName      AverageMark
+   ---------------  ------------
+   Emily Scarlett   80
+   Maria Fernandez  73
+   Steve Alaska     71
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="815"></a><a name="ch12lev2sec11"></a>Oracle</h3>
+<p class="first-para">In Oracle, you can create a temporary table using the <span class="fixed">CREATE GLOBAL TEMPORARY TABLE</span> command instead of the usual <span class="fixed">CREATE TABLE</span>. When you create a temporary table, you can specify whether the data should be preserved for the current session <a name="816"></a><a name="IDX-344"></a>(by specifying an <span class="fixed">ON COMMIT PRESERVE ROWS</span> clause) or only for the current transaction (<span class="fixed">ON COMMIT DELETE ROWS</span>). Oracle doesn't automatically allocate space for temporary tables as it does for normal tables: Space will be dynamically allocated as new rows are inserted.</p>
+<p class="para">Although the data in Oracle temporary tables is transitory, the tables themselves aren't&#8212;after you've created a temporary table, it will remain available until you drop it (using the normal <span class="fixed">DROP TABLE</span> command).</p>
+<div class="example">
+<span class="example-title">USING TEMPORARY TABLES (ORACLE)</span><a name="817"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following query in SQL*Plus:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE GLOBAL TEMPORARY TABLE tmp
+AS
+SELECT Student.Name AS StudentName, AVG(Mark) AS AverageMark
+FROM StudentExam
+   INNER JOIN Student
+   ON StudentExam.StudentID = Student.StudentID
+GROUP BY Student.Name;
+
+INSERT INTO tmp
+   SELECT Student.Name AS StudentName, AVG(Mark) AS AverageMark
+   FROM StudentExam
+      INNER JOIN Student
+      ON StudentExam.StudentID = Student.StudentID
+   GROUP BY Student.Name;
+
+SELECT StudentName, AverageMark FROM tmp WHERE AverageMark &lt; 50;
+SELECT StudentName, AverageMark FROM tmp WHERE AverageMark &gt; 70;
+</pre>
+</div>
+<p class="para">Again, you create a temporary table called <span class="fixed">tmp</span> to store the names and average marks of the students. Notice that you don't provide a list of column names and data types to define the table, but you provide a <span class="fixed">SELECT</span> statement. This statement doesn't, however, fill the table, so you do that using a <span class="fixed">SELECT INTO </span>statement. You can then query the table to find the students with very good or very poor averages:</p>
+<a name="818"></a><a name="IDX-345"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName      AverageMark
+
+   ---------------  ------------
+   Gary Burton      48
+
+   StudentName      AverageMark
+   ---------------  ------------
+   Emily Scarlett   80
+   Maria Fernandez  73
+   Steve Alaska     71
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="819"></a><a name="ch12lev2sec12"></a>DB2</h3>
+<p class="first-para">DB2 uses the <span class="fixed">DECLARE GLOBAL TEMPORARY TABLE</span> statement to create a temporary table. You can define the table using either a standard list of columns, as in SQL Server, or a <span class="fixed">SELECT</span> statement, as in Oracle.</p>
+<p class="para">When you create a temporary table in DB2, you need to tell DB2 where to put the table; to do this, you have to create a <i class="emphasis">tablespace</i>. There are different types of tablespaces in DB2, but to store temporary tables, you need to create a <span class="fixed">USER TEMPORARY</span> tablespace. This type of tablespace can be accessed by users of the database (as opposed to system tablespaces, which can only be accessed by DB2 itself) and will be destroyed once the connection is closed. Tablespaces can be managed either by the system or by the database itself.</p>
+<div class="example">
+<span class="example-title">USING TEMPORARY TABLES (DB2)</span><a name="820"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following query in Command Center:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE USER TEMPORARY TABLESPACE IUTemp
+   MANAGED BY SYSTEM USING ('C:\IUTemp_tbsp');
+DECLARE GLOBAL TEMPORARY TABLE tmp (
+   StudentName VARCHAR(50), AverageMark INT) IN IUTemp;
+
+INSERT INTO SESSION.tmp
+   SELECT Student.Name AS StudentName, AVG(Mark) AS AverageMark
+   FROM StudentExam
+      INNER JOIN Student
+      ON StudentExam.StudentID = Student.StudentID
+GROUP BY Student.Name;<a name="821"></a><a name="IDX-346"></a>
+SELECT StudentName, AverageMark FROM SESSION.tmp WHERE AverageMark &lt; 50;
+SELECT StudentName, AverageMark FROM SESSION.tmp WHERE AverageMark &gt; 70;
+</pre>
+</div>
+<p class="para">Here you create a system-managed <span class="fixed">USER TEMPORARY</span> tablespace called <span class="fixed">IUTemp</span>, specifying that the data files will be stored in the <span class="fixed">C:\IUTemp_tbsp</span> directory (change this as necessary for your system). This directory doesn't have to exist in advance&#8212;DB2 will create it if necessary:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE USER TEMPORARY TABLESPACE IUTemp
+   MANAGED BY SYSTEM USING ('C:\IUTemp_tbsp');
+</pre>
+</div>
+<p class="para">Once you've created the tablespace, you can create the table itself using the <span class="fixed">DECLARE GLOBAL TEMPORARY TABLE</span> command. In this case, you specify the column definitions for the table explicitly, rather than using the <span class="fixed">AS SELECT</span> syntax you saw with Oracle. Notice the <span class="fixed">IN</span> clause, which tells DB2 which tablespace to create the table in:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE GLOBAL TEMPORARY TABLE tmp (
+   StudentName VARCHAR(50), AverageMark INT) IN IUTemp;
+</pre>
+</div>
+<p class="para">Once you've created the table, you can populate it with an <span class="fixed">INSERT INTO...SELECT </span>statement. Notice that the table is by default created in the <span class="fixed">SESSION</span> schema, not the current user's schema, so you prefix the table name with <span class="fixed">SESSION</span> (<span class="fixed">SESSION.tmp</span>). You can then query this table as normal:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName      AverageMark
+
+   ---------------  ------------
+   Gary Burton      48
+
+   StudentName      AverageMark
+   ---------------  ------------
+   Emily Scarlett   80
+   Maria Fernandez  73
+   Steve Alaska     71
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="822"></a><a name="IDX-347"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="823"></a><a name="ch12lev2sec13"></a>MySQL</h3>
+<p class="first-para">MySQL has the simplest syntax&#8212;you create temporary tables using the <span class="fixed">CREATE TEMPORARY TABLE</span> statement, which has the same syntax as a normal <span class="fixed">CREATE TABLE</span> statement. Temporary tables can be particularly useful in MySQL as a way of getting around the lack of support for subqueries.</p>
+<div class="example">
+<span class="example-title">USING TEMPORARY TABLES (MYSQL)</span><a name="824"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following query at the <span class="fixed">mysql</span> command prompt:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TEMPORARY TABLE tmp (StudentName VARCHAR(50), AverageMark INT);
+
+INSERT INTO tmp
+   SELECT Student.Name AS StudentName, AVG(Mark) AS AverageMark
+   FROM StudentExam
+      INNER JOIN Student
+      ON StudentExam.StudentID = Student.StudentID
+   GROUP BY Student.Name;
+
+SELECT StudentName, AverageMark FROM tmp WHERE AverageMark &lt; 50;
+SELECT StudentName, AverageMark FROM tmp WHERE AverageMark &gt; 70;
+</pre>
+</div>
+<p class="para">In this example, you just create a temporary table named <span class="fixed">tmp</span> with the <span class="fixed">StudentName</span> and <span class="fixed">AverageMark</span> columns and populate it using the <span class="fixed">INSERT INTO...SELECT</span> statement. You then run your two queries against the <span class="fixed">tmp </span>table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName      AverageMark
+
+   ---------------  ------------
+   Gary Burton      48
+
+   StudentName      AverageMark
+   ---------------  ------------
+   Emily Scarlett   80
+   Maria Fernandez  73
+   Steve Alaska     71
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0075.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0077.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

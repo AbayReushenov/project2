@@ -1,0 +1,88 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Connecting to Databases using SQL</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0104.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0106.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="appendix">
+<a name="ap01"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1202"></a><a name="ap01lev1sec2"></a>Connecting to Databases using SQL</h2><p class="first-para">As well as installing the <span class="fixed">InstantUniversity</span> database, you'll need to connect to it in order to execute SQL statements against it. If you're using the SQL editing tools that you looked at previously, this may be done for you. However, if you're using a command-line interpreter or a less sophisticated graphical interface, you'll need to be explicit about what database you're using and provide the correct security credentials to do so, based on the security setting in your Relational Database Management System (RDBMS). You may also need to supply these details should you want to reconnect to a different database.</p>
+<p class="para">Three databases&#8212;Oracle, DB2, and SQL Server&#8212;support the SQL <span class="fixed">CONNECT</span> statement in some form, which allows you to connect remotely to a specific database. The basic syntax for this is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT TO [<i class="emphasis">database</i>] USER [<i class="emphasis">user_name</i>];
+</pre>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1203"></a><a name="ap01lev2sec6"></a>Oracle</h3>
+<p class="first-para">The syntax for connecting to a database using SQL*Plus is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT username@servicename/password
+[AS SYSOPER | AS SYSDBA];
+</pre>
+</div>
+<p class="para">If Oracle can't resolve the <span class="fixed">servicename</span>, you'll receive an ORA-12154 error:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ORA-12154: TNS:could not resolve service name
+<a name="1204"></a><a name="IDX-512"></a>
+</pre>
+</div>
+<p class="para">Again, if this happens, you can supply a complete TNS descriptor instead. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT InstSql@(DESCRIPTION=(ADDRESS_LIST=(
+   ADDRESS=(PROTOCOL=TCP)(HOST=<i class="emphasis">servername</i>)(PORT=1521)))
+   (CONNECT_DATA=(SERVICE_NAME=<i class="emphasis">servicename</i>)))/<i class="emphasis">password</i>;
+</pre>
+</div>
+<p class="para">If you need to connect with <span class="fixed">SYSDBA</span> or <span class="fixed">SYSOPER</span> privileges rather than as a normal user, you can specify <span class="fixed">AS SYSDBA</span> or <span class="fixed">AS SYSOPER</span>.</p>
+<p class="last-para">You can close the connection in SQL*Plus by executing the <span class="fixed">DISCONNECT</span> statement.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1205"></a><a name="ap01lev2sec7"></a>DB2</h3>
+<p class="first-para">The DB2 version of <span class="fixed">CONNECT</span> follows the standard basic syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONNECT TO <i class="emphasis">database</i> [USER <i class="emphasis">user</i> [USING <i class="emphasis">password</i>]];
+</pre>
+</div>
+<p class="para">You can connect using either the actual name of the database or its alias (if this is different). If no password is supplied with the <span class="fixed">USING</span> clause, you'll be prompted for one when you execute the statement.</p>
+
+<p class="last-para">Finally, you can close the connection using the command <span class="fixed">CONNECT RESET</span>.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1206"></a><a name="ap01lev2sec8"></a>SQL Server</h3>
+<p class="first-para">SQL Server supports <span class="fixed">CONNECT TO</span> only in Embedded SQL (ESQL) statements. ESQL statements are Transact-SQL statements embedded into C programs. However, Microsoft won't support this Application Programming Interface (API) beyond SQL Server 2000, so it's probably advisable to use a data-access technology such as ODBC or OLE DB in preference to ESQL.</p>
+<p class="para">The ESQL syntax for <span class="fixed">CONNECT TO</span> is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC SQL CONNECT TO <i class="emphasis">database</i> USER <i class="emphasis">user</i>
+</pre>
+</div>
+<p class="para">Here <i class="emphasis"><span class="fixed">database</span></i> is the name of the database to connect to, which will be <span class="fixed">InstantUniversity</span> or will be <span class="fixed"><i class="emphasis">MyServer</i>.InstantUniversity</span> if you're accessing the database remotely. The <i class="emphasis"><span class="fixed">user</span></i> is the name of the user account to connect with, which may include a password in the format <span class="fixed"><i class="emphasis">username</i>.<i class="emphasis">password</i></span>.</p>
+<p class="last-para">You can issue the <span class="fixed">DISCONNECT</span> command to close the connection; again, you can use this only from ESQL.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0104.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0106.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

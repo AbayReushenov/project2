@@ -1,0 +1,1207 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Stage 2: Creating the Stored Procedures</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0101.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0103.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch15"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1095"></a><a name="ch15lev1sec5"></a><span class="section-titlelabel">Stage 2: </span>Creating the Stored Procedures</h2><p class="first-para">You can conveniently subdivide the stored procedures into those that work on each of the four core storage tables and those that work on one of the mapping tables.</p>
+<a name="1096"></a><a name="IDX-471"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1097"></a><a name="ch15lev2sec8"></a>Users Stored Procedures</h3>
+<p class="first-para">You'll start by examining the stored procedures that will allow you to do the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Create a new user</p>
+</li>
+<li class="listitem">
+<p class="first-para">Update an existing user</p>
+</li>
+<li class="listitem">
+<p class="first-para">Delete a user</p>
+</li>
+<li class="listitem">
+<p class="first-para">Query for a list of all users</p>
+</li>
+<li class="listitem">
+<p class="first-para">Load the details for an individual user</p>
+</li>
+<li class="listitem">
+<p class="first-para">Validate a user's login credentials</p>
+</li>
+</ul>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1098"></a><a name="ch15lev3sec7"></a>Creating a User</h4>
+<p class="first-para">The <span class="fixed">RBS_CreateUser</span> stored procedure will create a new user in the system. The procedure accepts as input parameters all relevant user details, including the user's password (which is passed as a 20-byte binary parameter) and then inserts a new user into the database based on these values. It passes as an output parameter the <span class="fixed">UserID</span> value for the newly created user.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1099"></a><a name="ch15lev4sec5"></a>SQL Server</h5>
+<p class="first-para">You use a simple <span class="fixed">INSERT</span> statement to create the new user and then return the newly assigned identity column value from that table with the SQL constant <span class="fixed">@@IDENTITY</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_CreateUser
+@loginid varchar(10),
+@FirstName varchar(40),
+@LastName varchar(40),
+@Password binary(20),
+@Address1 varchar(80),
+@Address2 varchar(80),
+@City varchar(30),
+@State varchar(20),
+@ZipCode varchar(10),<a name="1100"></a><a name="IDX-472"></a>
+@EmailAddress varchar(255),
+@NewUserId int output
+AS
+   INSERT INTO Users(loginid, firstname, lastname, password,
+                      address1, address2, city, state, zipcode,
+                     emailaddress)
+               VALUES(@loginid, @FirstName, @LastName, @Password,
+                     @Address1, @Address2, @City, @State, @ZipCode,
+                      @EmailAddress)
+
+SET @NewUserId = @@IDENTITY
+</pre>
+</div>
+<p class="last-para">Because this example is small and just a case study, you can get away with using <span class="fixed">@@IDENTITY</span>. There are some issues with this constant that might make it inappropriate if you're using it in a high-volume system. For example, the value returned by <span class="fixed">@@IDENTITY</span> <i class="emphasis">may not actually be the value given to your row</i>. If a row is inserted between the time you performed your insert and the time you retrieve the value of <span class="fixed">@@IDENTITY</span>, you'll retrieve the wrong value. You can easily fix this by wrapping your <span class="fixed">CREATE</span> functions in isolated transactions.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1101"></a><a name="ch15lev4sec6"></a>Oracle</h5>
+<p class="first-para">The code for Oracle is somewhat different:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PROCEDURE RBS_CreateUser
+(
+i_loginid IN varchar,
+i_FirstName IN varchar,
+i_LastName IN varchar,
+i_Password IN varchar,
+i_Address1 IN varchar,
+i_Address2 IN varchar,
+i_City IN varchar,
+i_State IN varchar,
+i_ZipCode IN varchar,
+i_EmailAddress IN varchar,
+o_NewUserId OUT int
+)
+AS
+BEGIN
+INSERT INTO Users(loginid, firstname, lastname, password,
+                   address1, address2, city, state, zipcode,
+                   emailaddress)<a name="1102"></a><a name="IDX-473"></a>
+             VALUES(i_loginid, i_FirstName, i_LastName, i_Password,
+                  i_Address1, i_Address2, i_City, i_State, i_ZipCode,
+                   i_EmailAddress)
+;
+
+select userid_seq.currval into o_NewUserId from dual;
+
+END;
+/
+</pre>
+</div>
+<p class="last-para">You insert the current sequence value into your output parameter by selecting it from the <span class="fixed">DUAL</span> dummy table.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1103"></a><a name="ch15lev4sec7"></a>DB2</h5>
+<p class="first-para">The only real difference between the code for DB2 and that from Oracle is the way in which you insert the new <span class="fixed">UserID</span> value into your output parameter:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_CreateUser (
+   i_LoginID varchar(10),
+   i_FirstName varchar(40),
+   i_LastName varchar(40),
+   i_Password varchar(20),
+   i_Address1 varchar(80),
+   i_Address2 varchar(80),
+   i_City varchar(30),
+   i_State varchar(20),
+   i_ZipCode varchar(10),
+   i_EmailAddress varchar(255),
+   OUT o_NewUserId int)
+BEGIN
+INSERT INTO Users(loginid, firstname, lastname, password,
+                   address1, address2, city, state, zipcode,
+                   emailaddress)
+             VALUES(i_loginid, i_FirstName, i_LastName, i_Password,
+                    i_Address1, i_Address2, i_City, i_State, i_ZipCode,
+                     i_EmailAddress)
+;
+
+   SET o_NewUserID = IDENTITY_VAL_LOCAL();
+END
+</pre>
+</div>
+<p class="para">In terms of minor coding differences between Oracle and DB2, you'll notice that in DB2, the following are true:</p>
+<a name="1104"></a><a name="IDX-474"></a>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">You can't use the <span class="fixed">CREATE OR REPLACE</span> syntax.</p>
+</li>
+<li class="listitem">
+<p class="first-para">You're able to declare the size of your input and output parameters.</p>
+</li>
+<li class="listitem">
+<p class="first-para">You declare an output parameter by placing the <span class="fixed">OUT</span> keyword <i class="emphasis">before</i> rather than after the parameter name.</p>
+</li>
+<li class="listitem">
+<p class="first-para">You don't use the <span class="fixed">AS</span> keyword before <span class="fixed">BEGIN</span>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1105"></a><a name="ch15lev3sec8"></a>Deleting a User</h4>
+<p class="first-para">The procedure responsible for deleting a user from the system is remarkably simple. In SQL Server, it looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_DeleteUser
+@UserID int
+AS
+   DELETE Users WHERE UserId = @UserId
+</pre>
+</div>
+<p class="para">In DB2 and Oracle, it looks like this (bold indicates additions for the Oracle version):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PROCEDURE RBS_DeleteUser (i_UserID int)
+AS
+BEGIN
+   DELETE FROM Users WHERE UserID = i_UserID;
+END<b class="bold">;</b>
+<b class="bold">/</b>
+</pre>
+</div>
+<p class="last-para">The cascading delete options you've chosen on the foreign keys will ensure that related data in the database will be deleted as this procedure is executed.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1106"></a><a name="ch15lev3sec9"></a>Updating a User</h4>
+<p class="first-para">The <span class="fixed">RBS_UpdateUser</span> stored procedure will modify an existing user record. It takes as parameters the unique identifier for the user and all of that user's information including the password. A common limitation on many Web sites is that the e-mail address of the user is used as the primary key, so users often can't change their own e-mail addresses without creating a new account. This is cumbersome and often annoying to users. In this implementation, neither the login ID nor the e-mail address is restricted, and users can modify both of them as they choose. The key <a name="1107"></a><a name="IDX-475"></a>piece of information you use to identify a user in this stored procedure is their automatically assigned numeric ID.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1108"></a><a name="ch15lev4sec8"></a>SQL Server</h5>
+<p class="first-para">In SQL Server, the code looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_UpdateUser
+@UserId int,
+@loginid varchar(10),
+@Password binary(20),
+@FirstName varchar(40),
+@LastName varchar(40),
+@Address1 varchar(80),
+@Address2 varchar(80),
+@City varchar(30),
+@State varchar(2),
+@ZipCode varchar(10),
+@EmailAddress varchar(255)
+AS
+   UPDATE Users SET
+      loginid = @loginid,
+      Password = @Password,
+      FirstName = @FirstName,
+      LastName = @LastName,
+      Address1 = @Address1,
+      Address2 = @Address2,
+      City = @City,
+      State = @State,
+      ZipCode = @ZipCode,
+      EmailAddress = @EmailAddress
+   WHERE UserId = @UserID
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1109"></a><a name="ch15lev4sec9"></a>DB2 and Oracle</h5>
+<p class="first-para">In DB2, the code is virtually identical to the previous code (add the code in bold for Oracle and remember to remove the data type sizes):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE <b class="bold">OR REPLACE</b> PROCEDURE RBS_UpdateUser
+(
+   i_UserID int,
+   i_LoginID varchar(10),
+   i_FirstName varchar(40),<a name="1110"></a><a name="IDX-476"></a>
+   i_LastName varchar(40),
+   i_Password clob(20),
+   i_Address1 varchar(80),
+   i_Address2 varchar(80),
+   i_City varchar(30),
+   i_State varchar(20),
+   i_ZipCode varchar(10),
+   i_EmailAddress varchar(255))
+<b class="bold">AS</b>
+BEGIN
+UPDATE Users SET
+loginid = i_loginid,
+Password = i_Password,
+FirstName = i_FirstName,
+LastName = i_LastName,
+Address1 = i_Address1,
+Address2 = i_Address2,
+City = i_City,
+State = i_State,
+ZipCode = i_ZipCode,
+EmailAddress = i_EmailAddress
+WHERE UserId = i_UserID;
+END<b class="bold"><i class="emphasis">;</i></b>
+<b class="bold">/</b>
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1111"></a><a name="ch15lev3sec10"></a>Querying Users</h4>
+<p class="first-para">In keeping with the naming convention, you know that this particular procedure, <span class="fixed">RBS_SelectUsers</span>, retrieves more than one user. In this case, it retrieves all of the users in the system in no particular order. Because you don't exactly know what kind of code is being written for this application, we're providing this procedure as part of a set of default services just in case the application needs this to load a cache or some other function.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1112"></a><a name="ch15lev4sec10"></a>SQL Server</h5>
+<p class="first-para">The code in SQL Server is simple:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectUsers
+AS
+   SELECT FirstName, LastName, LoginId, UserId FROM Users
+   ORDER BY Lastname, FirstName
+<a name="1113"></a><a name="IDX-477"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1114"></a><a name="ch15lev4sec11"></a>Oracle</h5>
+<p class="first-para">In Oracle, things are a little more complicated. You return your rows into a special PL/SQL construct called a <i class="emphasis">cursor</i>, which you handle using a package (see <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures," for details). In the package specification, you declare your cursor (<span class="fixed">UserCur</span>) along with the procedure (<span class="fixed">GetUsers</span>) that are contained in the package body and will populate your cursor with the rows of users. The output parameter from the procedure is of type <span class="fixed">REF CURSOR</span> and is called <span class="fixed">o_UserCur</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PACKAGE RBS_SelectUsers_pkg
+AS
+TYPE
+UserCur IS REF CURSOR;
+PROCEDURE GetUsers(o_userCur OUT userCur);
+END RBS_SelectUsers_pkg
+;
+/
+</pre>
+</div>
+<p class="para">In the package body, you open the cursor and load it with the rows of data:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PACKAGE BODY RBS_SelectUsers_pkg
+AS
+PROCEDURE GetUsers(o_userCur OUT userCur)
+IS
+BEGIN
+OPEN o_userCur FOR
+SELECT FirstName, LastName, LoginId, UserId FROM Users;
+END Getusers;
+END RBS_SelectUsers_pkg;
+/
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1115"></a><a name="ch15lev4sec12"></a>DB2</h5>
+<p class="first-para">In DB2 you again return the rows into a cursor, but the code is more straight-forward:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectUsers()
+RESULT SETS 1
+BEGIN
+   DECLARE curUsers CURSOR WITH RETURN FOR
+      SELECT FirstName, LastName, LoginID, UserID FROM Users
+      ORDER BY LastName, FirstName;
+   OPEN curUsers;
+END
+<a name="1116"></a><a name="IDX-478"></a>
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1117"></a><a name="ch15lev3sec11"></a>Loading an Individual User</h4>
+<p class="first-para">Chances are fairly good that the application will be loading details for a single user at some point. This will more than likely be done right after a user's login/password combination is validated successfully. The assumption of this stored procedure is that the client code has already retrieved a list of user ID or an individual user ID via a login validation procedure. That numeric user ID is passed to this stored procedure as the key to load a user. Based on this validated user ID, the <span class="fixed">RBS_LoadUser</span> procedure retrieves all details (except the password) from the <span class="fixed">Users</span> table and returns them in output parameters.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1118"></a><a name="ch15lev4sec13"></a>SQL Server</h5>
+<p class="first-para">The code is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_LoadUser
+@UserId int,
+@Loginid varchar(10) output,
+@FirstName varchar(40) output,
+@LastName varchar(40) output,
+@Address1 varchar(80) output,
+@Address2 varchar(80) output,
+@City varchar(30) output,
+@State varchar(2) output,
+@ZipCode varchar(10) output,
+@EmailAddress varchar(255) output
+AS
+   SELECT
+      @LoginId = loginid,
+      @FirstName = FirstName,
+      @LastName = LastName,
+      @Address1 = Address1,
+      @Address2 = Address2,
+      @City = City,
+      @State = State,
+      @ZipCode = ZipCode,
+      @EmailAddress = EmailAddress
+   FROM Users
+   WHERE
+      UserId = @UserId
+<a name="1119"></a><a name="IDX-479"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1120"></a><a name="ch15lev4sec14"></a>Oracle</h5>
+<p class="first-para">Again, the code here is similar:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PROCEDURE RBS_LoadUser
+(
+o_UserId int,
+o_Loginid OUT varchar,
+o_FirstName OUT varchar,
+o_LastName OUT varchar,
+o_Address1 OUT varchar,
+o_Address2 OUT varchar,
+o_City OUT varchar,
+o_State OUT varchar,
+o_ZipCode OUT varchar,
+o_EmailAddress OUT varchar
+)
+AS
+BEGIN
+SELECT loginid, FirstName, LastName, Address1,
+       Address2, City, State, ZipCode, EmailAddress
+INTO
+       o_LoginId, o_FirstName, o_LastName,o_Address1,
+       o_Address2, o_City, o_State, o_ZipCode,
+       o_EmailAddress
+FROM Users
+WHERE UserId = o_UserId;
+END;
+/
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1121"></a><a name="ch15lev4sec15"></a>DB2</h5>
+<p class="first-para">And finally for DB2, this is the code:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_LoadUser (
+   i_UserID int,
+   OUT o_LoginID varchar(10),
+   OUT o_FirstName varchar(40),
+   OUT o_LastName varchar(40),
+   OUT o_Address1 varchar(80),
+   OUT o_Address2 varchar(80),
+   OUT o_City varchar(30),<a name="1122"></a><a name="IDX-480"></a>
+   OUT o_State varchar(20),
+   OUT o_ZipCode varchar(10),
+   OUT o_EmailAddress varchar(255))
+BEGIN
+SELECT loginid, FirstName, LastName, Address1,
+       Address2, City, State, ZipCode, EmailAddress
+INTO
+       o_LoginId, o_FirstName, o_LastName,o_Address1,
+       o_Address2, o_City, o_State, o_ZipCode,
+       o_EmailAddress
+FROM Users
+WHERE UserId = o_UserId;
+END<b class="bold"><i class="emphasis">;</i></b>
+<b class="bold">/</b>
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1123"></a><a name="ch15lev3sec12"></a>Validating User Login</h4>
+<p class="first-para">The following stored procedure, <span class="fixed">RBS_ValidateLogin</span>, will validate a user's login and password combination. The <span class="fixed">LoginID</span> and <span class="fixed">Password</span> are sent as input parameters to the stored procedure. The output parameters are the <span class="fixed">FirstName</span> and <span class="fixed">LastName</span>. In addition, the stored procedure returns a numeric value that indicates whether the login was successful. Again, note that the user's password should be encrypted before it's even passed as a parameter to the database. You first perform a <span class="fixed">SELECT</span> statement, looking to retrieve the row from the <span class="fixed">Users</span> table that matches the <span class="fixed">LoginID</span> and <span class="fixed">Password</span>. If no such row exists, the login fails and the stored procedure returns <span class="fixed">-1</span>. Otherwise, the stored procedure returns the numeric ID of the user, as well as that user's first and last name. The numeric ID of the user must be retained by the client application in some way because it's used as the key parameter in many other procedures.</p>
+<p class="para">It is fairly common practice for Web sites and applications to provide some kind of greeting in the application to display to authenticated users. Rather than require the application to make an additional round trip to the database to retrieve the first and last name of a user after they've logged in, you simply return that information as output parameters from this procedure for optimal performance.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1124"></a><a name="ch15lev4sec16"></a>SQL Server</h5>
+<p class="first-para">The following is the code for the SQL Server version of <span class="fixed">RBS_ValidateLogin</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_ValidateLogin
+@loginid varchar(10),
+@password binary(20),<a name="1125"></a><a name="IDX-481"></a>
+@FirstName varchar(40) output,
+@LastName varchar(40) output
+AS
+
+   DECLARE @UserId int
+
+   SELECT @UserId = UserId, @FirstName = firstname, @LastName = lastname
+   FROM Users
+   WHERE loginid = @loginid AND password = @password
+
+   IF @UserId IS NOT NULL
+      RETURN @UserId
+   ELSE
+      RETURN -1
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1126"></a><a name="ch15lev4sec17"></a>Oracle</h5>
+<p class="first-para">You can't get return values from Oracle stored procedures, so you simply define your <span class="fixed">UserID</span> as an output parameter:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PROCEDURE RBS_ValidateLogin
+(
+i_loginid varchar,
+i_password varchar,
+o_FirstName OUT varchar,
+o_LastName OUT varchar,
+o_UserID OUT int
+)
+AS
+BEGIN
+
+SELECT UserID, firstname, lastname
+INTO o_UserID, o_FirstName, o_LastName
+FROM Users
+WHERE loginid = i_loginid
+AND password = i_password;
+
+IF o_UserId IS NULL
+THEN
+      o_userid := -1;
+END IF;
+END;
+/
+<a name="1127"></a><a name="IDX-482"></a>
+</pre>
+</div>
+<p class="para">However, if you do want to actually return the <span class="fixed">UserID</span>, you can re-create the procedure as a stored <i class="emphasis">function</i>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE FUNCTION RBS_ValidateLogin_FUNC
+(
+i_loginid varchar,
+i_password raw,
+o_FirstName OUT varchar,
+o_LastName OUT varchar
+)
+RETURN int
+AS
+o_UserID int;
+BEGIN
+
+SELECT UserID, firstname, lastname
+INTO o_UserID, o_FirstName, o_LastName
+FROM Users
+WHERE loginid = i_loginid
+AND password = i_password;
+
+IF o_UserId IS NOT NULL
+THEN
+RETURN o_userID;
+ELSE
+Return -1;
+END IF;
+END;
+/
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1128"></a><a name="ch15lev4sec18"></a>DB2</h5>
+<p class="first-para">The code for DB2 is more similar to what you used for SQL Server:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_ValidateLogin
+(
+i_LoginID varchar(10),
+i_password clob(20),
+OUT o_FirstName varchar(40),
+OUT o_LastName varchar(40))
+BEGIN
+   DECLARE l_UserID int;<a name="1129"></a><a name="IDX-483"></a>
+   SELECT UserID, FirstName, LastName
+   INTO l_UserID, o_FirstName, o_LastName
+   FROM Users
+   WHERE LoginID = i_LoginID;
+
+   IF l_UserID IS NOT NULL THEN
+      RETURN l_UserID;
+   ELSE
+      RETURN -1;
+   END IF;
+END
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1130"></a><a name="ch15lev2sec9"></a>Roles Stored Procedures</h3>
+<p class="first-para">Let's take a look at the stored procedures you're going to create to provide application services dealing with roles.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1131"></a><a name="ch15lev3sec13"></a>Creating a Role</h4>
+<p class="first-para">The <span class="fixed">RBS_CreateRole</span> procedure creates a new role with the supplied description and returns the identity of the newly inserted row.</p>
+<p class="para">In SQL Server, you use the <span class="fixed">@@IDENTITY</span> constant to return the <span class="fixed">RoleID</span> for the newly inserted row:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_CreateRole
+@Description varchar(50),
+@NewRoleId int output
+AS
+   INSERT INTO Roles(Description) VALUES(@Description)
+
+   SET @NewRoleId = @@IDENTITY
+</pre>
+</div>
+<p class="para">In addition to the minor differences noted earlier, in place of the <span class="fixed">@@IDENTITY </span>constant, for Oracle you use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+select roleid_seq.currval into o_NewRoleId from dual;
+</pre>
+</div>
+<p class="para">And for DB2 you use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SET o_NewRoleID = IDENTITY_VAL_LOCAL();
+<a name="1132"></a><a name="IDX-484"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1133"></a><a name="ch15lev3sec14"></a>Deleting a Role</h4>
+<p class="first-para">This procedure deletes an existing role. Note that there's no additional checking to make sure the role exists before it's deleted. Foreign keys and cascading rules will allow all data related to the role to be automatically deleted when the role is deleted. The procedure will simply return without error if an attempt to delete a nonexistent role is made:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_DeleteRole
+@RoleId int
+AS
+   DELETE Roles WHERE RoleId = @RoleId
+</pre>
+</div>
+<p class="para">For DB2 and Oracle, you have the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE <b class="bold">OR REPLACE</b> PROCEDURE RBS_DeleteRole (i_RoleID int)
+<b class="bold">AS</b>
+BEGIN
+   DELETE FROM Roles WHERE RoleID = i_RoleID;
+END<b class="bold">;</b>
+<b class="bold">/</b>
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1134"></a><a name="ch15lev3sec15"></a>Updating a Role</h4>
+<p class="first-para">This procedure will modify the description of an existing role. It takes as input parameters the unique identifier for the role and the description. In SQL Server, you have the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_UpdateRole
+@RoleId int,
+@Description varchar(40)
+AS
+   UPDATE Roles SET Description = @Description WHERE RoleId = @RoleId
+</pre>
+</div>
+<p class="para">In DB2 the code looks like this (for Oracle, add the bold code and don't specify the size of the description parameter):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE <b class="bold">OR REPLACE</b> PROCEDURE RBS_UpdateRole
+(i_RoleID int, i_Description varchar(40))
+AS<a name="1135"></a><a name="IDX-485"></a>
+<b class="bold">BEGIN</b>
+   UPDATE Roles
+   SET Description = i_Description
+   WHERE RoleID = i_RoleID;
+END<b class="bold"><i class="emphasis">;</i></b>
+<b class="bold">/</b>
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1136"></a><a name="ch15lev3sec16"></a>Loading a Role</h4>
+<p class="first-para">This procedure will load the description of an existing role into an output parameter. In SQL Server, use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_LoadRole
+@RoleId int,
+@Description varchar(40) output
+AS
+   SELECT @Description = Description
+   FROM Roles
+   WHERE RoleId = @RoleId
+</pre>
+</div>
+<p class="para">In DB2 (for Oracle, add the bold code, remove the parameter size, and move the <span class="fixed">OUT</span> keyword to after the parameter name):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE <b class="bold">OR REPLACE</b> PROCEDURE RBS_LoadRole
+(
+i_RoleId int,
+OUT o_Description varchar(40)
+)
+<b class="bold">AS</b>
+BEGIN
+   SELECT Description
+   into o_Description
+   FROM Roles
+   WHERE RoleId = i_RoleId;
+END<b class="bold">;</b>
+<b class="bold">/</b>
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1137"></a><a name="ch15lev3sec17"></a>Selecting Roles</h4>
+<p class="first-para">The following procedure will retrieve a list of all of the roles in the database, sorted by the name of the role. In SQL Server, use the following:</p>
+<a name="1138"></a><a name="IDX-486"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectRoles
+AS
+   SELECT RoleId, Description FROM Roles ORDER BY Description
+</pre>
+</div>
+<p class="para">In Oracle, as for the <span class="fixed">RBS_SelectUsers</span> procedure, you load the rows into a cursor and handle this using a package:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PACKAGE RBS_SelectRoles_pkg
+AS
+TYPE
+RoleCur IS REF CURSOR;
+PROCEDURE GetRoles(o_roleCur OUT roleCur);
+END RBS_SelectRoles_pkg
+;
+/
+
+CREATE OR REPLACE PACKAGE BODY RBS_SelectRoles_pkg
+AS
+PROCEDURE GetRoles(o_roleCur OUT roleCur)
+IS
+BEGIN
+OPEN o_roleCur FOR
+SELECT RoleId, Description FROM Roles ORDER BY Description;
+END GetRoles;
+END RBS_SelectRoles_pkg;
+/
+</pre>
+</div>
+<p class="para">In DB2, you have this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectRoles()
+RESULT SETS 1
+BEGIN
+   DECLARE curRoles CURSOR WITH RETURN FOR
+      SELECT RoleID, Description FROM Roles
+      ORDER BY Description;
+   OPEN curRoles;
+END
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1139"></a><a name="ch15lev2sec10"></a>Permissions Stored Procedures</h3>
+<p class="first-para">Now you'll look at the stored procedures that deal with permissions. Once again, you'll see how to create, update, and delete a permission as well as how to load an individual permission and query for a list of all permissions.</p>
+
+<a name="1140"></a><a name="IDX-487"></a>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1141"></a><a name="ch15lev3sec18"></a>Creating a Permission</h4>
+<p class="first-para">This procedure will create a new permission. It takes a description as an input parameter, and the new ID of the permission created is placed in an output parameter. The SQL Server script is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_CreatePermission
+@Description varchar(50),
+@NewPermissionId int output
+AS
+
+   INSERT INTO Permissions(Description) VALUES(@Description)
+
+   SET @NewPermissionId = @@IDENTITY
+</pre>
+</div>
+<p class="last-para">You can convert this to DB2 and Oracle in the same manner as you did for the <span class="fixed">RBS_CreateUser</span> and <span class="fixed">RBS_CreateRoles</span> procedures.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1142"></a><a name="ch15lev3sec19"></a>Updating a Permission</h4>
+<p class="first-para">The following procedure will modify the description and category of an existing permission. Some applications may require that you not be able to change the category of a permission once it has been created, but you'll leave it up to the application to enforce that business rule because it won't violate any of the data rules to allow that. For SQL Server, you have the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_UpdatePermission
+@PermissionId int,
+@Description varchar(50),
+@CategoryId int
+AS
+   UPDATE Permissions
+   SET
+      Description = @Description,
+      CategoryId = @CategoryId
+   WHERE
+
+      PermissionId = @PermissionId;
+</pre>
+</div>
+<p class="para">In DB2, use the following (for Oracle, add the bold code and remove the size attribute from the <span class="fixed">i_Description</span> parameter):</p>
+<a name="1143"></a><a name="IDX-488"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE <b class="bold">OR REPLACE</b> PROCEDURE RBS_UpdatePermission
+(i_PermissionID int,
+i_Description varchar(50),
+i_CategoryID int
+)
+<b class="bold">AS</b>
+BEGIN
+   UPDATE Permissions
+   SET Description = i_Description, CategoryID = i_CategoryID
+   WHERE PermissionID = i_PermissionID;
+END<b class="bold"><i class="emphasis">;</i></b>
+<b class="bold">/</b>
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1144"></a><a name="ch15lev3sec20"></a>Deleting a Permission</h4>
+<p class="first-para">The following procedure is responsible for removing a permission from the database. The cascading rules on the foreign keys will take care of removing any related data for you. In SQL Server, the code is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_DeletePermission
+@PermissionId int
+AS
+   DELETE Permissions
+   WHERE
+      PermissionId = @PermissionId;
+</pre>
+</div>
+<p class="para">Again, here is the DB2/Oracle code:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE <b class="bold">OR REPLACE</b> PROCEDURE RBS_DeletePermission
+(
+i_PermissionID int
+)
+<b class="bold">AS</b>
+BEGIN
+   DELETE FROM Permissions
+   WHERE PermissionID = i_PermissionID;
+END;
+<b class="bold">/</b>
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1145"></a><a name="ch15lev3sec21"></a>Loading a Permission</h4>
+<p class="first-para">The following procedure will load an individual permission and return its data in output parameters. It makes use of an inner join to return the name and description of the category to which the permission belongs as well as the category ID:</p>
+<a name="1146"></a><a name="IDX-489"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_LoadPermission
+@PermissionId int,
+@Description varchar(50) output,
+@CategoryName varchar(50) output,
+@CategoryId int output
+AS
+   SELECT @Description = p.Description,
+           @CategoryId = p.CategoryId,
+          @CategoryName = pc.Description
+   FROM
+    Permissions p
+    INNER JOIN PermissionCategories pc
+    ON p.CategoryId = pc.CategoryId
+    WHERE p.PermissionId = @PermissionId;
+</pre>
+</div>
+<p class="para">In DB2, you have the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_LoadPermission
+(i_PermissionID int,
+OUT o_Description varchar(50),
+OUT o_CategoryName varchar(50),
+OUT o_CategoryID int)
+BEGIN
+   SELECT p.Description, p.CategoryID, pc.Description
+   INTO o_Description, o_CategoryID, o_CategoryName
+   FROM Permissions p
+   INNER JOIN PermissionCategories pc
+   ON p.CategoryID = pc.CategoryID;
+END
+</pre>
+</div>
+<p class="para">In Oracle, the query has been written to run on all Oracle versions (only 9i and later support the <span class="fixed">INNER JOIN</span> syntax):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PROCEDURE RBS_LoadPermission
+(
+i_PermissionId int,
+o_Description OUT varchar,
+o_CategoryName OUT varchar,
+o_CategoryId OUT int
+)<a name="1147"></a><a name="IDX-490"></a>
+AS
+  BEGIN
+    SELECT p.Description, p.CategoryId, pc.Description
+    INTO o_Description, o_CategoryId, o_CategoryName
+    FROM Permissions p, PermissionCategories pc
+    WHERE p.CategoryId = pc.CategoryId
+    AND p.PermissionId = i_PermissionId;
+  END;
+/
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1148"></a><a name="ch15lev3sec22"></a>Querying Permissions</h4>
+<p class="first-para">The following stored procedure will return a list of permissions. If a category is supplied, then the list of permissions will be a list of permissions that belong to that category. If a <span class="fixed">-1</span> is supplied in place of a category ID, then the list of permissions returned will be unfiltered. All results are ordered by the category name and then by the permission name. In SQL Server, the code is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectPermissions
+@CategoryId Int
+AS
+   IF @CategoryId = -1
+      SELECT p.PermissionId, p.CategoryId, p.Description,
+              pc.Description as CategoryName
+      FROM Permissions p
+      INNER JOIN PermissionCategories pc
+         ON p.CategoryId = pc.CategoryId
+      ORDER BY pc.Description, p.Description
+   ELSE
+      SELECT p.PermissionId, p.CategoryId, p.Description,
+              pc.Description as CategoryName
+      FROM Permissions p
+      INNER JOIN PermissionCategories pc
+         ON p.CategoryId = pc.CategoryId
+      WHERE p.CategoryId = @CategoryId
+      ORDER BY p.Description;
+</pre>
+</div>
+<p class="para">In DB2, you load the results into a cursor as follows:</p>
+<a name="1149"></a><a name="IDX-491"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectPermissions(i_CategoryID int)
+RESULT SETS 1
+BEGIN
+DECLARE cursor1 CURSOR WITH RETURN FOR
+   SELECT p.PermissionID, p.CategoryID, p.Description,
+           pc.Description AS CategoryName
+      FROM Permissions p
+      INNER JOIN PermissionCategories pc
+      ON p.CategoryID = pc.CategoryID
+      ORDER BY pc.Description, p.Description;
+DECLARE cursor2 CURSOR WITH RETURN FOR
+   SELECT p.PermissionID, p.CategoryID, p.Description,
+           pc.Description AS CategoryName
+      FROM Permissions p
+      INNER JOIN PermissionCategories pc
+      ON p.CategoryID = pc.CategoryID
+      WHERE p.CategoryID = i_CategoryID
+      ORDER BY p.Description;
+IF i_CategoryID = -1 THEN
+   OPEN cursor1;
+ELSE
+   OPEN cursor2;
+END IF;
+END
+</pre>
+</div>
+<p class="para">In Oracle, you have the usual package specification and body:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PACKAGE RBS_SelectPerms_pkg
+AS
+TYPE permCur IS REF CURSOR;
+PROCEDURE Getperms(i_CategoryID IN int, o_permCur OUT permCur);
+END RBS_SelectPerms_pkg
+;
+/
+
+CREATE OR REPLACE PACKAGE BODY RBS_SelectPerms_pkg
+AS
+PROCEDURE Getperms
+(
+i_CategoryID IN int, o_permCur OUT permCur
+)
+IS<a name="1150"></a><a name="IDX-492"></a>
+BEGIN
+IF i_CategoryId = -1
+THEN
+OPEN o_permCur FOR
+SELECT p.PermissionId, p.CategoryId, p.Description, pc.Description as
+CategoryName
+FROM Permissions p, PermissionCategories pc
+WHERE p.CategoryId = pc.CategoryId
+ORDER BY pc.Description, p.Description;
+
+ELSE
+OPEN o_permCur FOR
+SELECT p.PermissionId, p.CategoryId, p.Description, pc.Description as
+CategoryName
+FROM Permissions p, PermissionCategories pc
+WHERE p.CategoryId = pc.CategoryId
+AND p.CategoryId = i_CategoryId
+ORDER BY p.Description;
+END IF;
+END Getperms;
+END RBS_SelectPerms_pkg;
+/
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1151"></a><a name="ch15lev2sec11"></a>Stored Procedures for the Mapping Tables</h3>
+<p class="first-para">Finally, let's look at the stored procedures that are going to work with the mapping tables. From here on, we present only the SQL Server code. However, the conversion techniques have been fully covered in previous samples, and the code download for this chapter includes full scripts for all three databases.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1152"></a><a name="ch15lev3sec23"></a>Setting the Role's Permission Mode</h4>
+<p class="first-para">The following procedure will create an entry in the <span class="fixed">RolePermission</span> table. It assigns a permission to a role with a particular numeric mode value. The first thing you do is check to see if a mapping already exists. If it does, then you'll update that mapping with the new mode value. If it doesn't exist, then you'll create a new mapping with the supplied mode value. Note that the change to the role permission mode isn't additive. Therefore, the client application will be responsible for determining the previous value and adding access modes if that's the desired behavior. However, this type of stored procedure lends itself well to an application that provides a form with a list of data-bound checkboxes that can be submitted to invoke this procedure:</p>
+<a name="1153"></a><a name="IDX-493"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SetRolePermissionMode
+@PermissionId int,
+@RoleId int,
+@Mode int
+AS
+   DECLARE @Count int
+
+   SELECT @Count = Count(PermissionId) FROM RolePermission WHERE
+      RoleId = @RoleId AND PermissionId = @PermissionId
+
+   IF @Count = 0
+      INSERT INTO RolePermission(RoleId, PermissionId, Mode)
+      VALUES(@RoleId, @PermissionId, @Mode)
+   ELSE
+      UPDATE RolePermission
+      SET
+         Mode = @Mode
+      WHERE
+         PermissionId = @PermissionId AND
+         RoleId = @RoleId;
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1154"></a><a name="ch15lev3sec24"></a>Querying the Permissions Assigned to a Role</h4>
+<p class="first-para">The following procedure will return a list of permissions that are assigned to a given role, which is ordered by the name of the permission category and then by the name of the permission to produce an alphabetic list of permissions:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectRolePermissions
+@RoleId int
+AS
+   SELECT p.PermissionId, p.Description, pc.Description as CategoryName, rp.Mode
+   FROM Permissions p
+   INNER JOIN PermissionCategories pc
+   ON p.CategoryId = pc.CategoryId
+      INNER JOIN RolePermission rp
+      ON p.PermissionId = rp.PermissionId
+   WHERE rp.RoleId = @RoleId
+   ORDER BY pc.Description, p.Description;
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1155"></a><a name="ch15lev3sec25"></a>Querying the User's Effective Permission List</h4>
+<p class="first-para">This next procedure is essentially the entire meat of the RBS system. The bottom line is that roles exist for organization and maintenance purposes. Although it <a name="1156"></a><a name="IDX-494"></a>might be nice to display to the user or to administrators which roles are assigned to a user, that isn't the data you need.</p>
+<p class="para">The data you really need is a list of all of the tasks that a given user can perform. This list is a composition of all of the permissions granted to all of the roles that are assigned to that user and the modes associated with that user.</p>
+<p class="para">There's a slight twist you need to be aware of before you start writing your procedure, though. Think about this example: A user is a member of the Network Administrators role, and they're also a member of the Computer Administrators role. The Network Administrators role grants complete and full access to <span class="fixed">Users</span>, and the Computer Administrators role grants only read access on <span class="fixed">Users</span>. Which access does the user have if they've been granted two different modes of the same permission? Thankfully, because you chose to use simple integers rather than a pile of columns to indicate all of your mode flags, your choice is easy. You can make it additive. The result will be the <i class="emphasis">most</i> flags available. In other words, all you have to do is select the <span class="fixed">MAX()</span> of the mode of each permission in a <span class="fixed">GROUP BY</span> clause:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectEffectivePermissions
+@UserId int
+AS
+
+   SELECT RolePermission.PermissionId,
+          Max(Mode) as Mode,
+          Description
+   FROM RolePermission
+      INNER JOIN UserRoles On RolePermission.RoleId = UserRoles.RoleId
+      INNER JOIN Permissions ON RolePermission.PermissionId =
+   Permissions.PermissionId
+      WHERE UserRoles.UserId = @UserId
+      GROUP BY RolePermission.PermissionId, Permissions.Description;
+</pre>
+</div>
+<p class="para">
+<a class="internaljump" href="#ch15fig02">Figure 15-2</a> shows an execution of the stored procedure (from within SQL Server's query tool), retrieving the list of effective permissions belonging to user 1, a full administrator in the sample database.</p>
+<div class="figure">
+<a name="1157"></a><a name="ch15fig02"></a><span class="figuremediaobject"><a href="images/fig511%5F01%5F0%2Ejpg" NAME="IMG_43" target="_parent"><img src="images/fig511_01.jpg" height="157" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 15-2: </span>Retrieving a list of effective permissions for User 1</span>
+</div>
+<a name="1158"></a><a name="IDX-495"></a>
+<p class="para">
+<a class="internaljump" href="#ch15fig03">Figure 15-3</a> shows an execution of selecting the effective permission list for the second user in the database, which does not have quite as much power as the administrator (user 1).</p>
+<div class="figure">
+<a name="1159"></a><a name="ch15fig03"></a><span class="figuremediaobject"><a href="images/fig511%5F02%5F0%2Ejpg" NAME="IMG_44" target="_parent"><img src="images/fig511_02.jpg" height="157" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 15-3: </span>Selecting the effective permissions for User 2</span>
+</div>
+<p class="para">To rehash what we were illustrating about bitmasking, a <span class="fixed">Mode</span> value of <span class="fixed">29</span> given the bitmask key indicates that Create, Read, Update, and Delete are all <i class="emphasis">true</i>, and a <span class="fixed">Mode</span> value of <span class="fixed">4</span> indicates that only Read is available on the user's permission, as shown in <a class="internaljump" href="#ch15table08">Table 15-8</a>.</p>
+<a name="1160"></a><a name="ch15table08"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-8: </span>Permission Assignments for User 2</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Permission</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Create</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Read</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Update</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Delete</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Users</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td><td class="td" align="left">
+<p class="table-para">No</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Products</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Sales</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Coupons</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td><td class="td" align="left">
+<p class="table-para">Yes</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1161"></a><a name="IDX-496"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1162"></a><a name="ch15lev3sec26"></a>Querying a User's Assigned Roles</h4>
+<p class="first-para">This procedure allows your application to retrieve all of the roles that have been assigned to a given user and whether that user is allowed to grant those roles to others (assuming they can modify user permissions to begin with):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RBS_SelectUserRoles
+@UserId int
+AS
+
+   SELECT UserRoles.RoleId, Description, CanGrant FROM UserRoles
+   INNER JOIN Roles ON UserRoles.RoleId = Roles.RoleId
+   WHERE UserId = @UserId
+   ORDER BY Description;
+</pre>
+</div>
+<p class="para">
+<a class="internaljump" href="#ch15fig04">Figure 15-4</a> illustrates how you execute the stored procedure to retrieve the list of roles that are assigned to a user and whether the user can grant that role to other users (assuming they can modify user security settings).</p>
+<div class="figure">
+<a name="1163"></a><a name="ch15fig04"></a><span class="figuremediaobject"><a href="images/fig512%5F01%5F0%2Ejpg" NAME="IMG_45" target="_parent"><img src="images/fig512_01.jpg" height="131" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 15-4: </span>Retrieving the list of roles assigned to a user</span>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0101.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0103.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

@@ -1,0 +1,31 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Why Implement Role-Based Security?</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0098.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0100.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch15"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1050"></a><a name="ch15lev1sec2"></a>Why Implement Role-Based Security?</h2><a name="1051"></a><a name="IDX-454"></a>
+<p class="para">The main advantage of RBS is in the maintenance of systems employing the technique. The typical example is that you have a system of some kind that contains thousands of different users, possibly a human resources Web site for your corporate intranet. You want some users to be able to maintain their own information while you want a portion of other users to not have permission to write over existing files (or data in a database) or to access those files or data at all. In addition, you want to be able to grant to other users the ability to maintain information related to the corporate hierarchy, departments, organizational charts, and more.</p>
+<p class="para">So, in this sample, several different types of users exist within the system. Each type of user will need a different set of permissions in order to do their job. A user higher up in an organization might be granted more permissions than someone in the lower level of the organization. For example, the "department-head" type of user might have 50 different permissions while a "team-lead" type of user might only have 20 permissions. If the system has 10,000 users, think about the amount of time required to maintain each set of permissions individually for each user.</p>
+<p class="last-para">A more maintainable solution would be to first identify the various types of users in the system. Each "type" of user is a role. Then determine the permissions that belong to each role. Maintaining the system then becomes exponentially easier because all you have to do is map users to roles, rather than spending the painstaking time mapping individual permissions to each user.</p>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0098.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0100.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

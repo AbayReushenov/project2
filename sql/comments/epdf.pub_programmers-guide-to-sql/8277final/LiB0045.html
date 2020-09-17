@@ -1,0 +1,48 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Modifying Data Through a View</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0044.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0046.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch08"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="483"></a><a name="ch08lev1sec3"></a>Modifying Data Through a View</h2><p class="first-para">Depending on the view specification, it may be possible to modify data through a view. However, this isn't always possible. In order for a view to be modifiable via <span class="fixed">INSERT</span>, <span class="fixed">UPDATE</span>, or <span class="fixed">DELETE</span> (which will actually result in modification of the underlying data), certain conditions must be met:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">The view can't contain any aggregate functions, such as <span class="fixed">COUNT</span> or <span class="fixed">MAX</span>, or use a <span class="fixed">GROUP BY</span> clause. One exception is that subqueries can use aggregate functions although the values calculated here can't be modified.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The view doesn't contain a <span class="fixed">TOP</span> clause (SQL Server only).</p>
+</li>
+<li class="listitem">
+<p class="first-para">The view doesn't use <span class="fixed">DISTINCT</span>.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The view doesn't use calculated columns.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The view must obtain data from one or more tables rather than simply providing explicit values.</p>
+</li>
+</ul>
+<p class="para">This basically restricts view data modification to simple cases but can nonetheless be useful in some circumstances.</p>
+<p class="para">You can also utilize something more advanced to make views modifiable, notably triggers and partitioned views, but these are advanced topics that we won't cover here.</p>
+<p class="last-para">The <span class="fixed">WITH CHECK OPTION</span> clause at the end of a <span class="fixed">CREATE VIEW</span> statement is used on views that allow data modification to the data visible to the view. For example, if there's a filter on a column such as <span class="fixed">WHERE ClassID = 4</span>, then you couldn't change the value of this column to any value other than for any record, and you <a name="484"></a><a name="IDX-199"></a>couldn't add a new record with a different value of <span class="fixed">ClassID</span>. However, you could alter any visible columns that adhere to that condition.</p>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0044.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0046.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

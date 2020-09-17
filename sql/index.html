@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SQL Tutor</title>
+    <link rel="stylesheet" href="./css/stylesheet.css" type="text/css">
+    <meta name="description" content="SQL команды">
+    <meta name="keywords" content="SQL, tutorial">
+    <meta name="author" content="Abay Reushenov">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="./jpg/sql.ico" rel="shortcut icon" type="image/x-icon">
+	</head>
+	<body>
+		<header>
+        <div id="logo">
+            <a href="index.html" title="На главную страницу">
+                <img src="./jpg/sql11.png" title="Что такое SQL" alt="SQL для вас и Вас">
+                <span>SQL команды"</span>
+            </a>
+        </div>
+                               <p>Copyright © 2020 <a href="index.html">Все очень сложно</a>.
+                            Все права сохраняются за их правообладателями</p>
+     </header>
+
+
+    <div class="block">
+
+<div>
+<hr>
+<img src="./jpg/pic1.jpg"/><img src="./jpg/pic2.jpg"/><img src="./jpg/pic3.jpg"/>
+<hr>
+</div>
+<br/>
+
+     <h4>Введение </h4><br/>
+ Язык SQL очень прочно влился в жизнь бизнес-аналитиков и требования к кандидатам благодаря простоте, удобству и распространенности. Из собственного опыта могу сказать, что наиболее часто SQL используется для формирования выгрузок, витрин (с последующим построением отчетов на основе этих витрин) и администрирования баз данных. И поскольку повседневная работа аналитика неизбежно связана с выгрузками данных и витринами, навык написания SQL запросов может стать фактором, из-за которого кандидат или получит преимущество, или будет отсеян. Печальная новость в том, что не каждый может рассчитывать получить его на студенческой скамье. Хорошая новость в том, что в изучении SQL нет ничего сложного, это быстро, а синтаксис запросов прост и понятен. Особенно это касается тех, кому уже доводилось сталкиваться с более сложными языками.<br/>
+<br/>
+Обучение SQL запросам я разделил на три части. Эта часть посвящена базовому синтаксису, который используется в 80-90% случаев. Следующие две части будут посвящены подзапросам, Join'ам и специальным операторам. Цель гайдов: быстро и на практике отработать синтаксис SQL, чтобы добавить его к арсеналу навыков. <br/>
+<br/>
+<h4>Практика</h4><br/>
+Введение в синтаксис будет рассмотрено на примере открытой базы данных, предназначенной специально для практики SQL. Чтобы твое обучение прошло максимально эффективно, открой ссылку ниже в новой вкладке и сразу запускай приведенные примеры, это позволит тебе лучше закрепить материал и самостоятельно поработать с синтаксисом. <br/>
+<a name="habracut"></a><br/>
+<a href="https://www.w3schools.com/sql/trysql.asp?filename=trysql_op_in">Кликнуть здесь</a><br/>
+<br/>
+После перехода по ссылке можно будет увидеть сам редактор запросов и вывод данных в центральной части экрана, список таблиц базы данных находится в правой части. <br/>
+<br/>
+<h4>Структура sql-запросов</h4><br/>
+Общая структура запроса выглядит следующим образом:<br/>
+<br/>
+<pre><code class="sql">SELECT ('столбцы или * для выбора всех столбцов; обязательно')
+FROM ('таблица; обязательно')
+WHERE ('условие/фильтрация, например, city = 'Moscow'; необязательно')
+GROUP BY ('столбец, по которому хотим сгруппировать данные; необязательно')
+HAVING ('условие/фильтрация на уровне сгруппированных данных; необязательно')
+ORDER BY ('столбец, по которому хотим отсортировать вывод; необязательно')</code></pre><br/>
+Разберем структуру. Для удобства текущий изучаемый элемент в запроса выделяется CAPS'ом.<br/>
+<br/>
+<div>
+<hr>
+<img src="./jpg/pic4.jpeg"/><img src="./jpg/pic5.jpeg"/><img src="./jpg/pic6.jpeg"/>
+<hr>
+</div>
+<br/>
+<h4>SELECT, FROM</h4><br/>
+SELECT, FROM — обязательные элементы запроса, которые определяют выбранные столбцы, их порядок и источник данных. <br/>
+<br/>
+Выбрать все (обозначается как *) из таблицы Customers:<br/>
+<br/>
+<pre><code class="sql">SELECT * FROM Customers</code></pre><br/>
+Выбрать столбцы CustomerID, CustomerName из таблицы Customers:<br/>
+<br/>
+<pre><code class="sql">SELECT CustomerID, CustomerName FROM Customers</code></pre><br/>
+<br/>
+<h4>WHERE</h4><br/>
+WHERE — необязательный элемент запроса, который используется, когда нужно отфильтровать данные по нужному условию. Очень часто внутри элемента where используются IN / NOT IN для фильтрации столбца по нескольким значениям, AND / OR для фильтрации таблицы по нескольким столбцам.<br/>
+<br/>
+Фильтрация по одному условию и одному значению:<br/>
+<br/>
+<pre><code class="sql">select * from Customers
+WHERE City = 'London'</code></pre><br/>
+Фильтрация по одному условию и нескольким значениям с применением IN (включение) или NOT IN (исключение):<br/>
+<br/>
+<pre><code class="sql">select * from Customers
+where City IN ('London', 'Berlin')</code></pre><br/>
+<pre><code class="sql">select * from Customers
+where City NOT IN ('Madrid', 'Berlin','Bern')</code></pre><br/>
+Фильтрация по нескольким условиям с применением AND (выполняются все условия) или OR (выполняется хотя бы одно условие) и нескольким значениям:<br/>
+<br/>
+<pre><code class="sql">select * from Customers
+where Country = 'Germany' AND City not in ('Berlin', 'Aachen') AND CustomerID &gt; 15</code></pre><br/>
+<pre><code class="sql">select * from Customers
+where City in ('London', 'Berlin') OR CustomerID &gt; 4</code></pre><br/>
+<h4>GROUP BY</h4><br/>
+GROUP BY — необязательный элемент запроса, с помощью которого можно задать агрегацию по нужному столбцу (например, если нужно узнать какое количество клиентов живет в каждом из городов).<br/>
+<br/>
+При использовании GROUP BY обязательно:<br/>
+<br/>
+<div>
+<hr>
+<img src="./jpg/pic7.jpeg"/><img src="./jpg/pic8.png"/><img src="./jpg/pic9.png"/>
+<hr>
+</div>
+<br/>
+<ol>
+<li>перечень столбцов, по которым делается разрез, был одинаковым внутри SELECT и внутри GROUP BY,</li>
+<li>агрегатные функции (SUM, AVG, COUNT, MAX, MIN) должны быть также указаны внутри SELECT с указанием столбца, к которому такая функция применяется.</li>
+</ol><br/>
+Группировка количества клиентов по городу:<br/>
+<br/>
+<pre><code class="sql">select City, count(CustomerID) from Customers
+GROUP BY City</code></pre> <br/>
+Группировка количества клиентов по стране и городу: <br/>
+ <br/>
+<pre><code class="sql">select Country, City, count(CustomerID) from Customers
+GROUP BY Country, City</code></pre><br/>
+Группировка продаж по ID товара с разными агрегатными функциями: количество заказов с данным товаром и количество проданных штук товара:<br/>
+<br/>
+<pre><code class="sql">
+select ProductID, COUNT(OrderID), SUM(Quantity) from OrderDetails
+GROUP BY ProductID</code></pre><br/>
+Группировка продаж с фильтрацией исходной таблицы. В данном случае на выходе будет таблица с количеством клиентов по городам Германии:<br/>
+<br/>
+<pre><code class="sql">
+select City, count(CustomerID) from Customers
+WHERE Country = 'Germany'
+GROUP BY City</code></pre><br/>
+Переименование столбца с агрегацией с помощью оператора AS. По умолчанию название столбца с агрегацией равно примененной агрегатной функции, что далее может быть не очень удобно для восприятия.<br/>
+<br/>
+<pre><code class="sql">select City, count(CustomerID) AS Number_of_clients from Customers
+group by City</code></pre><br/>
+<h4>HAVING</h4><br/>
+HAVING — необязательный элемент запроса, который отвечает за фильтрацию на уровне сгруппированных данных (по сути, WHERE, но только на уровень выше).<br/>
+<br/>
+Фильтрация агрегированной таблицы с количеством клиентов по городам, в данном случае оставляем в выгрузке только те города, в которых не менее 5 клиентов:<br/>
+<br/>
+<pre><code class="sql">
+select City, count(CustomerID) from Customers
+group by City
+HAVING count(CustomerID) &gt;= 5 </code></pre><br/>
+<br/>
+В случае с переименованным столбцом внутри HAVING можно указать как и саму агрегирующую конструкцию count(CustomerID), так и новое название столбца number_of_clients: <br/>
+<br/>
+<pre><code class="sql">
+select City, count(CustomerID) as number_of_clients from Customers
+group by City
+HAVING number_of_clients &gt;= 5</code></pre><br/>
+Пример запроса, содержащего WHERE и HAVING. В данном запросе сначала фильтруется исходная таблица по пользователям, рассчитывается количество клиентов по городам и остаются только те города, где количество клиентов не менее 5: <br/>
+<br/>
+<pre><code class="sql">
+select City, count(CustomerID) as number_of_clients from Customers
+WHERE CustomerName not in ('Around the Horn','Drachenblut Delikatessend')
+group by City
+HAVING number_of_clients &gt;= 5</code></pre><br/>
+<h4>ORDER BY</h4><br/>
+ORDER BY — необязательный элемент запроса, который отвечает за сортировку таблицы.<br/>
+<br/>
+Простой пример сортировки по одному столбцу. В данном запросе осуществляется сортировка по городу, который указал клиент:<br/>
+<br/>
+<pre><code class="sql">
+select * from Customers
+ORDER BY City</code></pre><br/>
+Осуществлять сортировку можно и по нескольким столбцам, в этом случае сортировка происходит по порядку указанных столбцов:<br/>
+<br/>
+<pre><code class="sql">
+select * from Customers
+ORDER BY Country, City</code></pre><br/>
+По умолчанию сортировка происходит по возрастанию для чисел и в алфавитном порядке для текстовых значений. Если нужна обратная сортировка, то в конструкции ORDER BY после названия столбца надо добавить DESC:<br/>
+<br/>
+<pre><code class="sql">
+select * from Customers
+order by CustomerID DESC</code></pre><br/>
+Обратная сортировка по одному столбцу и сортировка по умолчанию по второму:<br/>
+<br/>
+<pre><code class="sql">select * from Customers
+order by Country DESC, City</code></pre><br/>
+<h4>JOIN</h4><br/>
+JOIN — необязательный элемент, используется для объединения таблиц по ключу, который присутствует в обоих таблицах. Перед ключом ставится оператор ON.<br/>
+<br/>
+Запрос, в котором соединяем таблицы Order и Customer по ключу CustomerID, при этом перед названиям столбца ключа добавляется название таблицы через точку:<br/>
+<br/>
+<pre><code class="sql">select * from Orders
+JOIN Customers ON Orders.CustomerID = Customers.CustomerID</code></pre><br/>
+Нередко может возникать ситуация, когда надо промэппить одну таблицу значениями из другой. В зависимости от задачи, могут использоваться разные типы присоединений. INNER JOIN — пересечение, RIGHT/LEFT JOIN для мэппинга одной таблицы знаениями из другой, <br/>
+<br/>
+<pre><code class="sql">
+select * from Orders
+join Customers on Orders.CustomerID = Customers.CustomerID
+where Customers.CustomerID &gt;10</code></pre><br/>
+Внутри всего запроса JOIN встраивается после элемента from до элемента where, пример запроса:<br/>
+<br/>
+Другие типы JOIN'ов можно увидеть на замечательной картинке ниже:<br/>
+<br/>
+
+
+      
+    </div>
+
+
+<div>	
+
+Paul O'Hara
+Follow
+09 MAY
+Computerphile (on YouTube - URL below) provides some excellent further examples of SQL injection attacks, and how to prevent them:
+
+https://www.youtube.com/watch?v=ciNHn38EyRc
+
+<div>
+SELECT * FROM Users WHERE Name = "" or ""="" AND Password = "" or ""="" 
+from w3schools.com
+
+</div>
+
+</div>
+
+</body>
+</html>

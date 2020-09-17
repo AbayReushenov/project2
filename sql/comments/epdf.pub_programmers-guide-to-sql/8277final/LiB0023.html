@@ -1,0 +1,358 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Adding New Data</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0022.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0024.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch03"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="185"></a><a name="ch03lev1sec2"></a>Adding New Data</h2><p class="first-para">Obviously, SQL wouldn't be much use if all it allowed you to do were to extract data. In order for it to be useful, you need to be able to add data as well, which you do using the <span class="fixed">INSERT</span> keyword.</p>
+<a name="186"></a><a name="IDX-68"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="187"></a><a name="ch03lev2sec1"></a>Performing a Single Row INSERT</h3>
+<p class="first-para">The basic use of <span class="fixed">INSERT</span> uses the following syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO <i class="emphasis">Table</i> (<i class="emphasis">Columns</i>) VALUES (<i class="emphasis">Values</i>);
+</pre>
+</div>
+<p class="para">The word <span class="fixed">INTO</span> is an optional keyword in some Relational Database Management System (RDBMS) implementations, notably SQL Server and MySQL. It is, however, part of the SQL-99 specification and a required keyword for Access, DB2, and Oracle. Including <span class="fixed">INTO</span> also makes what you're doing a bit more obvious, so we've included it in the SQL statements in this section. The following continues your examination of the syntax:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">Table</span></i> is the table to add values to, and acceptable values for this part of the SQL statement are the same as for <span class="fixed">SELECT</span> statements examined in the <a href="LiB0013.html#98" target="_parent" class="chapterjump">previous chapter</a>.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">Columns</span></i> is a comma-delimited list of the columns in the table into which to insert data. This can be a complete list of the columns in a table, but it doesn't necessarily have to be, depending on the database configuration.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">Values</span></i> is a comma-delimited list of the values to insert into those columns, which must appear in the same order as the columns in <i class="emphasis"><span class="fixed">Columns</span></i>.</p>
+</li>
+</ul>
+<p class="para">Let's look at a simple example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO LineProducts (ProductName, ProductCost, ItemsInStock)
+VALUES ('Plastic Asparagus Tips', 15.99, 10);
+</pre>
+</div>
+<p class="para">This example would add a single new row into the <span class="fixed">LineProducts</span> table. Notice that the literal values to be inserted (one string, one float, and one int) are formatted in various ways. This formatting depends on the data type of the column and the RDBMS being used. In the <a href="LiB0013.html#98" target="_parent" class="chapterjump">previous chapter</a> you saw several string literal values enclosed in ' characters, but other values such as integer and floating-point values don't have delimiters.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">
+<a href="LiB0031.html#267" target="_parent" class="chapterjump">Chapter 5</a>, "Performing Calculations and Using Functions," explores literal values in more depth.</p>
+</td>
+</tr>
+</table>
+<p class="para">We discussed earlier that the list of columns provided doesn't necessarily have be a complete list of the columns in a table. For example, the <span class="fixed">LineProducts</span> <a name="188"></a><a name="IDX-69"></a>table may well contain a primary key column called <span class="fixed">ProductID</span>, in which case you might expect to see an <span class="fixed">INSERT</span> statement such as the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO LineProducts (ProductID, ProductName, ProductCost, ItemsInStock)
+VALUES (8, 'Plastic Asparagus Tips', 15.99, 10);
+</pre>
+</div>
+<p class="para">However, you can omit <span class="fixed">ProductID</span> from your <span class="fixed">INSERT</span> statement if the RDBMS is configured to automatically insert a value into that column whenever a row is added to the table. Such columns are often referred to as <i class="emphasis">identity</i> columns. This is often the case for primary key columns because it's much easier and safer to let the RDBMS take responsibility for entering data into such columns (where each value entered into that column must be unique).</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The technique you use to instruct your RDBMS to automatically insert values into a primary key column varies from one RDBMS to another. <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects," discusses these techniques in detail.</p>
+</td>
+</tr>
+</table>
+<p class="para">There are other reasons why you might be able to omit columns from your <span class="fixed">INSERT</span> statements, so let's summarize them now:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">The column value <i class="emphasis">must</i> be automatically created by the RDBMS, which is usually the case for primary key columns.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The column value <i class="emphasis">may</i> be automatically created by the RDBMS&#8212;that is, where a default column value exists and can be added by the RDBMS when no alternative is supplied.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The column is set to be a timestamp type, in which case some RDBMSs will insert the current date and time for the column value.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The column is set to allow <span class="fixed">NULL</span> values, and none of the previous reasons apply, meaning that the column will simply not have any data in it for the inserted row.</p>
+</li>
+</ul>
+<p class="para">The previous conditions are RDBMS dependent, and some simpler implementations may work slightly differently. For example, there may not be a timestamp data type. For the most part, though, the previous will hold true whichever RDBMS you use.</p>
+<a name="189"></a><a name="IDX-70"></a>
+<p class="para">Let's look at a working example.</p>
+<div class="example">
+<span class="example-title">ADDING A SINGLE ROW TO A TABLE</span><a name="190"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Say you want to insert a single row into the <span class="fixed">Professor</span> table of your <span class="fixed">InstantUniversity</span> database. <a class="internaljump" href="#ch03table01">Table 3-1</a> shows the <span class="fixed">Professor</span> table.</p>
+<p class="para">
+<a name="191"></a><a name="ch03table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 3-1: </span>The <i class="emphasis"><span class="fixed">Professor</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Column Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Null?</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">PROFESSORID</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">NOT NULL</p>
+</td><td class="td" align="left">
+<p class="table-para">NUMBER(38)</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">NAME</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">NOT NULL</p>
+</td><td class="td" align="left">
+<p class="table-para">VARCHAR2(50)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</p>
+<p class="para">In this case, the <span class="fixed">ProfessorID</span> column is the primary key column, but you haven't instructed the RDBMS to automatically insert values on this column because, as discussed, the way in which you do this varies from RDBMS to RDBMS and because you want the base database to work on each platform. So, in this case, you have to specify both the <span class="fixed">ProfessorID</span> and <span class="fixed">Name</span> columns in the <span class="fixed">INSERT</span> statement.</p>
+<p class="para">Let's see what data is in the table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProfessorID, Name from Professor;
+</pre>
+</div>
+<p class="para">You'll get the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ProfessorID  Name
+
+   -----------  ----------------
+   1            Prof. Dawson
+   2            Prof. Williams
+   3            Prof. Ashby
+   4            Prof. Patel
+   5            Prof. Jones
+   6            Prof. Hwa
+<a name="192"></a><a name="IDX-71"></a>
+</pre>
+</div>
+<p class="para">Now that you know which values have already been used in the <span class="fixed">ProfessorID</span> column, you can safely insert your new row:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Professor (ProfessorID, Name)
+VALUES (7, 'Snail at work');
+</pre>
+</div>
+<p class="para">If you now rerun your previous <span class="fixed">SELECT</span> query, you'll see the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ProfessorID  Name
+
+   -----------  ----------------
+   1            Prof. Dawson
+   2            Prof. Williams
+   3            Prof. Ashby
+   4            Prof. Patel
+   5            Prof. Jones
+   6            Prof. Hwa
+   7            Snail at work
+</pre>
+</div>
+<p class="para">You've added a new row to the <span class="fixed">Professor</span> table in the <span class="fixed">InstantUniversity</span> database.</p>
+<p class="para">If the <span class="fixed">ProfessorID</span> column were an identity column, then you would have to omit it in the <span class="fixed">INSERT</span> statement because the RDMBS would be responsible for adding this data automatically. If you did attempt to insert a value into such a column in an RDBMS such as SQL Server that includes such functionality, you'd receive the following error:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">
+<i class="emphasis">Server: Msg 544, Level 16, State 1, Line 1</i>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<i class="emphasis">Cannot insert explicit value for identity column in table </i>'ColumnName' <i class="emphasis">when IDENTITY_INSERT is set to OFF.</i>
+</p>
+</li>
+</ul>
+<p class="para">This message implies that this behavior can be overridden, which is true although this book won't be covering how to do things such as this until later. Even then, it's difficult to think of a situation where supplying your own value to an automatically numbered column would be useful. One possible situation <a name="193"></a><a name="IDX-72"></a>could be where data absolutely must have specific values for all columns, but of course then you run the risk of insert failure if duplicate identity values crop up.</p>
+<p class="last-para">
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Incidentally, the sharp-eyed among you may notice that <i class="emphasis"><span class="fixed">'Snail at work'</span></i> is an anagram, but you'll have to figure it out for yourself.</p>
+</td>
+</tr>
+</table>
+</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">Before moving on, it's worth mentioning that it isn't strictly necessary to include <i class="emphasis"><span class="fixed">Columns</span></i> in your <span class="fixed">INSERT</span> statements. If you know the names of each column in the table and the exact order in which they were entered into the database, then you can omit the list of columns. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Professors
+VALUES (7, 'Snail at work');
+</pre>
+</div>
+<p class="para">However, this isn't practical for larger tables and, in any event, it's much clearer and safer to explicitly name the columns in your statements.</p>
+<p class="para">Note also that on certain RDBMSs, including SQL Server, you can create a new row based on default values that are defined in the table specification using the <span class="fixed">DEFAULT VALUES</span> method in place of the <span class="fixed">VALUES</span> section. Suppose you have a table like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ CREATE TABLE Author (
+   AuthorID int IDENTITY PRIMARY KEY,
+   Name varchar(100) DEFAULT 'Anonymous',
+   Dates varchar(20) DEFAULT 'Unknown'
+);
+</pre>
+</div>
+<p class="para">and you want to insert a new row with just the default values for each column and the auto-generated ID field. You can't do it using the standard <span class="fixed">INSERT...VALUES</span> syntax, so instead you'd use this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Author DEFAULT VALUES;
+</pre>
+</div>
+<p class="para">And that does the trick. Using <span class="fixed">DEFAULT VALUES</span> instead of the standard <span class="fixed">VALUES</span> clause inserts the default value for every column (or an auto-generated value for identity columns). If there isn't a default value for a non-identity column, the value is treated as <span class="fixed">NULL</span>. If any column in the table is <span class="fixed">NOT NULL</span>, isn't an identity column, and doesn't have a default value, then an error will be raised.</p>
+<a name="194"></a><a name="IDX-73"></a>
+<p class="last-para">This could be useful for keeping an activity log (inserting date/time information whenever a transaction occurs) or for entering a placeholder record (for example, an "anonymous" user as the default entry for posts to a forum where registration isn't required).</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="195"></a><a name="ch03lev2sec2"></a>Performing a Multi-Row INSERT</h3>
+<p class="first-para">The first thing to point out in this section is that SQL doesn't allow you to add multiple rows using literal values as in the <a class="internaljump" href="#ch03lev2sec1">previous section</a>. However, it's possible to add multiple rows using values obtained from the results of an embedded <span class="fixed">SELECT</span> query. In effect, what this means is that you copy data from one database table into another although of course the names and number of columns needn't be the same for the source and destination tables.</p>
+<p class="para">When using an <span class="fixed">INSERT</span> statement in this way, there are two changes from the syntax used in the <a class="internaljump" href="#ch03lev2sec1">previous section</a>:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">You don't use the <span class="fixed">VALUES</span> keyword; instead, you use <span class="fixed">SELECT</span> to embed the query that obtains the data to insert.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The list of columns to insert data to is optional. If it's supplied, then there must be an equal number of columns of the right types and in the right order returned by the <span class="fixed">SELECT</span> query that makes up the values for the <span class="fixed">INSERT</span> statement. If it isn't supplied, then the columns in the <span class="fixed">SELECT</span> query must match the columns in the target table. As a rule, it's always worth including column names because it'll make debugging much easier.</p>
+</li>
+<li class="listitem">
+<p class="first-para">This makes the syntax for a multi-row <span class="fixed">INSERT</span> statement as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO <i class="emphasis">Table</i> (<i class="emphasis">Columns</i>) SELECT <i class="emphasis">SelectStatement</i>;
+</pre>
+</div>
+</li>
+</ul>
+<p class="para">where <i class="emphasis"><span class="fixed">Columns</span></i> is optional.</p>
+<p class="para">This statement can be useful in moving large amounts of data around in a database without having to do much work, for example, in backing up data. For instance, you could create a backup table called <span class="fixed">StuffBackup</span> and then execute the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO StuffBackup SELECT ThingName, ThingCost FROM Stuff;
+</pre>
+</div>
+<p class="para">Alternatively, you can easily reshape data and rename columns of rows using a statement such as this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO StuffV2 (TheName, TheCost)
+SELECT ThingName, ThingCost FROM Stuff;
+<a name="196"></a><a name="IDX-74"></a>
+</pre>
+</div>
+<div class="example">
+<span class="example-title">ADDING MULTIPLE ROWS TO A TABLE</span><a name="197"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following SQL statement against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Professor (ProfessorID, Name)
+   SELECT StudentID + 7, Name
+   FROM Student;
+</pre>
+</div>
+<p class="para">If you then query the table in the same way as before, you should see something like the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ProfessorID  Name
+
+   -----------  ---------------
+   ...          ...
+   6            Prof. Hwa
+   7            Snail at work
+   8            John Jones
+   9            Gary Burton
+   ...          ...
+</pre>
+</div>
+<p class="para">Here you've taken data from the <span class="fixed">StudentID</span> and <span class="fixed">Name</span> columns in the <span class="fixed">Student</span> table and added the data to the similarly named columns in the <span class="fixed">Professor</span> table. With one short SQL statement, you added 12 rows of data to the <span class="fixed">Shippers</span> table.</p>
+<p class="last-para">Note that the data also underwent some modification on the way&#8212;you added seven to the <span class="fixed">StudentID</span> value before assigning it to the <span class="fixed">ProfessorID</span> column, simply to avoid overlapping non-unique values.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">In addition to this method for inserting multiple rows into a database, in SQL Server it's also possible to call a stored procedure when performing an insert, which could result in multiple rows being inserted into a table. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Professor (ProfessorID, Name)
+EXEC sp_RecruitProfessors;
+<a name="198"></a><a name="IDX-75"></a>
+</pre>
+</div>
+<p class="last-para">In this case, the stored procedure you've used (<span class="fixed">sp_RecruitProfessors</span>) could contain SQL to perform a similar operation to the inline <span class="fixed">SELECT</span> you saw in the example, producing the same result.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0022.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0024.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

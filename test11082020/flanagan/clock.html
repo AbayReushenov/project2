@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Digital Clock</title> 
+<style>
+#clock {
+    font: bold 24px sans-serif; background: #ddf;
+    padding: 15px;
+    border: solid black 2px; border-radius: 10px;
+    }
+</style>
+</head>
+<body>
+<h1>Digital Clock</h1>
+<span id="clock"></span> 
+<!-- We will insert the time into this element. --> 
+<script>
+    // Define a function to display the current time
+function displayTime() {
+    let clock = document.querySelector("#clock"); 
+    // Get element with id="clock" 
+    let now = new Date(); // Get current time 
+    clock.textContent = now.toLocaleTimeString(); 
+// Display time in the clock
+}
+displayTime() 
+// Display the time right away 
+setInterval(displayTime, 1000); 
+// And then update it every second. 
+</script>
+</body>
+</html>

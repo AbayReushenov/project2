@@ -1,0 +1,120 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Using Indexes</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0078.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0080.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="845"></a><a name="ch12lev1sec8"></a>Using Indexes</h2><p class="first-para">
+<i class="emphasis">Indexes</i> are database objects designed to increase the overall speed of database operations by creating internal "lookup" tables to allow for very quick searches. They work on the presumption that the vast majority of database operations are read and search operations. Having an index in a table is likely to improve <span class="fixed">SELECT </span>operations on that table, but it could slow down <span class="fixed">DELETE</span>, <span class="fixed">UPDATE</span>, and <span class="fixed">INSERT</span> operations. In most cases, the gains of having an index on a frequently accessed column will considerably outweigh the drawbacks.</p>
+<p class="para">You can create one or more indexes on a particular table, each index working on one column or on a set of columns. When a table is indexed on a specific <a name="846"></a><a name="IDX-356"></a>column, its rows are either indexed or physically arranged based on the values of that column and of the type of index. This allows the database to find information quickly if you perform a search based on the indexed columns. For example, if you have a long friends list in the <span class="fixed">Friend</span> table, having an index on the <span class="fixed">Name</span> column would significantly improve searches based on the name. This happens because instead of performing a full-table scan, the index is used to quickly find the requested record.</p>
+<p class="para">Indexes can slow down <span class="fixed">INSERT</span>, <span class="fixed">UPDATE</span>, and <span class="fixed">DELETE</span> operations because the internal index structures need to be updated (or the table rows rearranged) each time such an operation occurs. For this reason, having too many indexes can slow down the general performance of the database and therefore should applied carefully.</p>
+<p class="para">The general rule of thumb is to set indexes on columns that are frequently used in <span class="fixed">WHERE</span> or <span class="fixed">ORDER BY</span> clauses, that are used in table joins, or that have foreign key relationships with other tables. However, especially for big databases, a carefully designed performance-testing plan can reveal the best combination of indexes for your database.</p>
+<p class="para">Also, from a performance standpoint, it's worth placing indexes on columns that aren't going to have much duplicated data (they're said to have <i class="emphasis">high selectivity</i>) and on columns for which the <span class="fixed">SELECT</span> statements are likely to be highly restrictive&#8212;for example, when you're searching for a <i class="emphasis">particular</i> row rather than reading half of the table (in which case having an index may actually slow down the query).</p>
+<p class="para">Indexes can be unique or non-unique. Unique indexes don't permit repeating values on the indexed columns.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Unique indexes are always created for columns that have <i class="emphasis"><span class="fixed">PRIMARY KEY</span></i> or <i class="emphasis"><span class="fixed">UNIQUE</span></i> constraints set.</p>
+</td>
+</tr>
+</table>
+<p class="para">Indexes that are automatically created as a result of setting a constraint (<span class="fixed">PRIMARY KEY</span> or <span class="fixed">UNIQUE</span>) are removed when the constraint is removed, and they can't be removed separately. They're tied to the constraint that created them.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="847"></a><a name="ch12lev2sec19"></a>Creating Indexes</h3>
+<p class="first-para">Let's consider the <span class="fixed">Friend</span> table once again:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   FriendID INT PRIMARY KEY NOT NULL,
+   Name VARCHAR(50),
+   PhoneNo VARCHAR(15) DEFAULT 'Unknown Phone');
+<a name="848"></a><a name="IDX-357"></a>
+</pre>
+</div>
+<p class="para">If you're planning to do frequent searches on this table based on the name (such as, What is John's phone number?), placing an index on the <span class="fixed">Name</span> column will improve the performance of your queries.</p>
+<p class="para">The command to create a non-unique index on <span class="fixed">Name</span> is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE INDEX NameIndex ON Friend (Name);
+</pre>
+</div>
+<p class="para">For unique indexes, you add the <span class="fixed">UNIQUE</span> keyword:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE UNIQUE INDEX NameIndex ON Friend (Name);
+</pre>
+</div>
+<p class="para">Make sure <span class="fixed">Friend</span> is empty and execute the following <span class="fixed">INSERT</span> statements:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend (FriendID, Name, PhoneNo) VALUES (1,'Mike','1234567');
+INSERT INTO Friend (FriendID, Name, PhoneNo) VALUES (2,'Mike','3333333');
+INSERT INTO Friend (FriendID, Name, PhoneNo) VALUES (3,'Cath','7654321');
+</pre>
+</div>
+<p class="para">If you created a <span class="fixed">UNIQUE</span> index, the second <span class="fixed">INSERT</span> will be rejected because it duplicates an existing name.</p>
+<p class="para">Having an index on <span class="fixed">Name</span> will now make queries such as the following much faster (supposing, of course, that the <span class="fixed">Friend</span> table is filled with far more records than you inserted here):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FriendID, Name FROM Friend WHERE Name='Cath';
+</pre>
+</div>
+<p class="para">The same happens for queries returning multiple rows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FriendID, Name FROM Friend WHERE Name LIKE 'M%';
+</pre>
+</div>
+<p class="para">However, there's one catch: Text columns are indexed from left to right. For this reason, queries such as the previous one use the index you created on <span class="fixed">Name</span>. However, the index isn't used when you're searching for substrings that don't occur at the start of the string (that is, the first character of the search string is a wildcard, as in the following query). In such situations, a normal, full-table scan is performed to find the requested rows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FriendID, Name FROM Friend WHERE Name LIKE '%ike';
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="849"></a><a name="ch12lev2sec20"></a>Dropping Indexes</h3>
+<p class="first-para">The SQL command to drop indexes is <span class="fixed">DROP INDEX</span>. However, its exact syntax depends on the database vendor.</p>
+<a name="850"></a><a name="IDX-358"></a>
+<p class="para">With SQL Server, you need to prefix the index name with the table name:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP INDEX Friend.PhoneNoIndex;
+</pre>
+</div>
+<p class="para">With Oracle and DB2, you just need to specify the index name:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP INDEX PhoneNoIndex;
+</pre>
+</div>
+<p class="para">With MySQL, you also need to specify both the table name and index name but use a different syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP INDEX PhoneNoIndex ON Friend;
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0078.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0080.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

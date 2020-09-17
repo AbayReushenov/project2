@@ -1,0 +1,98 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Exploring Additional Joins in Oracle</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0040.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0042.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch07"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="465"></a><a name="ch07lev1sec3"></a>Exploring Additional Joins in Oracle</h2><p class="first-para">In addition to the joins you've just been looking at, Oracle 9i offers a few additional options, which you'll take a quick look at now.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="466"></a><a name="ch07lev2sec8"></a>Using Natural Joins</h3>
+<p class="first-para">A natural join performs a join for all columns with matching values in two tables. To put this in context, you could rewrite an earlier example from this:</p>
+<a name="467"></a><a name="IDX-191"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Class.ClassID,
+        Class.CourseID,
+        Class.Time,
+        Room.Comments AS RoomName
+FROM Class INNER JOIN Room
+ON Class.RoomID = Room.RoomID
+ORDER BY ClassID;
+</pre>
+</div>
+<p class="para">to this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Class.ClassID,
+        Class.CourseID,
+        Class.Time,
+        Room.Comments AS RoomName
+FROM Class NATURAL JOIN Room
+ORDER BY ClassID;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="468"></a><a name="ch07lev2sec9"></a>Working with the using Clause</h3>
+<p class="first-para">This clause is used if several columns share the same name. Again, you can modify a previous example to demonstrate this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Room.Comments, Class.Time
+FROM Room
+   INNER JOIN Class
+   ON Room.RoomID = Class.RoomID;
+</pre>
+</div>
+<p class="para">This query lists the name of each room and the times when it's in use:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Comments                     Time
+
+   ---------------------------  ---------------------------------
+   Science Department           Tue 16:00-17:00 Thu 15:00-17:00
+   Science Department           Tue 10:00-12:00, Thu 14:00-15:00
+   Science Room 1               Wed 09:00-11:00
+   Science Room 1               Mon 14:00-16:00
+   Languages Room 1             Fri 11:00-13:00
+   Languages Room 1             Mon 11:00-12:00, Thu 09:00-11:00
+   Languages Room 2             Mon 09:00-11:00
+   Engineering Room 1           Wed 11:00-13:00 Fri 09:00-11:00
+   Engineering Room 2           Fri 14:00-16:00
+   Engineering Room 2           Tue 14:00-16:00
+<a name="469"></a><a name="IDX-192"></a>
+</pre>
+</div>
+<p class="para">Using the <span class="fixed">USING</span> clause, you could write this as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Room.Comments, Class.Time
+FROM Class
+   JOIN Room
+   USING (RoomID);
+</pre>
+</div>
+<p class="last-para">This would produce the same results. Note that you can't use any further qualifiers, including <span class="fixed">WHERE</span> or <span class="fixed">GROUP BY</span> in this statement.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0040.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0042.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

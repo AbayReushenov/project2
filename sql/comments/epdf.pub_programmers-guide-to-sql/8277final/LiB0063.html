@@ -1,0 +1,62 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Let's Talk About Security</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0062.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0064.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch11"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="724"></a><a name="ch11lev1sec1"></a>Let's Talk About Security</h2><p class="first-para">Before moving on to the SQL security details, you need to understand some basic concepts regarding the way security is implemented in databases. It's important to understand the concepts of user, user permissions, and roles.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="725"></a><a name="ch11lev2sec1"></a>Users and Permissions</h3>
+<p class="first-para">At the base of the authentication process is the concept of a <i class="emphasis">user account</i>. When installing database software, one or more administrative accounts are created by default, and nobody else has access to the system. However, it's likely you'll need to give database access to other people.</p>
+<p class="para">To give database access to someone, you need to take two steps:</p>
+<ol class="orderedlist">
+<li class="first-listitem">
+<p class="first-para">Create a user account for that person (if he or she doesn't already have one). Using that account, the database system will be able to <i class="emphasis">authenticate</i> that person. Typically, the user is protected by a password that's requested during the login process.</p>
+</li>
+<li class="listitem">
+<p class="first-para">When a user is created, by default the user doesn't have access (permissions) to any database objects. So, you need to grant the necessary permissions to the person's account; by doing this, you <i class="emphasis">authorize</i> the person to access the necessary database resources.</p>
+</li>
+</ol>
+<p class="para">You can grant users various kinds of permissions, such as the rights to access various databases; create new data tables; update, select, insert, or delete records from data tables; execute stored procedures; add or modify other user accounts; and so on. The permissions can be generic (such as the user can create data tables or read any of the data tables), or they can be specific to existing database objects (such as the user can read or modify the <span class="fixed">Friend</span> data table).</p>
+<a name="726"></a><a name="IDX-303"></a>
+<p class="para">Each database supports a large number of possible permissions that a user can have. Users can be granted one or any combination of permissions; by setting permissions, a database administrator has the power to control who can do what to the database.</p>
+<p class="para">Along with the flexibility to provide each user with any combination of permissions, there comes the complexity of administering these permissions. When having a large number of users, each with its own combination of permissions, it can be become a nightmare to be in charge of security. What are the implications of an employee leaving the company or being transferred to another department? What about the permissions that the employee gave to other people while having the account?</p>
+<p class="last-para">SQL has answers for some of these problems. Additionally, most databases have started to offer additional tools to improve the database administrator's life. One of them is the support for <i class="emphasis">roles</i>.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="727"></a><a name="ch11lev2sec2"></a>Roles</h3>
+<p class="first-para">A <i class="emphasis">role</i> is a named set of database permissions. In other words, a role contains permissions. Roles can be granted to or revoked from users; granting a role to a user has the same effect as granting the user all the permissions in that role.</p>
+<p class="para">Roles are important because they're extremely helpful for administering database security; they allow the database administrator to manage user privileges in a much more convenient way than setting individual permissions.</p>
+<p class="para">From the databases we've presented so far, SQL Server, Oracle, and DB2 support roles. MySQL doesn't support roles. Access supports the notion of "user groups," which is similar to the notion of roles.</p>
+<p class="last-para">Each database that supports roles ships with a number of predefined database roles. For example, the system administrator (sa) account in SQL Server is associated with the sysadmin role. After creating a new SQL Server user, if you want to give it full access to the server's resources, you just need to assign it to the sysadmin role, and the job is done; the user will have all permissions associated with the system administrator role. This is much easier than if you had to manually assign permissions (and believe us, a system administrator has <i class="emphasis">a</i> <i class="emphasis">lot</i> of individual permissions on the database).</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="728"></a><a name="ch11lev2sec3"></a>Views</h3>
+<p class="first-para">Views aren't directly related to security, but database administrators often use them to control the security of a database.</p>
+<p class="para">If you want to grant a user access to a portion of a table (such as a limited number of columns or only to certain rows), you can create a view based on that <a name="729"></a><a name="IDX-304"></a>table (or even on multiple tables) and grant permissions on that view. Working with views sometimes offers more flexibility than assigning privileges on database tables.</p>
+<p class="last-para">For more information about views, please refer to <a href="LiB0043.html#471" target="_parent" class="chapterjump">Chapter 8</a>, "Hiding Complex SQL with Views."</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0062.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0064.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

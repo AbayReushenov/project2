@@ -1,0 +1,57 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Chapter 11: Users and Security</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0061.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0063.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch11"></a>
+<h1 class="chapter-title"><span class="chapter-titlelabel">Chapter 11: </span>Users and Security</h1><div class="section">
+<h2 class="sect2-title">
+<a name="721"></a>Overview</h2>
+<a name="722"></a><a name="IDX-301"></a>
+<p class="para">It's a fact of life that although storing and managing information is vital to the success of any business, having it fall into the wrong hands can bring a business down. As a result of this, database administrators have to be familiar with some complex security systems in order to protect a company's data.</p>
+<p class="para">The purpose of a database security system is to protect the stored information. There are various factors that you want to protect your data from; not only do you need to guard your database against attacks from outside the organization, but most of the time it's also vital to fine-tune access to sensitive database areas for employees inside the company (an obvious example would be locking access to personnel information so that only certain people can access salary details).</p>
+<div class="highlights">
+<p class="first-para">Security is a broad and complex subject. This chapter doesn't teach security theory; instead, you'll quickly look at the SQL commands and some database-specific commands that allow database administrators to configure their server's security. We'll present just enough so that you, the SQL programmer, will understand the basics of implementing security on database servers. If you're serious about learning more about security, you'll need to read a specialized book that's relevant to the database system with which you're working.</p>
+<p class="para">When implementing a security system, there are two fundamental concepts you need to understand:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<b class="bold">Authentication</b> is the part that deals with uniquely identifying users. This is usually done via checking for user ID and password combinations, but other methods such as fingerprint scanning are becoming increasingly popular.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Authorization</b> takes care of the permissions an authenticated user has inside the database (what the user is allowed to do with his or her account). So, even if you log in to the database (you <i class="emphasis">authenticate</i> yourself), you may not be <i class="emphasis">authorized</i> to view or modify certain tables or other database objects.</p>
+</li>
+</ul>
+<p class="para">With a modern Relational Database Management System (RDBMS), the administrator has a wide range of tools that help to fine-tune the security process and procedures. Although many of these features are beyond the scope of this book because they tend to be specific to particular database implementations, <a name="723"></a><a name="IDX-302"></a>you'll learn how to deal with the basic security needs that are implemented in similar ways by all database software products.</p>
+<p class="para">In this chapter, you'll learn, with examples for SQL Server, Oracle, DB2, and MySQL, how to do the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Create and remove database users and assign passwords to them (this has to do with the authentication part of security)</p>
+</li>
+<li class="listitem">
+<p class="first-para">Grant and revoke permissions to database users on the database resources (this has to do with authorization)</p>
+</li>
+</ul>
+<p class="last-para">You'll also look quickly at the security provided by Microsoft Access.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0061.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0063.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

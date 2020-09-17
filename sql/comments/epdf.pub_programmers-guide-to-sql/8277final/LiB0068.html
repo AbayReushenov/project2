@@ -1,0 +1,172 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Working with DB2 Security</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0067.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0069.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch11"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="767"></a><a name="ch11lev1sec6"></a>Working with DB2 Security</h2><p class="first-para">DB2 handles user accounts differently from the other database systems. DB2 user accounts are linked to local system users, relying on the authentication protocols of the underlying operating system rather than having self-contained users. To add a new user to DB2, you first need to create a new local system user using the standard tools available as part of the operating system. Once you have a local user account set up, you can then start granting and revoking permissions, which you'll learn about in the following sections.</p>
+<p class="para">For this example, let's assume you've created an account for Alice with a password of <span class="fixed">SimplePassword</span>.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="768"></a><a name="ch11lev2sec15"></a>Granting and Revoking Object-Level Permissions</h3>
+<p class="first-para">To grant object-level permissions, you use the usual syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT &lt;<i class="emphasis">privilege type</i>&gt; ON &lt;<i class="emphasis">resource</i>&gt; TO &lt;<i class="emphasis">username</i>&gt;
+</pre>
+</div>
+<p class="para">The object-level permissions supported by DB2 are as follows:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">ALTER</span> allows the grantee to change the table definition using the <span class="fixed">ALTER TABLE</span> command.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">DELETE</span>, <span class="fixed">INSERT</span>, <span class="fixed">SELECT</span>, <span class="fixed">UPDATE</span> are the permissions that apply to data tables and views.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">INDEX</span> allows the grantee to create indexes on the mentioned data table.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">REFERENCES</span> allows a user to insert rows into a table that has a <span class="fixed">FOREIGN KEY</span> constraint to another table where the user doesn't have <span class="fixed">SELECT</span> permissions.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">EXECUTE</span> allows the user to run the specified function or stored procedure or to access any program object declared in the specification of a package.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CONTROL</span> grants all of the previous permissions to the user and also gives them the ability to grant any of the previous permissions, excluding <span class="fixed">CONTROL</span>, to other users. The <span class="fixed">CONTROL</span> permission can only ever be granted by users with database administrator or system administrator status.</p>
+</li>
+</ul>
+<a name="769"></a><a name="IDX-322"></a>
+<p class="para">So, let's start by granting some permissions to Alice. Open DB2 Command Center and enter the following code:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT CONNECT ON DATABASE TO USER Alice;
+</pre>
+</div>
+<p class="para">So, Alice can now connect to the database. But if you try to connect to the <span class="fixed">InstantUniversity</span> database as Alice and then view some data, you'll find that permission is denied. So, while you're logged on as the <span class="fixed">DB2Admin</span> administrator, enter the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT, INSERT ON Student TO Alice;
+</pre>
+</div>
+<p class="para">Again, you could have specified <span class="fixed">WITH GRANT OPTION</span> in this statement to allow Alice to grant these permissions to others.</p>
+<p class="para">Now, if you log on as Alice, you'll be able to run the following commands:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO DB2Admin.Student (StudentID, Name)
+VALUES (13, 'George Bush');
+
+SELECT StudentID, Name FROM DB2Admin.Student;
+</pre>
+</div>
+<p class="para">However, to be able to delete George Bush from the database, you need to give Alice <span class="fixed">DELETE</span> privileges. Instead of granting this permission to Alice, let's revoke the <span class="fixed">INSERT</span> permission on Alice and then experiment with adding her to a group (the equivalent of a role on DB2):</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE INSERT ON Student FROM Alice;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="770"></a><a name="ch11lev2sec16"></a>Working with Groups</h3>
+<p class="first-para">Alice is now limited to being able to select data from the table, but because DB2 doesn't have traditional users and roles, to give Alice more permissions more easily, you need to use a mixture of SQL and tools available to the operating system.</p>
+<p class="para">If you create a new group account on your system, called MyGroup, you can assign permissions on this group just as you did with Alice:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT CONNECT ON DATABASE TO GROUP MyGroup;
+GRANT SELECT, INSERT, DELETE ON Student TO MyGroup;
+</pre>
+</div>
+<p class="para">Because Alice isn't a member of the group yet, she still can't insert or delete students. However, if you add the Alice user to the MyGroup group on your system, you'll find that Alice now has much more power when it comes to creating and deleting students.</p>
+<a name="771"></a><a name="IDX-323"></a>
+<p class="para">An interesting point to note is that if an individual member of a group has more permissions than the group itself, that user will still be able to perform all the appropriate tasks, even if other members of the group are unable to do so. To test this, create another system user called Joe and make him a member of MyGroup. Joe can now log on and select, insert, and delete students.</p>
+<p class="para">Now, log back in as the administrator and run the following commands:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE DELETE, INSERT On Student FROM MyGroup;
+GRANT UPDATE on Student TO Alice;
+GRANT CONTROL ON Student TO Joe;
+</pre>
+</div>
+<p class="para">Joe can now have much more fun with the <span class="fixed">Student</span> table, creating, altering, or deleting information as much as he wants. Alice can view and update data, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE DB2Admin.Student SET Name = 'George W. Bush'
+WHERE StudentID=13;
+</pre>
+</div>
+<p class="para">Any other members in the group are limited to simply viewing data in the table.</p>
+<p class="para">To finish, you can revoke all privileges from the users:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE ALL PRIVILEGES ON Student FROM Alice;
+</pre>
+</div>
+<p class="para">Note that you must first revoke <span class="fixed">CONTROL</span> from Joe and then revoke all the individual privileges that are added when the <span class="fixed">CONTROL</span> privilege is added:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE CONTROL ON Student FROM Joe;
+REVOKE ALL PRIVILEGES ON Student FROM Joe;
+</pre>
+</div>
+<p class="para">Note that, at this point, Alice and Joe can still view data in the <span class="fixed">Student</span> table because the MyGroup group still has <span class="fixed">SELECT</span> permission. This final command will prevent both users from viewing data in the <span class="fixed">Student</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE ALL PRIVILEGES ON Student FROM MyGroup;
+</pre>
+</div>
+<p class="para">But note that the users are still able to log on until you revoke the <span class="fixed">CONNECT</span> permission for the group (which revokes connect permission from Joe because you never explicitly granted him <span class="fixed">CONNECT</span> permission), then from Alice, who had her own explicit <span class="fixed">CONNECT</span> permission, which was the first thing you granted:</p>
+<a name="772"></a><a name="IDX-324"></a>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE CONNECT ON DATABASE FROM MyGroup;
+REVOKE CONNECT ON DATABASE FROM Alice;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="773"></a><a name="ch11lev2sec17"></a>Setting Statement-Level Permissions</h3>
+<p class="first-para">DB2 also has the ability to grant or revoke permissions for creating tables and databases. The full list of grantable permissions is quite lengthy, so you should consult the documentation.</p>
+<p class="para">If you want to allow a user to create tables, you could use the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT CREATETAB ON DATABASE TO Alice;
+</pre>
+</div>
+<p class="para">Note that to create a view, all you need is <span class="fixed">SELECT</span> permission on each of the tables involved in the view.</p>
+<p class="para">If you want to make Alice a full administrator of the database, in case she wanted to do a lot of work on manipulating the database, you could make her a full administrator of that database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT DBADM ON DATABASE TO Alice;
+</pre>
+</div>
+<p class="last-para">Note that when you enable this permission, all of the other permissions available are added. Removing just this permission won't remove all the other permissions that were added, so you'll need to first remove <span class="fixed">DBADM</span> and then do a <span class="fixed">REVOKE ALL PRIVILEGES</span>, as you saw with Joe.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0067.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0069.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

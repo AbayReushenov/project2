@@ -1,0 +1,328 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Combining Data From Queries</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0036.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0038.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch06"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="404"></a><a name="ch06lev1sec2"></a>Combining Data From Queries</h2><p class="first-para">You may have noticed that, although you used data from various different tables in your subqueries, you only actually returned either a calculated column or column data from a single table. Sometimes it's useful to be able to retrieve data from multiple tables and to return all of that data, or a subset of that data, as a single set of rows.</p>
+<p class="para">SQL provides you with several <i class="emphasis">set operators</i> that allow you to combine SQL queries for this purpose&#8212;namely, <span class="fixed">UNION</span>, <span class="fixed">UNION ALL</span>, <span class="fixed">INTERSECT</span>, and <span class="fixed">DIFFERENCE</span>.</p>
+<p class="para">ANSI SQL refers to the <span class="fixed">DIFFERENCE</span> operator, but it's referred to by other terms, depending on the database. Oracle calls this operator <span class="fixed">MINUS</span>, and DB2 calls it <span class="fixed">EXCEPT</span>.</p>
+<p class="para">The basic syntax for queries using these operators is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">TableA</i>
+&lt;<i class="emphasis">Operator</i>&gt;
+SELECT <i class="emphasis">ColumnC</i>, <i class="emphasis">ColumnD</i> FROM <i class="emphasis">TableB</i>;
+</pre>
+</div>
+<p class="para">The result will be two columns of data (generally called <i class="emphasis"><span class="fixed">ColumnA</span></i> and <i class="emphasis"><span class="fixed">ColumnB</span></i>) that contain data from all four columns. The actual set of data returned when you combine queries in this manner will vary depending on which operator you use.</p>
+<p class="para">The general rule for using these operators is that the data you extract from one table must have the same number of columns, and those columns must have the same data types, as the data extracted from other tables (or, at least, must be converted into the correct data types). So, as you can see, these operators were designed for use when you want to combine the contents of tables that have similar structure but different data. This means that in general, except of course where fortune (or indeed design) dictates, you have several tables with the same column data types.</p>
+<p class="para">The general technique for combining data from dissimilar tables is to use table joins, which you'll learn about in the <a href="LiB0039.html#418" target="_parent" class="chapterjump">next chapter</a>.</p>
+<p class="para">A classic example of where you can use the <span class="fixed">UNION</span> clause to great effect is when comparing an archived version of a table with the current version. Say, for example, that you archived the data in your <span class="fixed">InstantUniversity</span> database on a yearly basis; you could then extract data from a table in the archived <span class="fixed">Class of 2002</span> database and compare it with data from the equivalent table in the current <span class="fixed">Class of</span> <span class="fixed">2003</span> database.</p>
+<a name="405"></a><a name="IDX-159"></a>
+<p class="para">In general, however, you'll only extract a subset of the columns in each table. For example, if you were assembling a comparison between your products and those sold by a competitor, you might find that you could extract and combine the "similar" columns (product name, cost, and so on) from the tables carrying your own and your competitor's product information.</p>
+<p class="para">Let's start by examining the <span class="fixed">UNION</span> operator.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="406"></a><a name="ch06lev2sec5"></a>Using the UNION Operator</h3>
+<p class="first-para">The general syntax required to use <span class="fixed">UNION</span> is simple:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">TableA</i>
+UNION
+SELECT ColumnC, ColumnD FROM TableB;
+</pre>
+</div>
+<p class="para">In general, whenever you use the <span class="fixed">UNION</span> keyword, the column names are taken from the first <span class="fixed">SELECT</span> query, but DB2 will assign arbitrary names if the column names aren't identical.</p>
+<p class="para">The <span class="fixed">UNION</span> operator is supported in MySQL only from version 4.0 onward.</p>
+<p class="para">Suppose you have one table called <span class="fixed">Products</span> with <span class="fixed">ProductID</span>, <span class="fixed">ProductName</span>, and <span class="fixed">ProductCost</span> columns and one table called <span class="fixed">CompetitorProducts</span> with <span class="fixed">ID</span>, <span class="fixed">Name</span>, and <span class="fixed">Cost</span> columns, where the data types match. You could combine data from both these tables as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, ProductName, ProductCost FROM Products
+UNION
+SELECT ID, Name, Cost FROM CompetitorProducts;
+</pre>
+</div>
+<p class="para">This would result in three columns of data&#8212;<span class="fixed">ProductID</span>, <span class="fixed">ProductName</span>, and <span class="fixed">ProductCost</span>&#8212;containing data from both tables.</p>
+<p class="para">When you use <span class="fixed">UNION</span>, you'll often need to include calculated columns or data type conversion to get column data to match. If, in the previous example, <span class="fixed">ProductID</span> were a string value and <span class="fixed">ID</span> were numeric, you would need to convert <span class="fixed">ID</span> into a string. A handy way to do this would be to use the string conversion functions you looked at in the <a href="LiB0031.html#267" target="_parent" class="chapterjump">previous chapter</a>. For example, you could use this on SQL Server:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProductID, ProductName, ProductCost FROM Products
+UNION
+SELECT STR(ID), Name, Cost FROM CompetitorProducts;
+</pre>
+</div>
+<p class="para">Let's look at a working example.</p>
+<a name="407"></a><a name="IDX-160"></a>
+<div class="example">
+<span class="example-title">COMBINING DATA WITH UNION</span><a name="408"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter and execute the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, 'Professor' As Role FROM Professor
+   WHERE ProfessorID = (
+      SELECT ProfessorID FROM Class WHERE ClassID = 1)
+UNION
+SELECT Name, 'Student' FROM Student
+   WHERE StudentID IN (
+      SELECT StudentID FROM Enrollment WHERE ClassID = 1);
+</pre>
+</div>
+<p class="para">Note that this code won't work with MySQL 4.0 because it contains subqueries. A version of this query using table joins instead, which will work with MySQL, is available in the code download.</p>
+<p class="para">The query in this example extracts names from the <span class="fixed">Professor</span> and <span class="fixed">Student</span> tables that are involved in a specific class (subqueries are used here to match IDs with values in the <span class="fixed">Class</span> and <span class="fixed">Enrollment</span> tables, respectively). As well as extracting data, you provide a fixed value for a new calculated column, <span class="fixed">Role</span>, which shows which table the name has come from:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name          Role
+
+   ------------- ---------
+   Anna Wolff    Student
+   John Jones    Student
+   Julia Picard  Student
+   Prof. Dawson  Professor
+   ...           ...
+</pre>
+</div>
+<p class="para">It's well worth noting here that the resultant data is sorted together rather than having two sorted lists on top of one another. You can use <span class="fixed">ORDER BY</span> and filter on the result set just as you do with other data returned by queries.</p>
+<a name="409"></a><a name="IDX-161"></a>
+<p class="last-para">
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">It's normal for names to be sorted by last name rather than by first name. You could do this using the <i class="emphasis"><span class="fixed">FormatName()</span></i> function created in <a href="LiB0031.html#267" target="_parent" class="chapterjump">Chapter 5</a>, "Performing Calculations and Using Functions."</p>
+</td>
+</tr>
+</table>
+</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">The previous example is pretty straightforward, but it doesn't quite fully illustrate how the <span class="fixed">UNION</span> operator works. In set theoretical terms, a union of two sets of data will contain every member of each data set, <i class="emphasis">but with each member</i> <i class="emphasis">only being counted once</i>. So, the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+{1, 2, 3, 4} UNION {3, 4, 5, 6}
+</pre>
+</div>
+<p class="para">produces this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   {1, 2, 3, 4, 5, 6}
+</pre>
+</div>
+<p class="para">In order to demonstrate this, let's use another query, which is designed to extract the underperforming students:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID
+   FROM StudentExam
+   WHERE Mark &lt; 40
+UNION
+SELECT StudentID
+   FROM Enrollment
+   WHERE GRADE &lt; 40
+ORDER BY StudentID;
+</pre>
+</div>
+<p class="para">This query returns the <span class="fixed">StudentID</span> for every student who received one or more exam mark under 40, and every student who received one or more class grade under 40. The results are as follows:</p>
+<a name="410"></a><a name="IDX-162"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID
+
+   -----------
+   2
+   5
+   8
+</pre>
+</div>
+<p class="para">If you run each of the two queries involved in this <span class="fixed">UNION</span> operation separately, you'll see that there's one student (with an ID of <span class="fixed">5</span>) who has received an exam mark under 10 and a class grade under 40. However, this student is only listed once in the result set. What in effect you have in this case is this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+{2, 5, 8} UNION {5},
+</pre>
+</div>
+<p class="para">which produces this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   {2, 5, 8}
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="411"></a><a name="ch06lev2sec6"></a>Keeping Duplicate Rows</h3>
+<p class="first-para">SQL allows you to override the usual rules of set theory and return all members of each set of data regardless of duplicates. You do this by simply using the <span class="fixed">UNION</span> <span class="fixed">ALL</span> operator:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">TableA</i>
+UNION ALL
+SELECT <i class="emphasis">ColumnC</i>, <i class="emphasis">ColumnD</i> FROM <i class="emphasis">TableB</i>;
+</pre>
+</div>
+<p class="para">By simply adding the <span class="fixed">ALL</span> keyword to your <span class="fixed">UNION</span> operator, your result set will include duplicate data.</p>
+<p class="para">This is in contrast to other <span class="fixed">SELECT</span> queries, which as you've seen have required you to use the <span class="fixed">DISTINCT</span> keyword to remove duplicate data.</p>
+<a name="412"></a><a name="IDX-163"></a>
+<p class="para">This means that the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+{1, 2, 3, 4} UNION ALL {3, 4, 5, 6}
+</pre>
+</div>
+<p class="para">produces this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   {1, 2, 3, 3, 4, 4, 5, 6}
+</pre>
+</div>
+<p class="para">This can be useful if you want to know the number of occurrences of a particular value in more than one table. Let's return to the underperforming students and perform the same query but using <span class="fixed">UNION ALL</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID
+   FROM StudentExam
+   WHERE Mark &lt; 40
+UNION ALL
+SELECT StudentID
+   FROM Enrollment
+   WHERE GRADE &lt; 40
+ORDER BY StudentID;
+</pre>
+</div>
+<p class="para">The results are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID
+
+   -----------
+   2
+   5
+   5
+   8
+</pre>
+</div>
+<p class="para">Now, student <span class="fixed">5</span>, who was returned by both queries, is counted twice. This is quite useful because now you know that, although students <span class="fixed">2</span> and <span class="fixed">8</span> have suffered the odd bad exam grade, only student <span class="fixed">5</span> is consistently underperforming in class.</p>
+<a name="413"></a><a name="IDX-164"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="414"></a><a name="ch06lev2sec7"></a>Understanding Intersections and Differences</h3>
+<p class="first-para">The last two operators are supported only by DB2 and Oracle, so we'll just present them briefly. The <span class="fixed">INTERSECT</span> operator allows you to retrieve only the rows that occur in both queries. The following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+{1, 2, 3, 4} INTERSECT {3, 4, 5, 6}
+</pre>
+</div>
+<p class="para">produces this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   {3, 4}
+</pre>
+</div>
+<p class="para">The <span class="fixed">EXCEPT</span> (called <span class="fixed">MINUS</span> in Oracle) operator allows you to retrieve the rows that occur in the first but not the second query. For example, the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+{1, 2, 3, 4} EXCEPT (or MINUS) {3, 4, 5, 6}
+</pre>
+</div>
+<p class="para">produces this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   {1, 2, 5, 6}
+</pre>
+</div>
+<p class="para">Let's demonstrate these by shaming the underachievers even more. The following query retrieves the IDs of all those students who scored less than 40 in at least one of their exams <i class="emphasis">and</i> were given at least one overall grade of less than 40:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID
+   FROM StudentExam
+   WHERE Mark &lt; 40
+INTERSECT
+SELECT StudentID
+   FROM Enrollment
+   WHERE GRADE &lt; 40
+ORDER BY StudentID;
+<a name="415"></a><a name="IDX-165"></a>
+</pre>
+</div>
+<p class="para">The only row returned is, as you know, that for student <span class="fixed">5</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID
+
+   -----------
+   5
+</pre>
+</div>
+<p class="para">Let's alter the query a bit to find only those students who have done very badly in one or more exam but who haven't also received at least one very good grade. You can do this using the <span class="fixed">EXCEPT</span> operator (DB2):</p>
+<div class="informalexample">
+<pre class="literallayout">
+-- DB2 only
+SELECT StudentID
+   FROM StudentExam
+   WHERE Mark &lt; 40
+EXCEPT
+SELECT StudentID
+   FROM Enrollment
+   WHERE GRADE &gt; 69
+ORDER BY StudentID;
+</pre>
+</div>
+<p class="para">In Oracle, you use the <span class="fixed">MINUS</span> operator in the same way:</p>
+<div class="informalexample">
+<pre class="literallayout">
+-- Oracle only
+SELECT StudentID
+   FROM StudentExam
+   WHERE Mark &lt; 40
+MINUS
+SELECT StudentID
+   FROM Enrollment
+   WHERE GRADE &gt; 69
+ORDER BY StudentID;
+</pre>
+</div>
+<p class="para">This query returns the IDs of all the students who scored less than 40 in an exam, minus the set of students who achieved a grade of 70 or more. Two of the usual suspects show up:</p>
+<a name="416"></a><a name="IDX-166"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID
+
+   -----------
+   2
+   5
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0036.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0038.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

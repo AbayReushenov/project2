@@ -1,0 +1,485 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Chapter 7: Querying Multiple Tables</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0038.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0040.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch07"></a>
+<h1 class="chapter-title"><span class="chapter-titlelabel">Chapter 7: </span>Querying Multiple Tables</h1><a name="419"></a><a name="IDX-167"></a>
+<p class="para">Querying data from multiple tables using subqueries is a great capability, but it doesn't always give you everything you need, and the syntax can become a bit messy and confusing. Also, as discussed in the <a href="LiB0035.html#376" target="_parent" class="chapterjump">previous chapter</a>, when a subquery executes for each match of an outer query, performance can be affected. For this reason, SQL allows you to query multiple tables simultaneously with a simpler syntax. This capability doesn't completely replace some of the techniques you saw in the <a href="LiB0035.html#376" target="_parent" class="chapterjump">previous chapter</a> involving subqueries across multiple tables, but it's extremely powerful when you simply want a result set that contains information from more than one table. Because relational databases are designed to hold data in more than one table, where records in one table are usually associated with records in other tables, this functionality is essential.</p>
+<div class="highlights">
+<p class="first-para">In this chapter, you'll look at the various ways that multitable queries can be performed using what's known in SQL parlance as <i class="emphasis">joins</i>. You'll start, as usual, with the basics before building up to more complex situations. The simpler material concerns situations where you get a result set consisting of matches between rows in different tables based on certain criteria, either by looking at equality between column values or by using some other comparison. The more complex techniques involve forcing unmatched rows from one or more tables to be included in the results you receive, even if there's no match with a row in another table.</p>
+</div>
+<div class="section">
+<h2 class="sect2-title">
+<a name="420"></a><a name="ch07lev1sec1"></a>Understanding Simple Joins</h2>
+<p class="first-para">Let's consider a simple example. Imagine that someone at the example university wants to know when rooms are occupied and when they're free. You could find out this information by querying the <span class="fixed">Class</span> and <span class="fixed">Room</span> tables from the sample <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Class.ClassID, Class.Time, Room.RoomID
+FROM Room, Class;
+</pre>
+</div>
+<p class="para">Unfortunately, this won't yield the results you're after. You might think that you'd simply get a set of rows that consists of all the columns for both tables, <a name="421"></a><a name="IDX-168"></a>with each row containing data from a row in the first table and a row from the second. Well, you'd be right. However, what you may not imagine is quite how many rows you'd get (try it out for yourself and see what happens!).</p>
+<p class="para">Basically, the result of the join is the Cartesian product of the elements in each set. For example, the Cartesian product of the two sets <span class="fixed">{a, b, c}</span> and <span class="fixed">{a, b}</span> is the following set of pairs:</p>
+<div class="informalexample">
+<pre class="literallayout">
+{(a, a), (a, b), (b, a), (b, b), (c, a), (c, b)}
+</pre>
+</div>
+<p class="para">What happens in this example is that each row in <span class="fixed">Room</span> is combined with each row in <span class="fixed">Class</span> to give a row in the result set. So, the first row of <span class="fixed">Room</span> is combined with the first row of <span class="fixed">Class</span> for the first row in the result set. Next, the first row of <span class="fixed">Room</span> is combined with the second row of <span class="fixed">Class</span>, then the third row, the fourth row, and so on. The number of elements in the Cartesian product is the product of the number of elements in each set. In the example, you have nine rooms and 10 classes, so you have 90 results. Taking this further, if you had 100 rooms in your university and 100 classes scheduled, you'd end up with 10,000 rows of results!</p>
+<p class="para">In generic terms, imagine the following pseudoquery:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Table1.Column1, Table2.Column2, Table2.Column3 FROM Table1, Table2
+</pre>
+</div>
+<p class="para">Consider the situation where the previous query is executed, with the column <span class="fixed"><i class="emphasis">Table1</i>.<i class="emphasis">Column1</i></span> having the values <span class="fixed">T1C1V1</span>, <span class="fixed">T1C1V2</span>, and so on, with <span class="fixed"><i class="emphasis">Table1</i>.<i class="emphasis">Column2 </i></span>having <span class="fixed">T1C2V1</span>, <span class="fixed">T1C2V2</span>, and with the same naming scheme for <span class="fixed"><i class="emphasis">Table2</i>.<i class="emphasis">Column1</i></span>. The first few rows returned will be as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+Table1.Column1  Table1.Column2  Table2.Column1
+--------------- --------------- --------------
+T1C1V1          T1C2V1          T2C1V1
+T1C1V1          T1C2V1          T2C1V2
+T1C1V1          T1C2V1          T2C1V3
+T1C1V1          T1C2V1          T2C1V4
+</pre>
+</div>
+<p class="para">and so on for the rest of the rows in <span class="fixed"><i class="emphasis">Table2</i>.<i class="emphasis">Column1</i></span>. Next, you move on to the second row in <i class="emphasis"><span class="fixed">Table1</span></i>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+Table1.Column1  Table1.Column2  Table2.Column1
+--------------- --------------- --------------
+T1C1V2          T1C2V2          T2C1V1
+T1C1V2          T1C2V2          T2C1V2
+T1C1V2          T1C2V2          T2C1V3
+T1C1V2          T1C2V2          T2C1V4
+<a name="422"></a><a name="IDX-169"></a>
+</pre>
+</div>
+<p class="para">As before, you'll get one result for each row in <i class="emphasis"><span class="fixed">Table2</span></i>.</p>
+<p class="para">This type of join is known as a <i class="emphasis">cross join</i>, or Cartesian product. In fact, in all the RDBMSs covered in this book, except DB2, you can write the previous as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Table1.Column1, Table1.Column2, Table2.Column3 FROM Table1 CROSS JOIN Table2
+</pre>
+</div>
+<p class="para">This <span class="fixed">CROSS JOIN</span> operator is the SQL-92 standard.</p>
+<p class="para">In some circumstances, you might want this to happen but not many. What you need to do is to specify which rows in <i class="emphasis"><span class="fixed">Table1</span></i> should be joined with which rows in <i class="emphasis"><span class="fixed">Table2</span></i>. The way you tend to do this is to use table relationships. For example, you might stipulate that a row with a primary key value of <i class="emphasis"><span class="fixed">x</span></i> in <i class="emphasis"><span class="fixed">Table1</span></i> is joined to a row with the same foreign key value in <i class="emphasis"><span class="fixed">Table2</span></i>.</p>
+<p class="para">That way you might end up with 100 rows if there was a one-to-one correlation, or perhaps even less, if for example you were only joining a filtered group of rows in <i class="emphasis"><span class="fixed">Table1</span></i> to a filtered group of rows in <i class="emphasis"><span class="fixed">Table2</span></i>.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="423"></a><a name="ch07lev2sec1"></a>Using Two Table Equi-Joins</h3>
+<p class="first-para">The most common way of associating rows from one table to another is via an <i class="emphasis">equi-join</i>. This is where you link rows based on an equality (hence "equi") between the values contained in a column of each row:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Table1.Column1, Table1.Column2, Table2.Column3 FROM Table1, Table2
+   WHERE Table1.Column1 = Table2.Column2
+</pre>
+</div>
+<p class="para">As with cross joins, you can also express this using a more explicit keyword form, which is the SQL-92 standard and works for all current versions of the RDBMSs covered in this book:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Table1.Column1, Table1.Column2, Table2.Column3FROM Table1 JOIN Table2
+   ON Table1.Column1 = Table2.Column2
+</pre>
+</div>
+<p class="para">Here, the difference is that you use the <span class="fixed">JOIN</span> keyword rather than a comma and <span class="fixed">ON</span> rather than <span class="fixed">WHERE</span>. Because this is the standard form, you'll be using it in subsequent example code.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">For this example syntax to work on all database platforms and produce the same results, <i class="emphasis"><span class="fixed">JOIN</span></i> may have to be replaced by <i class="emphasis"><span class="fixed">INNER JOIN</span></i>. You'll see this in action in the upcoming example.</p>
+</td>
+</tr>
+</table>
+<a name="424"></a><a name="IDX-170"></a>
+<p class="para">Returning to the rooms and classes example, if you use the following SQL code, you'll see a much smaller result set:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Class.ClassID, Class.Time, Room.RoomID
+FROM Room
+   JOIN Class ON Room.RoomID = Class.RoomID;
+</pre>
+</div>
+<p class="para">You now see just 10 rows, one for each class, indicating what time and in which room each class is held.</p>
+<p class="para">You should note that versions of Oracle up to 8.1.7 don't support the <span class="fixed">JOIN </span>keyword. Instead, simply use the following syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Room.RoomID, Class.Time, Class.ClassID
+FROM Room, Class
+WHERE Room.RoomID = Class.RoomID;
+</pre>
+</div>
+<p class="para">As another example, if you had a table called <span class="fixed">Customers</span> with a <span class="fixed">CustomerID </span>column and a table called <span class="fixed">CreditCards</span> that also had a <span class="fixed">CustomerID</span> column (going back to an earlier example where you had multiple credit cards per customer), you might write the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Customers.CustomerID,
+        Customers.CustomerName,
+        CreditCards.CardNumber
+FROM Customers
+   JOIN CreditCards
+   ON Customers.CustomerID = CreditCards.CustomerID;
+</pre>
+</div>
+<p class="para">Assuming there's a one-to-many relationship between these tables (one customer can have multiple credit cards), you'd get one row returned for each credit card in <span class="fixed">CreditCards</span>. Note that some of these rows would have identical customer information because this is how you've asked for the data.</p>
+<div class="example">
+<span class="example-title">TWO TABLE EQUI-JOINS</span><a name="425"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Say you want to report the marks that have been achieved for every exam taken by every student. The following query will do the trick. Execute it against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentExam.ExamID,
+       StudentExam.Mark,
+       Student.Name AS StudentName<a name="426"></a><a name="IDX-171"></a>
+FROM StudentExam
+   JOIN Student
+   ON StudentExam.StudentID = Student.StudentID
+ORDER BY ExamID;
+</pre>
+</div>
+<p class="para">Note that to run this example with MySQL and Access, you need to use <span class="fixed">INNER JOIN</span> instead of <span class="fixed">JOIN</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+...
+FROM StudentExam
+   INNER JOIN Student
+...
+</pre>
+</div>
+<p class="para">(We'll explain what this extra clause means in just a moment.)</p>
+<p class="para">You should see the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ExamID  Mark  StudentName
+
+   ------- ----- -------------
+   1       55    John Jones
+   1       26    Anna Wolff
+   1       71    Julia Picard
+   2       62    Anna Wolff
+   ...     ...   ...
+</pre>
+</div>
+<p class="last-para">In this example, you've joined data from <span class="fixed">StudentExam</span> directly to data from the <span class="fixed">Student</span> table and presented it in a single result set. Rather than getting the <span class="fixed">StudentID</span> value and having to then extract student names, joining the tables with the equi-join specification of <span class="fixed">ON StudentExam.StudentID = Student.StudentID</span> gives you direct access to this information. This is much more efficient because you get the information you want without having to run a separate query or, as might be the case, several separate queries for each student.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="427"></a><a name="IDX-172"></a>
+<p class="para">Again, instead of using the <span class="fixed">JOIN</span> clause in this example, you could have constructed the same query using <span class="fixed">WHERE</span> clauses as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentExam.ExamID,
+        StudentExam.Mark,
+        Student.Name AS StudentName
+FROM StudentExam, Student
+WHERE StudentExam.StudentID = Student.StudentID
+ORDER BY ExamID;
+</pre>
+</div>
+<p class="para">Another point to note is that this type of join, and in fact any other type of join, can include additional clauses as examined in other chapters. A <span class="fixed">WHERE</span> clause, for example, is just as valid in a join as in any other query. The following modification to the previous example gives just those students with a mark of 80 or more:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentExam.ExamID,
+        StudentExam.Mark,
+        Student.Name AS StudentName
+FROM StudentExam JOIN Student
+ON StudentExam.StudentID = Student.StudentID
+WHERE StudentExam.Mark &gt;= 80
+ORDER BY ExamID;
+</pre>
+</div>
+<p class="last-para">It's important to bear this in mind in later examples, where you won't concentrate on anything other than the joining of tables because there's a whole world of flexibility available.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="428"></a><a name="ch07lev2sec2"></a>Using Multitable Equi-Joins</h3>
+<p class="first-para">When it comes to equi-joins, there's no need to stop at two tables. You can include as many tables as you like, taking care to match rows to one another to avoid obtaining thousands of rows. To do this, you simply add another <span class="fixed">JOIN</span> and <span class="fixed">ON </span>clause after the first one:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM <i class="emphasis">Table1</i> JOIN <i class="emphasis">Table2</i>
+   ON Table1.Column1 = Table2.Column2
+   JOIN <i class="emphasis">Table3</i>
+   ON Table1.Column3 = Table3.Column4
+<a name="429"></a><a name="IDX-173"></a>
+</pre>
+</div>
+<p class="para">To go back to the customers and credit cards example, imagine that you have another table called <span class="fixed">Addresses</span>, where each customer has one or more addresses stored. You could expand on the query to get columns from this new table with simple additions:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Customers.CustomerID,
+        Customers.CustomerName,
+        CreditCards.CardNumber,
+        Addresses.Country
+FROM Customers
+   JOIN CreditCards
+   ON Customers.CustomerID = CreditCards.CustomerID
+   JOIN Addresses
+   ON Customers.CustomerID = Addresses.CustomerID
+</pre>
+</div>
+<p class="para">Let's look at an example of this using the <span class="fixed">InstantUniversity</span> database.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Access doesn't seem to support multitable equi-joins like the other database platforms do. Instead, you need to use a nested join to achieve the same results, as you'll see in a moment.</p>
+</td>
+</tr>
+</table>
+<div class="example">
+<span class="example-title">MULTI-TABLE EQUI-JOINS (NOT ACCESS)</span><a name="430"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The following example displays, for every exam taken by every student, what mark they achieved and the date on which the exam was given. This combines data from the <span class="fixed">Student</span> and <span class="fixed">Exam</span> tables via the <span class="fixed">StudentExam</span> junction table (displaying data from both sides of the many-to-many relationship).</p>
+<p class="para">Execute the following statement (again, change <span class="fixed">JOIN</span> to <span class="fixed">INNER JOIN</span> for MySQL):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentExam.ExamID,
+        StudentExam.Mark,
+        Exam.SustainedOn,
+        Student.Name AS StudentName
+FROM StudentExam
+   JOIN Student
+   ON StudentExam.StudentID = Student.StudentID
+   JOIN Exam
+   ON StudentExam.ExamID = Exam.ExamID
+ORDER BY StudentExam.ExamID;
+<a name="431"></a><a name="IDX-174"></a>
+</pre>
+</div>
+<p class="para">This should produce the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ExamID  Mark  SustainedOn               StudentName
+
+   ------- ----- ------------------------  ------------
+   1       55    2003-03-12 00:00:00.000   John Jones
+   1       26    2003-03-12 00:00:00.000   Anna Wolff
+   1       71    2003-03-12 00:00:00.000   Julia Picard
+   2       62    2003-03-13 00:00:00.000   Anna Wolff
+   ...     ...   ...                       ...
+</pre>
+</div>
+<p class="last-para">Here you've extended the previous example by getting the <span class="fixed">SustainedOn</span> field from <span class="fixed">Exam</span> and using the <span class="fixed">ExamID</span> field to join the tables. All you had to do to get this information was to include an extra <span class="fixed">JOIN ON</span> clause for the new table, and then you could extract the data using <span class="fixed">Exam.SustainedOn</span>. Note that one more change was necessary: The <span class="fixed">ORDER BY</span> clause changed from <span class="fixed">ExamID</span> to <span class="fixed">StudentExam.ExamID</span>, which was needed because now there are two <span class="fixed">ExamID</span> columns, one in <span class="fixed">StudentExam</span> and one in <span class="fixed">Exam</span>. You have to be explicit when referencing columns in such a situation.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">So, let's see how you can achieve similar results in Microsoft Access, as well as the other platforms by altering how you nest joins.</p>
+<div class="example">
+<span class="example-title">NESTED MULTI-TABLE EQUI-JOINS (ALL PLATFORMS)</span><a name="432"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Access seems to prefer to start from one end of the relationship and use nested joins to display the same results that you saw previously, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentExam.ExamID,
+        StudentExam.Mark,
+        Exam.SustainedOn,
+        student.Name
+FROM Exam
+   INNER JOIN (student
+      INNER JOIN StudentExam ON student.StudentID = StudentExam.StudentID)
+   ON Exam.ExamID = StudentExam.ExamID
+ORDER BY StudentExam.ExamID;
+<a name="433"></a><a name="IDX-175"></a>
+</pre>
+</div>
+<p class="para">This syntax will work on all platforms. Again, you see the same results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ExamID  Mark  SustainedOn               StudentName
+
+   ------- ----- ------------------------  ------------
+   1       55    2003-03-12 00:00:00.000   John Jones
+   1       26    2003-03-12 00:00:00.000   Anna Wolff
+   1       71    2003-03-12 00:00:00.000   Julia Picard
+   2       62    2003-03-13 00:00:00.000   Anna Wolff
+   ...     ...   ...                       ...
+</pre>
+</div>
+<p class="last-para">In this example, you first perform a join between the <span class="fixed">Student</span> and <span class="fixed">StudentExam</span> tables, then you join the resulting table to the <span class="fixed">Exam</span> table to produce the results. Access requires that you use <span class="fixed">INNER JOIN</span> instead of <span class="fixed">JOIN</span>, and it also requires brackets around the first join.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="434"></a><a name="ch07lev2sec3"></a>Using Non-Equi Joins</h3>
+<p class="first-para">All equi-joins use the equality operator (<span class="fixed">=</span>) in their <span class="fixed">WHERE</span> clause. However, this is by no means essential. You can use any comparison operator you like, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM <i class="emphasis">Table1</i>, <i class="emphasis">Table2</i>
+WHERE Table1.Column1 &lt; Table2.Column2
+</pre>
+</div>
+<p class="para">This is likely to result in more results than an equi-join because there are likely to be more matches in the <span class="fixed">WHERE</span> clause.</p>
+<p class="para">Let's look at an example:</p>
+<a name="435"></a><a name="IDX-176"></a>
+<div class="example">
+<span class="example-title">NON-EQUI JOINS</span><a name="436"></a>
+
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">First, let's see which classes are being held in which rooms at a certain time, as you saw earlier.</p>
+<p class="para">Execute the following against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Room.RoomID, Class.Time, Class.ClassID
+FROM Room JOIN Class ON Room.RoomID = Class.RoomID;
+</pre>
+</div>
+<p class="para">You should see the following list:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   RoomID  Time                                 ClassID
+
+   ------- ----------------------------------
+   6       Mon 09:00-11:00                      1
+   5       Mon 11:00-12:00, Thu 09:00-11:00     2
+   3       Mon 14:00-16:00                      3
+   2       Tue 10:00-12:00, Thu 14:00-15:00     4
+   9       Tue 14:00-16:00                      5
+   2       Tue 16:00-17:00 Thu 15:00-17:00      6
+   3       Wed 09:00-11:00                      7
+   8       Wed 11:00-13:00 Fri 09:00-11:00      8
+   5       Fri 11:00-13:00                      9
+   9       Fri 14:00-16:00                      10
+</pre>
+</div>
+<p class="para">Notice that room 2 is busy on Tuesday morning from 10 A.M. to 12 P.M., and room 3 is busy on Monday afternoon from 2 A.M. to 4 P.M.</p>
+<p class="para">Second, what if you wanted to have a list of when rooms are free? Alter the query, dropping the <span class="fixed">ClassID</span> column, as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Room.RoomID, Class.Time
+FROM Room JOIN Class ON Room.RoomID &lt;&gt; Class.RoomID;
+</pre>
+</div>
+<p class="para">You should now see the following:</p>
+<a name="437"></a><a name="IDX-177"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   RoomID  Time
+
+   ------- ----------------------------------
+   ...     ...
+   2       Mon 11:00-12:00, Thu 09:00-11:00
+   2       Mon 14:00-16:00
+   2       Tue 14:00-16:00
+   2       Wed 09:00-11:00
+   2       Wed 11:00-13:00 Fri 09:00-11:00
+   2       Fri 11:00-13:00
+   2       Fri 14:00-16:00
+   3       Mon 09:00-11:00
+   3       Mon 11:00-12:00, Thu 09:00-11:00
+   3       Tue 10:00-12:00, Thu 14:00-15:00
+   3       Tue 14:00-16:00
+   3       Tue 16:00-17:00 Thu 15:00-17:00
+   ...     ...
+</pre>
+</div>
+<p class="last-para">Notice that room 2 doesn't have an available 10 A.M. to 12 P.M. slot, and room 3 is also booked on Monday afternoons from 2 A.M. to 4 P.M. (these times don't appear in this list). This is a bit of a crude way to identify if a room is actually free (the only times that appear are times when there are classes). However, it does at least demonstrate, in this database, how using an inequality operator instead of an equality operator produces many more results because the search is broader in this case.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="438"></a><a name="ch07lev2sec4"></a>Using Aliasing in Equi-Joins</h3>
+<p class="first-para">The example queries you've seen so far have had one thing in common&#8212;they all tend to be rather long. However, the aliasing technique you've used previously in this book really comes into its own here. For example, you can rewrite the query used earlier:</p>
+<a name="439"></a><a name="IDX-178"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentExam.ExamID,
+        StudentExam.Mark,
+        Student.Name AS StudentName
+FROM StudentExam
+   JOIN Student
+   ON StudentExam.StudentID = Student.StudentID
+ORDER BY ExamID
+</pre>
+</div>
+<p class="para">using aliases as so:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT SE.ExamID,
+        SE.Mark,
+        S.Name AS StudentName
+FROM StudentExam AS SE
+   JOIN Student AS S
+   ON SE.StudentID = S.StudentID
+ORDER BY ExamID
+</pre>
+</div>
+<p class="last-para">The query operates in the same way, but you save a fair bit of space, making the important bits easier to read along the way.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0038.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0040.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

@@ -1,0 +1,304 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Working with SQL Server Security</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0065.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0067.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch11"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="740"></a><a name="ch11lev1sec4"></a>Working with SQL Server Security</h2><p class="first-para">In the following sections, you'll learn how you can use SQL Server's built-in stored procedures to add new users and change their passwords. You'll then see how you can use stored procedures and SQL statements to change the permissions of a particular user&#8212;that is, how you can determine what they can and can't do within a particular database.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="741"></a><a name="ch11lev2sec6"></a>Working with Users</h3>
+<p class="first-para">With SQL Server, you can create a new user with the <span class="fixed">sp_addlogin</span> stored procedure. You need to provide a username and optionally a password. There are more optional parameters; please consult SQL Server Books Online for the complete syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC sp_addlogin 'Alice', 'simplepassword'
+<a name="742"></a><a name="IDX-309"></a>
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">For aesthetic purposes, we use proper casing for usernames, but database usernames are case insensitive. This is true for all databases covered in this book.</p>
+</td>
+</tr>
+</table>
+<p class="para">You can change the user's password with the <span class="fixed">sp_password</span> stored procedure. It takes as parameters the old password, the new password, and the username. If no username is supplied, the logged-in user is assumed by default. The following example illustrates how you can change Alice's simple password to a more complicated one:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC sp_password 'simplepassword', 'complicatedpassword', 'Alice'
+</pre>
+</div>
+<p class="para">You can remove a user by using the <span class="fixed">sp_droplogin</span> stored procedure, which takes as a parameter the username you want to delete. You can remove the Alice account using the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC sp_droplogin 'Alice'
+</pre>
+</div>
+<p class="para">This statement will drop the Alice account.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">In order to test the following statements, you'll need to keep the Alice account around.</p>
+</td>
+</tr>
+</table>
+<div class="section">
+<h4 class="sect4-title">
+<a name="743"></a><a name="ch11lev3sec1"></a>Integrated Security and Windows Authentication</h4>
+<p class="first-para">Note that SQL Server also supports an alternative mode of authentication, known as <i class="emphasis">Integrated Security</i>, where access to the database is linked to Windows authentication (local user accounts or domain user accounts). If you're using Windows authentication, you can refer to domain accounts or local accounts in SQL statements in the same way as database user accounts except that you can't create a new user account in this manner.</p>
+<p class="para">To refer to domain users, you can use the syntax <span class="fixed"><i class="emphasis">DOMAIN</i>\<i class="emphasis">UserName</i></span>. Local accounts are referred to using the name of the machine you're using, for example, <span class="fixed">MyMachine\Administrator</span>. If you're using Windows authentication, you'll need to have access to a user called Alice for these examples. You can create a local system user called Alice using the Computer Management console. For the following examples, you can use <span class="fixed">MachineName/Alice</span> as your username.</p>
+<a name="744"></a><a name="IDX-310"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">SQL Server also supports mixed mode authentication, where both Windows authentication and SQL Server authentication are used.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="745"></a><a name="ch11lev2sec7"></a>Granting Database Access</h3>
+<p class="first-para">Once you've added a new database account, you can start playing with its rights and permissions. By default, the new account doesn't have any permissions.</p>
+<p class="para">For a start, you can grant the new user permission to access a particular database. You can do this with the <span class="fixed">sp_grantdbaccess</span> stored procedure. Giving users access to a database allows them to connect to the database, but it doesn't give any specific permissions to individual objects.</p>
+<p class="para">If you're logged in with the sa account (or an account that has the rights to create databases), you can do this little experiment using Query Analyzer:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE DATABASE TestDatabase
+GO
+USE TestDatabase
+GO
+CREATE TABLE TestTable (TestRow INT);
+GO
+EXEC sp_grantdbaccess 'Alice'
+</pre>
+</div>
+<p class="para">Note that the <span class="fixed">sp_grantdbaccess</span> stored procedure always works with the current database. In this example, you first create a new database named <span class="fixed">TestDatabase</span>. When you connect to the database, you create a new data table and then you grant Alice access to the database.</p>
+<p class="para">Now, if you log in using the Alice account you'll be able to connect to <span class="fixed">TestDatabase</span> (by calling <span class="fixed">USE TestDatabase</span>), but you won't be able to read any rows from <span class="fixed">TestTable</span>. An attempt to read <span class="fixed">TestTable</span> generates a <span class="fixed">SELECT permission</span> <span class="fixed">denied</span> error.</p>
+<p class="para">You can easily reverse this action and revoke Alice's access to <span class="fixed">TestDatabase</span> using the <span class="fixed">sp_revokedbaccess</span> stored procedure (you need to be logged on as a user with administrative privileges again):</p>
+<div class="informalexample">
+<pre class="literallayout">
+USE TestDatabase
+GO
+EXEC sp_revokedbaccess 'Alice'
+</pre>
+</div>
+<p class="para">If you execute this command and then log in with Alice's account, <span class="fixed">TestDatabase</span> will not be visible to you. An attempt to call <span class="fixed">USE TestDatabase</span> would <a name="746"></a><a name="IDX-311"></a>generate an error: <span class="fixed">Server user 'Alice' is not a valid user in database 'TestDatabase'.</span>
+</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">For now, just make sure Alice does have access to <i class="emphasis"><span class="fixed">TestDatabase</span></i> so you'll be able to experiment further.</p>
+</td>
+</tr>
+</table>
+<p class="last-para">After you've given the user access to the database itself, you'll most likely want to give the user access to objects <i class="emphasis">inside</i> the database&#8212;as you've seen, users can't access anything unless they are explicitly given the right to do so.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="747"></a><a name="ch11lev2sec8"></a>Setting Object-Level Permissions</h3>
+<p class="first-para">For fine-tuning user permissions, SQL Server provides you with the SQL-99 commands <span class="fixed">GRANT</span> and <span class="fixed">REVOKE</span>. You also have an additional command named <span class="fixed">DENY</span>. Here you'll see how to use these commands to control object-level access.</p>
+<p class="para">The basic syntax for <span class="fixed">GRANT</span> when setting object-level permissions is as follows:</p>
+
+<div class="informalexample">
+<pre class="literallayout">
+GRANT &lt;<i class="emphasis">privilege type</i>&gt; ON &lt;<i class="emphasis">resource</i>&gt; TO &lt;<i class="emphasis">username</i>&gt;
+</pre>
+</div>
+<p class="para">You can assign six privileges to SQL Server objects:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">SELECT</span>, <span class="fixed">INSERT</span>, <span class="fixed">UPDATE</span>, and <span class="fixed">DELETE</span> are the four rights that apply to data tables and views. Users having the <span class="fixed">SELECT</span> permission on a data table will be able to read information from that table by using the <span class="fixed">SELECT</span> statement. Users can have a mix of these permissions&#8212;for example, a user can be allowed to insert new rows into a table but can be forbidden to read data from the table.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">REFERENCES</span> allow a user to insert rows into a table that has a <span class="fixed">FOREIGN KEY</span> constraint to another table where the user doesn't have <span class="fixed">SELECT</span> permissions. This permission was implemented because inserting rows int a table having <span class="fixed">FOREIGN KEY</span> constraints can give you tips about the data in other tables on which you may not have <span class="fixed">SELECT</span> rights.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">EXECUTE</span> allows the user to run the specified stored procedure.</p>
+</li>
+</ul>
+<p class="para">If you want to give Alice <span class="fixed">SELECT</span> access to a table named <span class="fixed">TestTable</span>, you type the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT ON TestTable TO Alice
+<a name="748"></a><a name="IDX-312"></a>
+</pre>
+</div>
+<p class="para">If you want to give Alice the right to pass along the permissions she receives (using <span class="fixed">GRANT</span>), you can use the <span class="fixed">WITH GRANT OPTION</span> parameter of <span class="fixed">GRANT</span>. This allows her to grant <span class="fixed">SELECT</span> access to <span class="fixed">TestTable</span> to other users:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT ON TestTable TO Alice WITH GRANT OPTION
+</pre>
+</div>
+<p class="para">
+<span class="fixed">DENY</span> is the opposite of <span class="fixed">GRANT</span>: It prevents the user from accessing the targeted object. <span class="fixed">DENY</span> overrides any previously issued <span class="fixed">GRANT</span> statements and overrides any permissions the user may have because of role memberships.</p>
+<p class="para">
+<span class="fixed">REVOKE</span> eliminates the effect of previously issued <span class="fixed">GRANT</span> or <span class="fixed">DENY</span> statements. After revoking all individual permissions, the user will revert to having the default set of permissions specified by any roles of which they're a member.</p>
+<p class="para">To remove the <span class="fixed">SELECT</span> permission on <span class="fixed">TestTable</span> from Alice, you can call either <span class="fixed">DENY</span> or <span class="fixed">REVOKE</span>. <span class="fixed">REVOKE</span> nullifies the effect of the <span class="fixed">GRANT</span> statement, which was initially issued because Alice couldn't access <span class="fixed">TestTable</span>. <span class="fixed">DENY</span> is even tougher and explicitly denies Alice from accessing <span class="fixed">TestTable</span>. Let's use <span class="fixed">REVOKE</span> now:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE SELECT ON TestTable FROM Alice
+</pre>
+</div>
+<p class="para">If you granted access using <span class="fixed">WITH GRANT OPTION</span>, you must use <span class="fixed">CASCADE</span> when revoking the permission. This will remove the <span class="fixed">SELECT</span> permission from all the accounts Alice granted this permission to:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE SELECT ON TestTable FROM Alice CASCADE
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Keep in mind that <i class="emphasis"><span class="fixed">GRANT</span></i>, <i class="emphasis"><span class="fixed">REVOKE</span></i>, and <i class="emphasis"><span class="fixed">DENY</span></i> allow you to control access down to column level.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="749"></a><a name="ch11lev2sec9"></a>Using Roles</h3>
+<p class="first-para">SQL Server has a number of predefined roles (for a full list, you should consult the SQL Server Books Online). Here you'll focus on the commands that create new roles and assign them to database users.</p>
+<p class="para">To create a new SQL Server role, you use the <span class="fixed">sp_addrole</span> stored procedure, which takes as a parameter the name of the new role. While logged in with a system administrator account, create a new role named <span class="fixed">TestRole</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC sp_addrole 'TestRole'
+<a name="750"></a><a name="IDX-313"></a>
+</pre>
+</div>
+<p class="para">After adding the role, let's assign the permission to perform <span class="fixed">SELECT</span> on <span class="fixed">TestTable</span> to it. You do this using the <span class="fixed">GRANT</span> command, where instead of a username to assign the permission, you specify the name of a role:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT ON TestTable TO TestRole
+</pre>
+</div>
+<p class="para">Okay, so you have a role that has an associated permission. In this example, you're testing a role with a single permission, but remember that you can add any number of permissions to <span class="fixed">TestRole</span>. You can also assign <span class="fixed">DENY</span> permissions to a role&#8212;so you can have roles that are allowed to perform some actions but that are prevented from performing other tasks.</p>
+<p class="para">After creating a role, it's time to assign the role to the Alice account. The <span class="fixed">sp_addrolemember</span> stored procedure take care of that:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC sp_addrolemember TestRole, Alice
+</pre>
+</div>
+<p class="para">Now it's time to see if Alice has gotten her rights to access <span class="fixed">TestTable</span> again. Log in using the Alice account, select <span class="fixed">TestDatabase</span> to make it your current database, and make a query on <span class="fixed">TestTable</span>. It should run without problems:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM TestTable
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">DENY</span></i> is always more powerful than <i class="emphasis"><span class="fixed">GRANT</span></i>. If you explicitly deny <i class="emphasis"><span class="fixed">SELECT</span></i> access on <i class="emphasis"><span class="fixed">TestTable</span></i> to Alice, she won't be able to read <i class="emphasis"><span class="fixed">TestTable</span></i>, even if she's a member of <i class="emphasis"><span class="fixed">TestRole</span></i>. Also, if you explicitly granted to Alice <i class="emphasis"><span class="fixed">SELECT</span></i> access on <i class="emphasis"><span class="fixed">TestTable</span></i> but assigned her a role that denies the same privilege, Alice couldn't access <i class="emphasis"><span class="fixed">TestTable</span></i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">You can use the <span class="fixed">sp_droprolemember</span> stored procedure to remove a role from a user account. Type the following command when logged in using an administrator account on <span class="fixed">TestDatabase</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC sp_droprolemember TestRole, Alice
+</pre>
+</div>
+<p class="para">After executing this command, Alice can't access <span class="fixed">TestTable</span> anymore. You can drop roles from the database using <span class="fixed">sp_droprole</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXEC sp_droprole TestRole
+<a name="751"></a><a name="IDX-314"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="752"></a><a name="ch11lev2sec10"></a>Setting Statement-Level Permissions</h3>
+<p class="first-para">
+<span class="fixed">GRANT</span>, <span class="fixed">DENY</span>, and <span class="fixed">REVOKE</span> also deal with the statement-level permissions. With two exceptions, these rights allow the user to create new database objects. The statement-level permissions supported by SQL Server are as follows:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">CREATE DATABASE</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CREATE DEFAULT</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CREATE FUNCTION</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CREATE PROCEDURE</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CREATE RULE</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CREATE TABLE</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CREATE VIEW</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">BACKUP DATABASE</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">BACKUP LOG</span>
+</p>
+</li>
+</ul>
+<p class="para">As an example, the following command gives Alice the right to create databases:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT CREATE DATABASE TO Alice
+</pre>
+</div>
+<p class="para">Note that when you issue this command you need to have the <span class="fixed">master</span> database currently selected, and Alice needs to be granted login permission to the <span class="fixed">master</span> database before the administrator can run this command. As with object-level permissions, you use <span class="fixed">WITH GRANT OPTION</span> if you want the grantee to be able to give the received permissions to other users as well.</p>
+<p class="para">It's also possible to grant a user the right to create tables within the current database. Make sure the database you want to give access to is your currently selected database and execute a <span class="fixed">GRANT CREATE TABLE</span> statement, just like in the following example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+USE TestDatabase
+GRANT CREATE TABLE TO Alice
+</pre>
+</div>
+<p class="last-para">Now you can log in with the Alice account and attempt to create a new table in <span class="fixed">TestDatabase</span>&#8212;you'll see; it works.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0065.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0067.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

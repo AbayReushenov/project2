@@ -1,0 +1,177 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Testing the Database Installation</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0108.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0110.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="appendix">
+<a name="ap02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1252"></a><a name="ap02lev1sec3"></a>Testing the Database Installation</h2><p class="first-para">Once all the data has been input into the database, you should test the installation to check whether it worked. One of the simplest tests you can do for quick 'n' dirty testing is to use the following universal command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM <i class="emphasis">Table</i>;
+</pre>
+</div>
+<p class="para">This statement will simply list all available data in the selected table. However, if you want to use something a bit more refined, you can try out the following examples.</p>
+<div class="example">
+<span class="example-title">TESTING THE DATA 1</span><a name="1253"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">You can use this example to test whether the sample data has been inserted correctly:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Course.Name AS Course, Student.Name AS Student,
+   Professor.Name AS Professor
+FROM Student
+   INNER JOIN (Professor
+      INNER JOIN (Course
+         INNER JOIN (Class
+            INNER JOIN Enrollment
+            ON Class.ClassID = Enrollment.ClassID)
+         ON Course.CourseID = Class.CourseID)
+      ON Professor.ProfessorID = Class.ProfessorID)
+   ON Student.StudentID = Enrollment.StudentID
+ORDER BY Course.Name;
+<a name="1254"></a><a name="IDX-528"></a>
+</pre>
+</div>
+<p class="para">If you used the <span class="fixed">INSERT</span> statements available for download from the Apress Web site, then you should see the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+COURSE                     STUDENT           PROFESSOR
+-------------------------- ----------------- ----------------
+Applied Mathematics        Gary Burton       Prof. Williams
+Applied Mathematics        Maria Fernandez   Prof. Williams
+Applied Mathematics        Bruce Lee         Prof. Williams
+Core Mathematics           Bruce Lee         Prof. Jones
+Core Mathematics           Maria Fernandez   Prof. Jones
+Core Mathematics           Steve Alaska      Prof. Jones
+Electronics                Gary Burton       Prof. Ashby
+Electronics                Maria Fernandez   Prof. Ashby
+Electronics                Steve Alaska      Prof. Ashby
+Electronics                Vic Andrews       Prof. Ashby
+History of Computing       Gary Burton       Prof. Williams
+History of Computing       Julia Picard      Prof. Williams
+History of Computing       Vic Andrews       Prof. Williams
+Human Biology              Emily Scarlett    Prof. Patel
+Human Biology              Andrew Foster     Prof. Patel
+Mediaeval Romanian         John Jones        Prof. Dawson
+Mediaeval Romanian         Julia Picard      Prof. Dawson
+Mediaeval Romanian         Anna Wolff        Prof. Dawson
+Metallurgy                 Vic Andrews       Prof. Hwa
+Metallurgy                 Andrew Foster     Prof. Hwa
+Modern English Literature  Anna Wolff        Prof. Dawson
+Modern English Literature  Julia Picard      Prof. Dawson
+Organic Chemistry          Emily Scarlett    Prof. Ashby
+Organic Chemistry          Andrew Foster     Prof. Ashby
+Philosophy                 John Jones        Prof. Dawson
+Philosophy                 Anna Wolff        Prof. Dawson
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="1255"></a><a name="IDX-529"></a>
+<div class="example">
+<span class="example-title">TESTING THE DATA 2</span><a name="1256"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">This example will test a table with a date in it to ensure that differences between date syntax haven't led to any errors:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Student.Name AS Student,
+       Course.Name AS Course,
+       Enrollment.EnrolledOn AS EnrollmentDate,
+       Enrollment.Grade AS Grade
+FROM Course
+   INNER JOIN (Class
+      INNER JOIN (Student
+         INNER JOIN Enrollment
+         ON Student.StudentID = Enrollment.StudentID)
+      ON Class.ClassID = Enrollment.ClassID)
+   ON Course.CourseID = Class.CourseID
+ORDER BY Student.Name;
+</pre>
+</div>
+<p class="para">You should see something like the following (depending on the time zone settings on your machine):</p>
+<div class="informalexample">
+<pre class="literallayout">
+STUDENT         COURSE                    ENROLLMENTDATE  GRADE
+
+--------------- ------------------------- --------------  -----
+Andrew Foster   Organic Chemistry           9/23/2002      68
+Andrew Foster   Human Biology               9/23/2002      66
+Andrew Foster   Metallurgy                  9/30/2002      68
+Anna Wolff      Mediaeval Romanian          9/23/2002      33
+Anna Wolff      Modern English Literature   9/23/2002      65
+Anna Wolff      Philosophy                  9/23/2002      63
+Bruce Lee       Applied Mathematics         9/20/2002      60
+Bruce Lee       Core Mathematics            9/20/2002      70
+Emily Scarlett  Human Biology               9/30/2002      80
+Emily Scarlett  Organic Chemistry           9/30/2002      78
+Gary Burton     Electronics                 9/23/2003      68
+Gary Burton     History of Computing        9/23/2003      51
+Gary Burton     Applied Mathematics         9/23/2003      41
+John Jones      Mediaeval Romanian          9/23/2002      62<a name="1257"></a><a name="IDX-530"></a>
+John Jones      Philosophy                  9/30/2002      70
+Julia Picard    Mediaeval Romanian          9/23/2002      70
+Julia Picard    History of Computing        9/23/2002      53
+Julia Picard    Modern English Literature   9/30/2002      42
+Maria Fernandez Core Mathematics            9/20/2002      75
+Maria Fernandez Applied Mathematics         9/20/2002      66
+Maria Fernandez Electronics                 9/20/2002      76
+Steve Alaska    Electronics                 9/20/2002      82
+Steve Alaska    Core Mathematics            9/20/2002      66
+Vic Andrews     Metallurgy                  9/23/2002      54
+Vic Andrews     History of Computing        9/23/2002      78
+Vic Andrews     Electronics                 9/23/2002      71
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0108.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0110.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

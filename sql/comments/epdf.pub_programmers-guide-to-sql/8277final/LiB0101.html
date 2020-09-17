@@ -1,0 +1,978 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Stage 1: Creating the Database Tables</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0100.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0102.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch15"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1060"></a><a name="ch15lev1sec4"></a><span class="section-titlelabel">Stage 1: </span>Creating the Database Tables</h2><p class="first-para">Now that we've covered the basics of permission modes and discussed the naming convention, let's get to the meat of creating this database. <a class="internaljump" href="#ch15fig01">Figure 15-1</a> shows what the whole thing is going to look like.</p>
+<div class="figure">
+<a name="1061"></a><a name="ch15fig01"></a><span class="figuremediaobject"><a href="images/fig474%5F01%5F0%2Ejpg" NAME="IMG_42" target="_parent"><img src="images/fig474_01.jpg" height="282" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 15-1: </span>The RBS database</span>
+</div>
+<a name="1062"></a><a name="IDX-458"></a>
+<p class="para">The first thing to do is identify the most basic type of data to be stored in the database. As you can see, there are four key storage tables:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">Users</span>: This stores all the relevant information about your application users.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Roles</span>: Each role defines a specific collection of permissions (a typical role might be Administrator).</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Permissions</span>: A permission is a point of access into the system (a typical permission might be Document).</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">PermissionCategories</span>: This allows you to define certain types of permission, such as Tax Documents.</p>
+</li>
+</ul>
+<p class="para">There are also two mapping tables:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">UserRoles</span>: This allows you to map roles to users.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">RolePermission</span>: This allows you to map permissions to roles.</p>
+</li>
+</ul>
+<p class="para">In this case, everything is going to revolve around the <span class="fixed">Users</span> table, so let's determine what kind of information you need to store about users.</p>
+<a name="1063"></a><a name="IDX-459"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1064"></a><a name="ch15lev2sec3"></a>Users</h3>
+<p class="first-para">In this example, you're targeting the database at a Web site application, so you'll need some kind of unique identifier for the user, as well as a login/password combination that you can use to authenticate the user. In addition, you need to keep some contact information on the user. In summary, you'll need to store the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Name</p>
+</li>
+<li class="listitem">
+<p class="first-para">Address</p>
+</li>
+<li class="listitem">
+<p class="first-para">Login ID</p>
+</li>
+<li class="listitem">
+<p class="first-para">Password</p>
+</li>
+<li class="listitem">
+<p class="first-para">E-mail address or other contact details</p>
+</li>
+</ul>
+<p class="para">In this example, you're not going to support international addresses because the topic of storing international addresses in a database is probably big enough for its own chapter. The only tricky part of this is the password. How do you store the password in such a way that the following conditions are true:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">The customers are guaranteed privacy (your employees can't get at customer passwords).</p>
+</li>
+<li class="listitem">
+<p class="first-para">There's privacy over the wire so that communication between the application and the database server is never disclosing a private password?</p>
+</li>
+</ul>
+<p class="para">Well, you could use encryption or some form of hashing. When designing the database, you don't need to worry too much about how the programmers accomplish the hashing or encryption. You'll simply be storing raw binary bytes for the user's password. If your database server doesn't have a convenient way of storing raw binary data, you can simply use a string column (such as <span class="fixed">VARCHAR</span>) and store the "hexified" ASCII version of the binary data. The assumption for this case study is that the application will be encrypting the password into some arrangement of binary data. That binary data is the only thing that the database is ever going to see. The user validation attempts will be performed against encrypted passwords, and users will be created and modified with encrypted passwords. This provides the maximum level of security for the user because you're adhering to the following rule: Private data is never transmitted between applications, application components, or physical environments without first being encrypted.</p>
+<a name="1065"></a><a name="IDX-460"></a>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1066"></a><a name="ch15lev3sec1"></a>Creating the Users Table</h4>
+<p class="first-para">With the previous in mind, let's look at the design of the <span class="fixed">Users</span> table (see <a class="internaljump" href="#ch15table02">Table 15-2</a>).</p>
+<a name="1067"></a><a name="ch15table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-2: </span>The <i class="emphasis"><span class="fixed">Users</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="right">
+<p class="table-para">
+<b class="bold"><span class="fixed">Size</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UserId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INT</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">This is the unique numeric ID of the user. It is an ID field (auto-incrementing) and the primary key.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">FirstName</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">40</p>
+</td><td class="td" align="left">
+<p class="table-para">The first name of the user.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LastName</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">40</p>
+</td><td class="td" align="left">
+<p class="table-para">The last name of the user.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LoginId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">10</p>
+</td><td class="td" align="left">
+<p class="table-para">The login ID of the user.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Password</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">BINARY</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">20</p>
+</td><td class="td" align="left">
+<p class="table-para">The password of the user. To provide maximum security, it's stored in its encrypted format as a set of raw bytes.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Address1</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">80</p>
+</td><td class="td" align="left">
+<p class="table-para">First line of the user's address.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Address2</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">80</p>
+</td><td class="td" align="left">
+<p class="table-para">Second (optional) line of the user's address.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">City</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">30</p>
+</td><td class="td" align="left">
+<p class="table-para">User's city.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">State</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">2</p>
+</td><td class="td" align="left">
+<p class="table-para">User's state (two-character abbreviation).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">ZipCode</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">10</p>
+</td><td class="td" align="left">
+<p class="table-para">User's ZIP code (dashes removed from extended ZIP codes).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">EmailAddress</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="right">
+<p class="table-para">255</p>
+</td><td class="td" align="left">
+<p class="table-para">The user's e-mail address.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">There really aren't any surprises or complex columns in the <span class="fixed">Users</span> table, with the exception of the <span class="fixed">Password</span> column, which is stored in binary. The thing to keep in mind is that SQL allows you to compare a set of raw bytes just as easily as you can compare strings, so you won't have to do anything special to provide authentication services for your users with encrypted passwords. Oracle also allows the comparison of raw binary data (in fact, all string comparisons in Oracle end up as raw binary comparisons eventually). If your underlying database doesn't support binary, then you can store the data as a string as long as you can ensure that the database doesn't attempt to convert byte values more than 127 into something printable.</p>
+<p class="para">Let's look at the SQL script for creating the <span class="fixed">Users</span> table in SQL Server, Oracle, and DB2.</p>
+<a name="1068"></a><a name="IDX-461"></a>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1069"></a><a name="ch15lev4sec2"></a>SQL Server</h5>
+<p class="first-para">The script should look fairly straightforward to you if you've worked through <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects." <span class="fixed">UserID</span> is the primary key column, so you define it as an identity column, with values starting at one and incrementing by one each time:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Users (
+   UserId int IDENTITY (1, 1) NOT NULL ,
+   FirstName varchar (40) NOT NULL ,
+   LastName varchar (40) NOT NULL ,
+   LoginId varchar (10) NOT NULL ,
+   Password binary (20) ,
+   Address1 varchar (80) NOT NULL ,
+   Address2 varchar (80) NULL ,
+   City varchar (30) NOT NULL ,
+   State varchar (2) NOT NULL ,
+   ZipCode varchar (10) NOT NULL ,
+   EmailAddress varchar (255) NOT NULL
+);
+</pre>
+</div>
+<p class="para">You then define <span class="fixed">UserID</span> as the primary key column:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Users ADD
+   CONSTRAINT PK_Users PRIMARY KEY
+   (
+      UserId
+   );
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">In the code download for this chapter, there's a separate script that creates all necessary constraints for every table.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1070"></a><a name="ch15lev4sec3"></a>Oracle</h5>
+<p class="first-para">The code to create the <span class="fixed">UserID</span> table in Oracle is pretty similar. Oracle doesn't use the <span class="fixed">binary</span> data type, so we've stored the password in a <span class="fixed">varchar</span> field although you could also use a <span class="fixed">raw</span> type:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Users
+(
+   UserId int NOT NULL ,<a name="1071"></a><a name="IDX-462"></a>
+   FirstName varchar (40) NOT NULL ,
+   LastName varchar (40) NOT NULL ,
+   LoginId varchar (10) NOT NULL ,
+   Password varchar(20),
+   Address1 varchar (80) NOT NULL ,
+   Address2 varchar (80) NULL ,
+   City varchar (30) NOT NULL ,
+   State varchar (20) NOT NULL ,
+   ZipCode varchar (10) NOT NULL ,
+   EmailAddress varchar (255) NOT NULL
+);
+ALTER TABLE Users
+   ADD CONSTRAINT PK_Users PRIMARY KEY (UserID);
+</pre>
+</div>
+<p class="para">We've used the <span class="fixed">varchar</span> type to maintain as much consistency in the code as possible. This code will work on Oracle, but you should note that the <span class="fixed">varchar</span> is a deprecated type and it's advised that you use <span class="fixed">varchar2</span> instead.</p>
+<p class="para">You need to create a sequence and a trigger, as described in <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects," to automatically supply unique values to the primary key field:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SEQUENCE userid_seq;
+
+CREATE OR REPLACE TRIGGER Users_AUTONUMBER
+BEFORE INSERT ON Users
+FOR EACH ROW
+BEGIN
+SELECT userid_seq.NEXTVAL
+INTO :NEW.UserID FROM DUAL;
+END;
+/
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1072"></a><a name="ch15lev4sec4"></a>DB2</h5>
+<p class="first-para">Again, the code for DB2 is similar. In the absence of a <span class="fixed">binary</span> data type, you store the password in a simple <span class="fixed">varchar</span> field:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Users
+(
+   UserId int GENERATED ALWAYS AS IDENTITY,
+...&lt;etc.&gt;...
+   Password varchar(20),
+...&lt;script cropped&gt;...;<a name="1073"></a><a name="IDX-463"></a>
+ALTER TABLE Users
+   ADD CONSTRAINT PK_Users PRIMARY KEY (UserID);
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1074"></a><a name="ch15lev2sec4"></a>Roles</h3>
+<p class="first-para">With the <span class="fixed">Users</span> table designed in the database, you can move on to other things. Now we're going to talk about roles. What is a role? A <i class="emphasis">role</i> is just a placeholder for a collection of permissions. You also know that you want to keep this database in the appropriate normal form to keep it scalable and easily manageable, so you're not going to use columns to map roles to permissions. Instead, you just need a single table to maintain roles (you'll learn about relating roles and permissions a little later).</p>
+<p class="para">For now, let's figure out what information you need to store about a role:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Identifier</p>
+</li>
+<li class="listitem">
+<p class="first-para">Description</p>
+</li>
+</ul>
+<p class="para">That's about it. Really all you need is the unique identity of the role and some verbose description of the role such as "administrator" or "middle management."</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1075"></a><a name="ch15lev3sec2"></a>Creating the Roles Table</h4>
+<p class="first-para">Let's look at the design for the <span class="fixed">Roles</span> table (see <a class="internaljump" href="#ch15table03">Table 15-3</a>).</p>
+<a name="1076"></a><a name="ch15table03"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-3: </span>The <i class="emphasis"><span class="fixed">Roles</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Size</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RoleId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">The primary key of the <span class="fixed">Roles</span> table, the unique numeric identifier for a role</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Description</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">50</p>
+</td><td class="td" align="left">
+<p class="table-para">The description of the role</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">The following is the SQL script used to generate the <span class="fixed">Roles</span> table in SQL Server (this is taken from SQL by right-clicking the database, choosing All Tasks, and then selecting Generate Script):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Roles (
+   RoleId int IDENTITY (1, 1) NOT NULL ,<a name="1077"></a><a name="IDX-464"></a>
+   Description varchar (50) NOT NULL
+);
+ALTER TABLE Roles
+   ADD CONSTRAINT PK_Roles PRIMARY KEY (RoleID);
+</pre>
+</div>
+<p class="para">In DB2, you create the identity column as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+RoleID int GENERATED ALWAYS AS IDENTITY,
+</pre>
+</div>
+<p class="last-para">In Oracle you have to create a sequence and a trigger, exactly as described in the "<a class="internaljump" href="#ch15lev3sec1">Creating the Users Table</a>" section.</p>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1078"></a><a name="ch15lev2sec5"></a>Permissions</h3>
+<p class="first-para">A <i class="emphasis">permission</i> is a point of access into the system. Remember that we're making a big distinction between a permission and a permission mode. An example of a permission might be Document. When that permission is granted to a role, it might be granted with a mode indicating read/update/delete access.</p>
+<p class="para">Therefore, with that distinction made, the following is really the only information you need to store about permissions:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Identifier</p>
+</li>
+<li class="listitem">
+<p class="first-para">Description</p>
+</li>
+</ul>
+<p class="para">However, there's a bit of extra information that you can add to a permission. In complex systems with many different kinds of data and resources that need protecting, managing all of the different permissions can be a complicated task. To make things easier for administrators, you're going to provide the ability to categorize permissions. Therefore, you're going to have something called a <i class="emphasis">permission category</i>. This also only needs a description because the majority of the work comes from the mapping of a permission to its parent category. A permission category might group sets of permissions with the type of data they relate to, such as Files, Tax Data, Legal Data, and so on.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1079"></a><a name="ch15lev3sec3"></a>Creating the PermissionCategories Table</h4>
+<p class="first-para">The <span class="fixed">PermissionCategories</span> table is a simple table that is defined in <a class="internaljump" href="#ch15table04">Table 15-4</a>.</p>
+<a name="1080"></a><a name="ch15table04"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-4: </span>The <i class="emphasis"><span class="fixed">PermissionCategories</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Size</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">CategoryId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">This is the primary key and identity field. Unique numeric identifier for a permission category.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Description</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">50</p>
+</td><td class="td" align="left">
+<p class="table-para">Description of the permission category.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1081"></a><a name="IDX-465"></a>
+<p class="para">The SQL Server script for the <span class="fixed">PermissionCategories</span> table is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE PermissionCategories (
+   CategoryId int IDENTITY (1, 1) NOT NULL ,
+   Description varchar (50) NOT NULL
+);
+
+ALTER TABLE PermissionCategories
+   ADD CONSTRAINT PK_PermCategories PRIMARY KEY (CategoryID);
+</pre>
+</div>
+<p class="last-para">By now you can easily convert the table code to DB2 and Oracle, and then you can create the appropriate sequence and trigger for Oracle.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1082"></a><a name="ch15lev3sec4"></a>Creating the Permissions Table</h4>
+<p class="first-para">The <span class="fixed">Permissions</span> table is defined in <a class="internaljump" href="#ch15table05">Table 15-5</a>.</p>
+<a name="1083"></a><a name="ch15table05"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-5: </span>The <i class="emphasis"><span class="fixed">Permissions</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Size</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">PermissionId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">This is the primary key and identity field. Unique numeric identifier for a permission.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Description</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">VARCHAR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">50</p>
+</td><td class="td" align="left">
+<p class="table-para">Description of the permission.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">CategoryId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">Foreign key (<span class="fixed">PermissionCategories</span>). This is the category to which the permission belongs.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">The SQL Server script for the <span class="fixed">Permissions</span> table is as follows:</p>
+<a name="1084"></a><a name="IDX-466"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Permissions (
+   PermissionId int IDENTITY (1, 1) NOT NULL ,
+   Description varchar (50) NOT NULL ,
+   CategoryId int NOT NULL
+)
+</pre>
+</div>
+<p class="para">In addition to the primary key, this time you also create a foreign key on the <span class="fixed">CategoryID</span> column, which references the same column in <span class="fixed">PermissionCategories</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Permissions
+   ADD CONSTRAINT PK_Permissions PRIMARY KEY (PermissionID);
+
+ALTER TABLE Permissions
+   ADD CONSTRAINT FK_Perms_PermCats FOREIGN KEY (CategoryID)
+   REFERENCES PermissionCategories (CategoryID)
+     ON DELETE CASCADE;
+</pre>
+</div>
+<p class="last-para">Notice that you enforce cascading deletes in the relationship between this table and the <span class="fixed">PermissionCategories</span> table so that on a delete operations, all related items are removed.</p>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1085"></a><a name="ch15lev2sec6"></a>Mapping Tables</h3>
+<p class="first-para">So far, we've covered the design for the <span class="fixed">Users</span>, <span class="fixed">Roles</span>, <span class="fixed">Permissions</span>, and <span class="fixed">PermissionCategories</span> tables. Each of these has been basically stand-alone data with no relation to any other data in the system. Now we're going to cover the tables you need to create the mappings and relationships that will finish up the database design for the RBS system.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1086"></a><a name="ch15lev3sec5"></a>Creating the UserRoles Table</h4>
+<p class="first-para">The first thing you're going to look at is the ability to assign roles to users. <a class="internaljump" href="#ch15table06">Table 15-6</a> defines the <span class="fixed">UserRoles</span> table.</p>
+<a name="1087"></a><a name="ch15table06"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-6: </span>The <i class="emphasis"><span class="fixed">UserRoles</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Size</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UserId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Int</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">User ID to which the role is mapped. This is part of the primary key.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RoleId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Int</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">Role ID assigned to the user.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">CanGrant</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">BIT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">1</p>
+</td><td class="td" align="left">
+<p class="table-para">Indicates whether that user may grant the role to others if they also have the ability to edit security within the application.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1088"></a><a name="IDX-467"></a>
+<p class="para">Here's the script for the <span class="fixed">UserRoles</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE UserRoles (
+   UserId int NOT NULL ,
+   RoleId int NOT NULL ,
+   CanGrant bit NOT NULL
+);
+</pre>
+</div>
+<p class="para">For Oracle and DB2, you can use a <span class="fixed">smallint</span> data type for the <span class="fixed">CanGrant</span> column in place of <span class="fixed">bit</span>.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">As we explain shortly, you actually want the <i class="emphasis"><span class="fixed">CanGrant</span></i> column to take a default value of zero. In DB2, it's best to do that when you actually create the table.</p>
+</td>
+</tr>
+</table>
+<p class="para">You create the primary key as usual. Note that this time, though, you're using a composite primary key. The values in the <span class="fixed">UserID</span> and <span class="fixed">RoleID</span> columns <i class="emphasis">together</i> will uniquely identify each row:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE UserRoles
+   ADD CONSTRAINT PK_UserRoles PRIMARY KEY (UserID, RoleID);
+</pre>
+</div>
+<p class="para">This next <span class="fixed">ALTER</span> command creates two foreign keys on the <span class="fixed">UserRoles</span> table. One key references <span class="fixed">RoleID</span> from the <span class="fixed">Roles</span> table, and the other key references the <span class="fixed">UserID</span> from the <span class="fixed">Users</span> table. Because this table has foreign keys pointing at both the <span class="fixed">User</span> and <span class="fixed">Role</span> table, it should be impossible to create a mapping between any role or user that doesn't exist. The database will also not allow the removal of <a name="1089"></a><a name="IDX-468"></a>a user or a role that contains a mapping in this table. The following is the code for Oracle and DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE UserRoles
+   ADD CONSTRAINT FK_UserRoles_Roles FOREIGN KEY (RoleID)
+   REFERENCES Roles (RoleID) ON DELETE CASCADE
+   ADD CONSTRAINT FK_UserRoles_Users FOREIGN KEY (UserID)
+   REFERENCES Users (UserID) ON DELETE CASCADE;
+</pre>
+</div>
+<p class="para">The code for SQL Server is only slightly different:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE UserRoles
+   ADD CONSTRAINT FK_UserRoles_Roles FOREIGN KEY (RoleId)
+   REFERENCES Roles (RoleId) ON DELETE CASCADE,
+   CONSTRAINT FK_UserRoles_Users FOREIGN KEY
+   (UserId) REFERENCES Users (UserId) ON DELETE CASCADE;
+</pre>
+</div>
+<p class="para">You might've noticed the <span class="fixed">CanGrant</span> flag on this mapping table. One thing it was necessary to include in the RBS was the ability to prevent administrators from giving out permissions they're not allowed to give. For example, let's say an administrator has the ability to modify users, but they don't have the Middle Management role. The system needs to be able to make sure that the user can't grant roles they aren't supposed to be granting as a way of circumventing the security system. The default data would be set up to allow the System user to grant all roles, with the regular administrator allowed to grant everything but the System role. It can be used to create the equivalent of a Unix <span class="fixed">root</span> user or the SQL Server <span class="fixed">sa</span> user.</p>
+<p class="para">So, let's now alter the <span class="fixed">CanGrant</span> column so that it takes a default value of zero. In SQL Server, you do it like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE UserRoles ADD
+   CONSTRAINT DF_UserRoles_CanGrant DEFAULT (0) FOR CanGrant;
+</pre>
+</div>
+<p class="para">In Oracle, you can use this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE UserRoles
+   MODIFY (CanGrant smallint DEFAULT 0);
+</pre>
+</div>
+<p class="para">In DB2, you create the <span class="fixed">DEFAULT</span> constraint when you create the table:</p>
+<a name="1090"></a><a name="IDX-469"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE UserRoles (
+   UserID int NOT NULL,
+   RoleID int NOT NULL,
+   CanGrant smallint NOT NULL DEFAULT 0
+);
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1091"></a><a name="ch15lev3sec6"></a>Creating the RolePermission Table</h4>
+<p class="first-para">The next table, <span class="fixed">RolePermission</span>, takes care of assigning permissions to roles, the guts of allowing users to perform any secured task in the application (see <a class="internaljump" href="#ch15table07">Table 15-7</a>). Obviously, you need to store the <span class="fixed">RoleID</span> and the <span class="fixed">PermissionID</span>. This is also where you're going to make use of the bitmasked access mode discussed earlier in the chapter, so you need a field to contain all 32-bits of the bitmask flags.</p>
+<a name="1092"></a><a name="ch15table07"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-7: </span>The <i class="emphasis"><span class="fixed">RolePermission</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Type</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Size</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RoleId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Int</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">This is the role ID to which the permission is mapped.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">PermissionId</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">This is the permission ID mapped to the role.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Mode</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4</p>
+</td><td class="td" align="left">
+<p class="table-para">This indicates how this permission is mapped to the role. This is a bitmasked value and can contain multiple flags.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">This is the script for the <span class="fixed">RolePermission</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE RolePermission (
+   RoleId int NOT NULL ,
+   PermissionId int NOT NULL ,
+   Mode int NOT NULL
+);
+</pre>
+</div>
+<p class="para">Interestingly, <span class="fixed">Mode</span> is a reserved word in Oracle, so you need to use a different column name (such as <span class="fixed">PermMode</span>).</p>
+<p class="para">You define a composite primary key:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE RolePermission
+   ADD CONSTRAINT PK_RolePermission
+   PRIMARY KEY (RoleID, PermissionID);
+<a name="1093"></a><a name="IDX-470"></a>
+</pre>
+</div>
+<p class="para">Much like for the previous mapping table, the <span class="fixed">RolePermission</span> table maps roles to permissions. As such, you create a foreign key referencing the <span class="fixed">Permissions</span> table (on the <span class="fixed">RolePermissionID</span> column) and another foreign key on the <span class="fixed">Roles</span> table (on the <span class="fixed">RolesID</span> column). For Oracle and DB2, you use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE RolePermission
+   ADD CONSTRAINT FK_RolePermission_Permissions
+     FOREIGN KEY(PermissionId)
+     REFERENCES Permissions (PermissionId
+       ON DELETE CASCADE
+   ADD CONSTRAINT FK_RolePermission_Roles
+     FOREIGN KEY (RoleId)
+     REFERENCES Roles (RoleId)
+       ON DELETE CASCADE;
+</pre>
+</div>
+<p class="para">For SQL Server, simply replace the second <span class="fixed">ADD</span> keyword with a comma.</p>
+<p class="last-para">Now that you have the tables taken care of, let's take a look at the stored procedures that are going to use these table and relations.</p>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1094"></a><a name="ch15lev2sec7"></a>Starting Again</h3>
+<p class="first-para">If at any point you want to drop all of the tables and start over, the following is the script that will do it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP TABLE UserRoles;
+DROP TABLE Users;
+DROP TABLE RolePermisison;
+DROP TABLE Roles;
+DROP TABLE Permissions;
+DROP TABLE Permissioncategories;
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0100.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0102.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

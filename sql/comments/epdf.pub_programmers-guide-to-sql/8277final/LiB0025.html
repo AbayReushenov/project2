@@ -1,0 +1,147 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Deleting Data</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0024.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0026.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch03"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="206"></a><a name="ch03lev1sec4"></a>Deleting Data</h2><p class="first-para">The other essential part of any language intended to access databases is the ability to delete rows. Again, not all tables will need this functionality, but more often than not they will&#8212;even if just to remove rows that have been added in error. SQL uses the <span class="fixed">DELETE</span> keyword for this purpose.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="207"></a><a name="ch03lev2sec5"></a>Deleting Rows with DELETE</h3>
+<p class="first-para">To use <span class="fixed">DELETE</span> statements, you use the following syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM <i class="emphasis">Table</i> WHERE <i class="emphasis">RowFilter</i>;
+</pre>
+</div>
+<p class="para">which makes <span class="fixed">DELETE</span> statements the simplest ones you've seen so far. Here <i class="emphasis"><span class="fixed">Table</span></i> and <i class="emphasis"><span class="fixed">RowFilter</span></i> mean just what they did in the previous example. An appropriate choice of <i class="emphasis"><span class="fixed">RowFilter</span></i> can remove one or more rows from the chosen <i class="emphasis"><span class="fixed">Table</span></i>.</p>
+<p class="para">As with the <span class="fixed">INTO</span> keyword from the <span class="fixed">INSERT</span> statement, the <span class="fixed">FROM</span> keyword is optional. Again, this chapter continues to use it because it makes SQL statements easier to read.</p>
+<p class="para">To remove a single row, you'd normally specify the ID (primary key) of the row as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Customers WHERE CustomerID = 23;
+<a name="208"></a><a name="IDX-79"></a>
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">If you don't specify a <i class="emphasis"><span class="fixed">WHERE</span></i> clause, then <i class="emphasis">all</i> rows will be removed from the chosen table.</p>
+</td>
+</tr>
+</table>
+<p class="para">Selecting based on an identity column is a little safer than selecting by other columns because the values are guaranteed to be unique. Selecting based on a customer name, for example, may result in more than one row being deleted.</p>
+<div class="example">
+<span class="example-title">DELETING ROW DATA</span><a name="209"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following statement against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Professor WHERE ProfessorID &gt; 6;
+</pre>
+</div>
+<p class="para">Executing this statement and then viewing the amended table will produce the following result:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ProfessorID  Name
+
+   -----------  ----------------
+   1            Prof. Dawson
+   2            Prof. Williams
+   3            Prof. Ashby
+   4            Prof. Patel
+   5            Prof. Jones
+   6            Prof. Hwa
+</pre>
+</div>
+<p class="last-para">The SQL statement in this example deletes all rows from the <span class="fixed">Professor</span> table with a <span class="fixed">ProfessorID</span> value of more than six. This removes all the records added in previous examples and takes the table back to its original state, before you started mucking around with it. We must say, we're a little sad to see them go. Wave goodbye for us.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="210"></a><a name="IDX-80"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="211"></a><a name="ch03lev2sec6"></a>Using DELETE with Different RDBMSs</h3>
+<p class="first-para">In addition to the functionality shown previously, similar vendor-specific options are available to those discussed:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">
+<b class="bold">SQL Server</b>: Includes facility for overriding the default optimizer behavior. SQL Server also includes the ability to specify a second <span class="fixed">FROM</span> clause to apply a delete to a related row in a related table. For example, if you have a <span class="fixed">Books</span> table and an <span class="fixed">Authors</span> table, and you want to delete one author and all his books from your database, you could use a statement like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Books FROM Authors
+WHERE Books.AuthorID = Authors.AuthorID AND Books.AuthorID = 1;
+</pre>
+</div>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Oracle</b>: The <span class="fixed">RETURNING</span> clause can be used to store deleted data in a variable.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">MySQL</b>: Includes the <span class="fixed">LIMIT</span> keyword for limiting the scope of a deletion (which you'll look at in the <a href="LiB0027.html#216" target="_parent" class="chapterjump">next chapter</a>).</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">DB2</b>: Includes the <span class="fixed">ONLY</span> keyword to limit the scope of the deletion for typed tables and typed views.</p>
+</li>
+</ul>
+<p class="last-para">SQL Server, Oracle, and DB2 also have the facility for dealing with cursors, which you'll look at later in the book.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="212"></a><a name="ch03lev2sec7"></a>Using the TRUNCATE Statement</h3>
+<p class="first-para">If you do want to delete all rows in a table, you might want to use the alternative command <span class="fixed">TRUNCATE TABLE <i class="emphasis">TableName</i></span>, which is supported by SQL Server and Oracle. The syntax of the <span class="fixed">TRUNCATE</span> command is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+TRUNCATE TABLE <i class="emphasis">name</i>;
+</pre>
+</div>
+<p class="para">
+<span class="fixed">TRUNCATE</span> is optimized to work faster than <span class="fixed">DELETE</span> because it doesn't log details of the deletion. This also means that rollback is impossible because the data is permanently deleted.</p>
+<p class="para">For example, you could execute the following statement against the <span class="fixed">InstantUniversity</span> database to permanently delete all of the available rooms:</p>
+<div class="informalexample">
+<pre class="literallayout">
+TRUNCATE TABLE Rooms;
+</pre>
+</div>
+<p class="last-para">This might be useful if the university moved premises.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0024.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0026.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

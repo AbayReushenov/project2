@@ -1,0 +1,227 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Understanding Database Transactions</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0057.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0059.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch10"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="641"></a><a name="ch10lev1sec2"></a>Understanding Database Transactions</h2><p class="first-para">In the case of database transactions, the group of actions that you attempt to execute (a process that either succeeds or fails&#8212;the all-or-nothing proposition) are SQL statements, and the system that needs to be kept in a consistent state is the database itself.</p>
+<p class="para">Luckily enough, SQL-99 has support for transactions, as do the major database systems. Otherwise, you would need to manually enforce the ACID rules, which would be a tough job!</p>
+<a name="642"></a><a name="IDX-269"></a>
+<p class="para">In order to implement transactions, databases keep log files with everything that happens inside the transaction. When rolling back the transaction, all the successful operations are reversed based on the data in the log files, and the affected data is brought back to its previous state.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The way log files work is considered an advanced topic and will not be covered in this book. Moreover, because each database system has its own particularities regarding this subject, you would be best off consulting the documentation for your database platform.</p>
+</td>
+</tr>
+</table>
+<p class="para">SQL Server, Oracle, DB2, and MySQL do support transactions and the ACID rules. Access doesn't support transactions.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="643"></a><a name="ch10lev2sec2"></a>The Typical Database Transaction</h3>
+<p class="first-para">Transactions work differently with each Relational Database Management System (RDBMS), but there are some concepts and steps common to all transactions. We'll describe how transactions work and then give specific examples for each RDBMS, discussing the particularities of each database platform.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="644"></a><a name="ch10lev3sec1"></a>Beginning the Transaction</h4>
+<p class="first-para">Transactions must have a clearly defined start and end point. The point the transaction starts is very important&#8212;it's the point you can roll back to in case some failure or problem occurs in any of its constituent SQL statements. In respect to the consistency rule, at the moment a new transaction is created, the data must be in a consistent state.</p>
+<p class="para">The SQL-99 standard specifies the <span class="fixed">START TRANSACTION</span> statement, which should mark the point at which a new transaction starts, but this command isn't implemented in the database platforms covered in this book.</p>
+<p class="para">Oracle and DB2 start transactions automatically. In other words, a transaction automatically begins as soon as you execute the first SQL statement. With SQL Server, you use the <span class="fixed">BEGIN TRANSACTION</span> statement, which can also accept a transaction name, and with MySQL you simply use <span class="fixed">BEGIN</span>. You'll see more details in the examples later in this chapter.</p>
+<a name="645"></a><a name="IDX-270"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="646"></a><a name="ch10lev3sec2"></a>Executing the SQL Statements</h4>
+<p class="first-para">Whether the statements execute correctly will determine whether the transaction is committed or rolled back. You'll usually need a mechanism that can test whether all the SQL statements ran without problems so that you can decide how to end the transaction (to commit it if everything went okay or to roll back if it didn't go okay).</p>
+<p class="para">Implementing a testing mechanism is important because, by default, the transaction is not rolled back if a noncritical error occurs. Let's take another look at the checking/savings accounts example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Checking
+   SET Balance = Balance - 1000
+   WHERE Account = 'Sally';
+UPDATE Savings
+   SET Balance = Balance + 1000
+   WHERE Account = 'Sally';
+</pre>
+</div>
+<p class="para">If these two statements are part of a transaction, and one of them generates an error because it can't be executed successfully, the transaction will most likely not be rolled back by default. Instead, you need to manually test whether each statement performed successfully; if either of them didn't, you can roll back the transaction. Also, if everything runs okay, you need to manually to commit the transaction.</p>
+<p class="last-para">In this chapter's examples, you'll see how to test if any of the statements generated errors and how to react to them.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="647"></a><a name="ch10lev3sec3"></a>Rolling Back the Transaction</h4>
+<p class="first-para">As you saw earlier, when problems occur inside the transaction, you can roll it back to its starting point or to a <i class="emphasis">savepoint</i> if the database system supports savepoints (we'll cover these in more detail a little later).</p>
+<p class="para">The SQL-99 syntax for rolling back transactions is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ROLLBACK [WORK] [TO SAVEPOINT <i class="emphasis">savepoint_name</i>]
+</pre>
+</div>
+<p class="para">This structure is fully supported by Oracle, DB2, and partially by MySQL, which doesn't support savepoints.</p>
+<p class="para">The SQL Server syntax is a bit different, but it serves the same purpose:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ROLLBACK TRANSACTION [&lt;<i class="emphasis">transaction name</i>&gt;|&lt;<i class="emphasis">savepoint name</i>&gt;]
+<a name="648"></a><a name="IDX-271"></a>
+</pre>
+</div>
+<p class="last-para">What's important to keep in mind is that rolling back a transaction brings the data it has affected to its previous state and closes the transaction, but the execution of the batch continues normally. For example, if you have a <span class="fixed">ROLLBACK</span> statement in the middle of a stored procedure, the execution doesn't stop at <span class="fixed">ROLLBACK</span> (so <span class="fixed">ROLLBACK</span> isn't like a <span class="fixed">RETURN</span> or a <span class="fixed">GOTO</span> command, and it doesn't move the execution pointer). If you want the stored procedure to stop executing when you do a <span class="fixed">ROLLBACK</span>, you need to manually handle this&#8212;you'll see how to accomplish this in the upcoming examples.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="649"></a><a name="ch10lev3sec4"></a>Committing the Transaction</h4>
+<p class="first-para">If all of the SQL commands in the transaction execute successfully (or in a way you consider to be okay), you issue a <span class="fixed">COMMIT</span> command. This tells the database to persist the changes made by the transaction in the database. From this moment, the changes can't be undone using a <span class="fixed">ROLLBACK</span> command.</p>
+<p class="para">The SQL-99 syntax for committing transactions is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+COMMIT [WORK]
+</pre>
+</div>
+<p class="last-para">This syntax is supported by all major database vendors, but some of them also accept additional parameters. SQL Server supports <span class="fixed">COMMIT WORK</span> but also has a <span class="fixed">COMMIT TRANSACTION</span> command that accepts as a parameter the name of the transaction to be committed (SQL Server supports having transaction names).</p>
+
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="650"></a><a name="ch10lev2sec3"></a>Particulars of Database Transactions</h3>
+<p class="first-para">You'll now look at some features that aren't supported by all database systems covered in this book or that are supported differently. First, we cover the concepts, and then we'll show how to apply them in a few examples.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="651"></a><a name="ch10lev3sec5"></a>Autocommit</h4>
+<p class="first-para">A database that runs in autocommit mode will treat every SQL query as a separate transaction, without needing any additional SQL commands such as <span class="fixed">BEGIN</span>, <span class="fixed">COMMIT</span>, or <span class="fixed">ROLLBACK</span>. After a SQL data modification statement is executed, the changes are automatically committed (so the results are considered final) by the database system.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">SQL Server and MySQL work by default in autocommit mode.</p>
+</td>
+</tr>
+</table>
+<a name="652"></a><a name="IDX-272"></a>
+<p class="para">With a database that works in autocommit mode, these two statements will be considered as two separate transactions:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Checking
+   SET Balance = Balance - 1000
+   WHERE Account = 'Sally';
+UPDATE Savings
+   SET Balance = Balance + 1000
+   WHERE Account = 'Sally';
+</pre>
+</div>
+<p class="para">While in autocommit mode, if you want to start a transaction formed by more than one SQL command, you must use a <span class="fixed">BEGIN</span> command and then manually finish the transaction with either <span class="fixed">ROLLBACK</span> or <span class="fixed">COMMIT</span>. So if you want to have a single transaction containing the previous two SQL statements, you need to do something like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN WORK
+UPDATE Checking
+   SET Balance = Balance - 1000
+   WHERE Account = 'Sally';
+UPDATE Savings
+   SET Balance = Balance + 1000
+   WHERE Account = 'Sally';
+COMMIT WORK
+</pre>
+</div>
+<p class="para">However, note that here you didn't do any checking to see whether either of the two <span class="fixed">UPDATE</span> statements executed successfully. In a real-world example, you'd need to implement some error handling mechanism and <span class="fixed">ROLLBACK</span> the transaction in case an error happens.</p>
+<p class="para">If the database <i class="emphasis">isn't</i> in autocommit mode, it's said to be in <i class="emphasis">automatic-transactions</i> mode.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Oracle and DB2 work by default in automatic-transactions mode.</p>
+</td>
+</tr>
+</table>
+<p class="para">In this mode, a new transaction starts automatically with the first SQL query you type, but it's not automatically committed. In other words, the database system works as if you had already typed a <span class="fixed">BEGIN</span> command and then waits for you to call <span class="fixed">COMMIT</span> or <span class="fixed">ROLLBACK</span> to finish the transaction. With a database working in automatic-transactions mode, you can integrate the previous two <span class="fixed">UPDATE</span> commands in a transaction like this:</p>
+<a name="653"></a><a name="IDX-273"></a>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Checking
+   SET Balance = Balance - 1000
+   WHERE Account = 'Sally';
+UPDATE Savings
+   SET Balance = Balance + 1000
+   WHERE Account = 'Sally';
+COMMIT WORK
+</pre>
+</div>
+<p class="para">SQL Server and MySQL work by default in autocommit mode while Oracle and DB2 work by default in automatic-transactions mode, but in all cases the default mode can be changed (although most developers prefer to keep the default mode of the database system).</p>
+<p class="para">For Oracle, you change the default mode with <span class="fixed">SET AUTOCOMMIT ON/OFF</span>. With SQL Server you use <span class="fixed">SET IMPLICIT_TRANSACTIONS ON/OFF</span>, and with MySQL you use <span class="fixed">SET AUTOCOMMIT=0/1</span>. When working with DB2, you can handle this by selecting Command Center <font face="wingdings">Ø</font> Options from the main menu of the Command Center tool and then checking or unchecking the Automatically Commit SQL Statements box in the Execution tab as appropriate (see <a class="internaljump" href="#ch10fig01">Figure 10-1</a>).</p>
+<div class="figure">
+<a name="654"></a><a name="ch10fig01"></a><span class="figuremediaobject"><a href="images/fig289%5F01%5F0%2Ejpg" NAME="IMG_28" target="_parent"><img src="images/fig289_01.jpg" height="193" width="233" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 10-1: </span>Choosing to automatically commit SQL statements</span>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">It's possible that your data access provider (for example, JDBC or OLEDB) will be working in autocommit mode. If you want to issue SQL statements in automatic-transactions mode, then you may have to alter the default behavior of your provider as well.</p>
+</td>
+</tr>
+</table>
+<p class="last-para">In general, because of the isolation property of transactions, other users will not be able to see your changes if you forget to send a <span class="fixed">COMMIT</span> command. Be sure <a name="655"></a><a name="IDX-274"></a>to always issue <span class="fixed">COMMIT</span> statements after an update, insert, or delete when working in automatic-transactions mode.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="656"></a><a name="ch10lev3sec6"></a>Savepoints</h4>
+<p class="first-para">A <i class="emphasis">savepoint</i> acts as a bookmark inside a transaction. You can roll back any actions that have been performed by a transaction to a certain savepoint, without actually closing the transaction. Rolling back to a certain savepoint brings the database to the status it was when the savepoint was created, but it doesn't end the transaction. A final <span class="fixed">ROLLBACK</span> or <span class="fixed">COMMIT</span> is still required.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Savepoints are supported by Oracle, DB2, and SQL Server. MySQL supports transactions but doesn't support savepoints.</p>
+</td>
+</tr>
+</table>
+<p class="para">SQL-99 specifies the <span class="fixed">SAVEPOINT</span> command to create savepoints, and this command is implemented in Oracle and DB2. Because you can have multiple savepoints in a single transaction, you always need to supply a savepoint name:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SAVEPOINT &lt;<i class="emphasis">savepoint name</i>&gt;
+</pre>
+</div>
+<p class="para">SQL Server uses <span class="fixed">SAVE TRANSACTION</span> instead of <span class="fixed">SAVEPOINT</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SAVE TRANSACTION &lt;<i class="emphasis">savepoint name</i>&gt;
+</pre>
+</div>
+<p class="para">This is how you would add a savepoint to the bank transactions example using the SQL Server syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN TRANSACTION
+
+SAVE TRANSACTION BeforeChangingBalance
+UPDATE Checking
+   SET Balance = Balance - 1000
+   WHERE Account = 'Sally';
+ROLLBACK TRANSACTION BeforeChangingBalance
+
+UPDATE Savings
+   SET Balance = Balance + 1000
+   WHERE Account = 'Sally';
+
+COMMIT TRANSACTION
+<a name="657"></a><a name="IDX-275"></a>
+</pre>
+</div>
+<p class="para">After executing this batch, Sally will have $1,000 more in her account. The first <span class="fixed">UPDATE</span> statement is rolled back (but the transaction still remains active!), and finally the transaction is committed.</p>
+<p class="last-para">We'll see examples with SQL Server, Oracle, and DB2 savepoints in the following sections.</p>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0057.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0059.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

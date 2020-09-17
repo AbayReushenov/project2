@@ -1,0 +1,469 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Introducing Relational Databases</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0009.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0011.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch01"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="44"></a><a name="ch01lev1sec2"></a>Introducing Relational Databases</h2><p class="first-para">A <i class="emphasis">database</i> is an organized store of data. Many applications, created in any language, need access to a database. For example, without a database of customers and products, e-commerce applications simply aren't possible.</p>
+<p class="para">From the point of view of applications using data in a database, the actual mechanism of storage is usually not important. Whether the data is stored on disk, in memory, or in arrangements of trees on a desert island somewhere, the usage will be the same. What we mean by this is that if an application requests some data concerning a customer and subsequently obtains that data, then where it came from doesn't matter. Of course, performance might be increased if you don't have to keep planting trees....</p>
+<p class="para">Three concepts you need to understand before learning about how data is stored in a relational database are <i class="emphasis">entities</i>, <i class="emphasis">attributes</i>, and <i class="emphasis">values</i>. An entity represents some object in reality, such as a person or a product. Entities, as objects, represent a class of "things." A <span class="fixed">Customers</span> entity describes all possible customers, and then each instance of that object represents a specific customer. Each instance of your <span class="fixed">Customers</span> entity will have identical attributes that define the meaning of that entity. Consider the following collection of attributes:</p>
+<a name="45"></a><a name="IDX-8"></a>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Customer first name</p>
+</li>
+<li class="listitem">
+<p class="first-para">Customer last name</p>
+</li>
+<li class="listitem">
+<p class="first-para">Postal address</p>
+</li>
+<li class="listitem">
+<p class="first-para">E-mail address</p>
+</li>
+<li class="listitem">
+<p class="first-para">Phone number</p>
+</li>
+</ul>
+<p class="para">Each of these attributes will store values, and these values are generally different from one <span class="fixed">Customer</span> instance to another. One <span class="fixed">Customer</span> instance could store the values <span class="fixed">Joe</span>, <span class="fixed">Bloggs</span>, <span class="fixed">12 SQL Street</span>, &lt;<a href="mailto:jbloggs@email.com"><span class="fixed">jbloggs@email.com</span></a>&gt;, and <span class="fixed">012-456-789</span>. Another instance might store completely different values in each attribute.</p>
+<p class="para">In the relational database world, roughly speaking, the following is true:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">An entity is a <i class="emphasis">table.</i>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">An attribute is a <i class="emphasis">column</i> in that table.</p>
+</li>
+<li class="listitem">
+<p class="first-para">A <i class="emphasis">row</i> describes a particular instance of the entity (it contains values for the various columns that comprise the table).</p>
+</li>
+</ul>
+<div class="section">
+<h3 class="sect3-title">
+<a name="46"></a><a name="ch01lev2sec5"></a>Understanding Database Tables</h3>
+<p class="first-para">The fundamental data storage unit in a relational database is the <i class="emphasis">table</i>. A single database contains one or more tables. Tables are used to group related data into a single, named unit. For example, an e-commerce application will need to keep track of customers and products. To cater to this, you could use two separate tables, perhaps one called <span class="fixed">Customers</span> and one called <span class="fixed">Products</span>, which store relevant information with regard to each entity.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">There's a general disagreement in the programming community concerning whether table names should have plural names. We tend to think they should be because they're likely to contain multiple data entries, but others have told us they like referring to, say, "the <i class="emphasis"><span class="fixed">Customer</span></i> table" because it sounds better. Quite honestly, though, you shouldn't worry about any of this too much as long as the name you choose relates to the table content in a reasonably sensible way.</p>
+</td>
+</tr>
+</table>
+<p class="para">Obviously, tables require more than just a name before you can store data in them. What data can and can't go into a table, and in what form it's stored, is <a name="47"></a><a name="IDX-9"></a>defined by the <i class="emphasis">schema</i> information for the table. A database will typically include a single schema defining all the tables it contains, including information concerning columns and data types as described next, relationships between tables, and so on. Schemas are usually stored in the RDBMS in some proprietary format, which is fine because you're unlikely to want to manipulate table schemas directly. Instead, higher-level modifications to table structure will be reflected in schema changes.</p>
+<p class="para">Tables consist of a series of columns and rows. Columns define what data can be stored in the table, and rows are where you store the actual data.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="48"></a><a name="ch01lev3sec1"></a>Columns</h4>
+<p class="first-para">Each table in a database is made up of one or more named <i class="emphasis">columns</i> (also known as <i class="emphasis">fields</i>). Each column describes one particular facet of your entity (for example, the name of a customer). For example, an entry in the previous <span class="fixed">Customers</span> table is likely to have the following columns:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">FirstName</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">LastName</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Address</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Email</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">TelephoneNumber</span>
+</p>
+</li>
+</ul>
+<p class="para">And so on. Columns might be marked as required, in which case they <i class="emphasis">must</i> contain data for a given data item (for example, you'll probably always want to store the customer's name, address, and e-mail), but they might also allow <span class="fixed">NULL</span> values (where no data is specified) in some circumstances&#8212;you don't necessarily need a customer phone number, for example. In most RDBMSs it's also possible to have columns that aren't maintained by you, such as a column that receives an automatically generated value for each data item, for example. You'll learn more about these topics later in this chapter.</p>
+<p class="para">Bear in mind that the columns that make up a table uniquely define that table. If you were to take data from somebody else's <span class="fixed">Customers</span> table (that is, a <span class="fixed">Customers</span> table in another database), things might not fit right. Instead of an <span class="fixed">Address</span> column, for example, a different database might contain multiple columns, columns for each line of the address, like <span class="fixed">City</span>, <span class="fixed">ZipCode</span>, and others. This is an excellent example of a common problem&#8212;deciding which columns you require in a table. With addresses, the single-column model is more versatile because you could put anything you like in there, but using multiple columns makes more sense in terms of <a name="49"></a><a name="IDX-10"></a>identifying and using the different strings that make up a complete address. However, the exact columns used might not fit in with the methods of addressing used worldwide. For example, United Kingdom addresses use postcodes rather than ZIP codes, which, while serving the same purpose, are formatted differently. This could cause problems both for users (who might not know how to enter data in columns with unfamiliar names) and administrators (who might rely on the validation of address information prior to shipment).</p>
+<p class="para">Once the columns in a table have been defined, it can be awkward to add more or remove redundant ones while maintaining data integrity, so a well-planned design at the start is essential.</p>
+<p class="last-para">Each column in a database table has a specific <i class="emphasis">data type</i>. This data type determines what information can be stored in the column. We'll return to this topic shortly.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="50"></a><a name="ch01lev3sec2"></a>Rows</h4>
+<p class="first-para">Data in a database table takes the form of individual <i class="emphasis">rows</i>. Each row in a database is a single data entry, or item, and is often referred to as a <i class="emphasis">record</i>. A single row includes information for each column in a table that requires a value.</p>
+<p class="last-para">So, in the <span class="fixed">Customer</span> table described earlier, a single row will represent a single customer. Joe Bloggs gets his own row, as would Bridget Jones.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="51"></a><a name="ch01lev3sec3"></a>Primary Keys</h4>
+<p class="first-para">A fundamental tenet of storing data in a relational database is that you must be able to uniquely identify each row of data that you store. As such, each table is required to have a column that's known as the <i class="emphasis">primary key</i> for the table. The data in this column is used to uniquely identify rows in a table, so if you ask for the row with a primary key value of seven (or row 2f7dh&#8212;keys don't necessarily have to be integers although they tend to be for simplicity), you'll receive one and only one row. It's usual for RDBMSs to keep track of key values, so if you try to add a row with a duplicate key, you'll probably raise an error.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Primary keys only need to be unique across a single table. It's perfectly okay to have several tables using the same primary key values.</p>
+</td>
+</tr>
+</table>
+<p class="para">Say you had a <span class="fixed">Friend</span> table where you stored phone numbers for each of your friends. Without primary keys, you could have a <span class="fixed">Friend</span> table with the following contents:</p>
+<a name="52"></a><a name="IDX-11"></a>
+<div class="informalexample">
+<pre class="literallayout">
+Name                        PhoneNumber
+--------------------------- ------------
+Johnny                      8989189
+Johnny                      2328014
+Emilio                      4235427
+Girl nextdoor               ???
+</pre>
+</div>
+<p class="para">Of course, this table has a problem. If we were to ask you what Johnny's phone number is, you couldn't answer because you have two records with the same <span class="fixed">Name</span> value.</p>
+<p class="para">The solution is to either make <span class="fixed">Name</span> a primary key (in which case the database will not allow duplicate values) or add a new column (an ID column) to act as a primary key. With an ID column, the <span class="fixed">Friend</span> table would look like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FriendID     Name                        PhoneNumber
+-----------  --------------------------  ---------------
+1            Johnny                      8989189
+2            Johnny                      2328014
+3            Emilio                      4235427
+4            Girl nextdoor               ???
+</pre>
+</div>
+<p class="para">In this example, even if you have two people named Johnny, they're regarded as different people because they have different IDs. Because the primary key is <span class="fixed">FriendID</span>, this is the column on which you'll do the identifying searches on the table.</p>
+<p class="para">Although in practice it's easier to say that <span class="fixed">FriendID</span> is the primary key column of <span class="fixed">Friend</span>, technically this isn't accurate&#8212;a primary key isn't a column but a <i class="emphasis">constraint</i> that applies to a column.</p>
+<p class="para">Constraints are rules that apply to data tables and that form part of the integrity rules of the database. The database itself takes care of its integrity and makes sure that these rules aren't broken. As with data types (when, for example, the database doesn't allow you to insert a string value on a numeric column), you won't be able to insert two records with the same ID value if the ID column is set to be the primary key.</p>
+<p class="para">Sometimes choosing the primary key of a table can be a tough decision to make, especially because, in most cases, it has deep impact on the design of the whole database. The philosophy of database design says that the primary key column should <i class="emphasis">represent</i> (uniquely identify) the table rows. It's common to have values assigned to this column automatically by the RDBMS. Alternatively, unique properties of records could be used rather than a random value. You could use the Social Security number of a customer, for example. However, this can make things more complicated, and in general it's better to have a completely separate data facet for the primary key.</p>
+<a name="53"></a><a name="IDX-12"></a>
+<p class="para">Primary keys can be formed by combing more than one column. The groups of columns that form the primary key, taken as a unit, are guaranteed to have unique values, even if the individual columns can have repeating values in the table.</p>
+<p class="para">There can be only one primary key on a table. A value must be entered for every row of the primary key (it isn't allowed to contain <span class="fixed">NULL</span> values&#8212;see later), and an index is automatically created on its constituent columns. Indexes affect database performance, and we'll talk more about them in <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects."</p>
+<p class="para">Before moving on, let's recap the terminology you've learned so far (see <a class="internaljump" href="#ch01fig01">Figure 1-1</a>).</p>
+<div class="figure">
+<a name="54"></a><a name="ch01fig01"></a><span class="figuremediaobject"><a href="images/fig28%5F01%5F0%2Ejpg" NAME="IMG_4" target="_parent"><img src="images/fig28_01.jpg" height="291" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-1: </span>Relational database terminology</span>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="55"></a><a name="ch01lev2sec6"></a>Enforcing Table Integrity</h3>
+<p class="first-para">A table has the power to enforce many rules regarding the data it stores, and it's important that you understand these rules, both when using the DML and when using the DDL portions of SQL. You've already seen what you can achieve by <a name="56"></a><a name="IDX-13"></a>enforcing a primary key constraint on a column. There are many other options available. You'll not look at all of them here (you'll be meeting a fair amount of this when you learn about creating tables in <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects"), you'll look at some of the most immediately useful areas. Data types are perhaps the most important way to control the stored data, so let's start with them.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="57"></a><a name="ch01lev3sec4"></a>Data Types</h4>
+<p class="first-para">Data types are a fundamental topic we need to discuss simply because you can't avoid them. It's always necessary to specify a data type when creating a new table field. This might mean that a given column can only hold integer numbers, for example. The data types used in RDBMSs tend to be a little more versatile than this, though, often allowing you to specify how many bytes of storage are allocated to an entry in a column, which will put a restriction on, say, the maximum value of an integer or the precision to which a floating-point number is represented. Alternatively, they might restrict data to positive values (we're still talking integers here&#8212;we've yet to see a database that restricts string-type columns to values such as "hardworking," "good sense of humor," or "team player"). Often, you'll want to restrict the number of characters allowed to store strings. For example, you might decide to limit a <span class="fixed">Password</span> field to eight characters.</p>
+<p class="para">Choosing which data types to use for different columns can impact the performance and scalability of your database. By restricting values, you can ensure that less memory is taken up in the database because you don't allocate memory for values that can't be used. Data types also provide a low-level error checking capability because trying to put a "wrong" value in a database is likely to generate an error. As with variable types in some programming languages, though, this won't always be the case. Sometimes a round peg will fit through a square hole even though the square peg won't fit through the round hole, and you can't rely on this aspect of database storage to validate all your data. In any case, you can achieve far better and more powerful validation by other means.</p>
+<p class="para">One important (and occasionally annoying) point here is that column data types tend to vary between RDBMSs. This can make it difficult to transfer data between databases and might also result in having to change source code in order to access the same data in a different database. Often the difference is minor&#8212;perhaps an <span class="fixed">integer</span> data type in one RDBMS is called <span class="fixed">int</span> in another while retaining the same meaning&#8212;but it can still break code if you're not careful. <a href="LiB0110.html#1258" target="_parent" class="chapterjump">Appendix C</a>, "SQL Data Types," of this book provides an overview of the data types supported by each RDBMS and offers advice on "equivalent" types if a specific type in one RDBMS isn't supported (or called the same thing) in another.</p>
+<p class="para">Although in some cases the actual names differ, the main data types are supported by all databases. Let's see which these are.</p>
+<a name="58"></a><a name="IDX-14"></a>
+<div class="section">
+<h5 class="sect5-title">
+<a name="59"></a><a name="ch01lev4sec1"></a>Numbers</h5>
+<p class="first-para">Numbers are everywhere and probably are the favorite type of each database. Numbers come in different sizes, shapes, and internal storage formats.</p>
+<p class="para">Integers are usually represented by the <span class="fixed">INT</span> or <span class="fixed">INTEGER</span> data type. Depending on your database, you may have access to other integer data types (which differ by the minimum and maximum values allowed), such as <span class="fixed">TINYINT</span>, <span class="fixed">SMALLINT</span>, <span class="fixed">MEDIUMINT</span>, and <span class="fixed">BIGINT</span>.</p>
+<p class="para">Floating-point numbers are stored using the <span class="fixed">FLOAT</span>, <span class="fixed">REAL</span>, or <span class="fixed">NUMBER</span> (for Oracle) data type.</p>
+<p class="last-para">A common issue regarding numeric data types concerns accurately storing monetary information. With MySQL and DB2, the <span class="fixed">DECIMAL</span> data type is the way to go; with Oracle you use the general-purpose <span class="fixed">NUMBER</span>, and SQL Server has a specialized <span class="fixed">Money</span> data type, but <span class="fixed">DECIMAL</span> (or <span class="fixed">NUMERIC</span>) can also be used.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="60"></a><a name="ch01lev4sec2"></a>Text</h5>
+<p class="first-para">The second important group of types is the one that stores text and character data.</p>
+<p class="para">Usual names for string data types are <span class="fixed">CHAR</span>, <span class="fixed">VARCHAR</span>, and <span class="fixed">TEXT</span>. <span class="fixed">VARCHAR</span> is a variable-length type for which you specify a maximum size, but the actual size occupied in the database depends on the length of the string you're storing (which might be considerably lower than the maximum size defined for that column).</p>
+<p class="para">
+<span class="fixed">TEXT</span> usually allows for much longer strings but acts considerably slower than <span class="fixed">CHAR</span> and <span class="fixed">VARCHAR</span>.</p>
+<p class="last-para">When creating or altering columns of character data types, you need to specify the maximum length of the string to be stored.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="61"></a><a name="ch01lev4sec3"></a>Date and Time</h5>
+<p class="first-para">Each database knows how to store dates and times.</p>
+<p class="last-para">The actual data types are <span class="fixed">SmallDateType</span> and <span class="fixed">Date</span> for SQL Server, <span class="fixed">DATE</span> for Oracle, and <span class="fixed">ATETIME</span>, <span class="fixed">DATE</span>, <span class="fixed">TIMESTAMP</span>, <span class="fixed">TIME</span>, and <span class="fixed">YEAR</span> for MySQL.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="62"></a><a name="ch01lev3sec5"></a>NULLs</h4>
+<p class="first-para">Apart from establishing the data types for your columns, you have to decide whether you have to enter a specific value into a column or whether you're allowed to leave it empty. In other words, can a column store <span class="fixed">NULL</span> values?</p>
+<p class="para">What's <span class="fixed">NULL</span>? Perhaps the best definition of <span class="fixed">NULL</span> is "<font color="CC00CC">undefined</font>"&#8212;simply a column for which a value hasn't been specified. The decision of allowing <span class="fixed">NULL </span>values is a strategic one: Columns that you mark to reject <span class="fixed">NULL</span> values will always have a value, and the database engine will require you to specify a value for <a name="63"></a><a name="IDX-15"></a>them when adding new rows. On the other hand, if a column is nullable and you don't specify a value for it when adding a new row, <span class="fixed">NULL</span> will be automatically assigned to it.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">An empty string (<span class="fixed">''</span>) and a numeric value of zero are specific values and aren't the same as <i class="emphasis"><span class="fixed">NULL</span></i> values.</p>
+</td>
+</tr>
+</table>
+<p class="para">Even saying "<span class="fixed">NULL</span> value," although used frequently, is a bit misleading because <i class="emphasis"><span class="fixed">NULL</span></i> isn't a value. <span class="fixed">NULL</span> specifies the absence of a value, and the database knows that. If you try to find all rows that have <span class="fixed">NULL</span> for a specific field, searching with something like the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Customer WHERE PhoneNumber = NULL
+</pre>
+</div>
+<p class="para">you won't get any results. SQL works with a tri-valued logic: <span class="fixed">TRUE</span>, <span class="fixed">FALSE</span>, and <span class="fixed">UNKNOWN</span>. For the previous query, the database engine will search through the rows and evaluate the values found in the <span class="fixed">PhoneNumber</span> column against the search condition <span class="fixed">WHERE PhoneNumber = NULL</span>. It'll return a row only if the search condition evaluates to <span class="fixed">TRUE</span>. However, when a <span class="fixed">NULL</span> value is compared to any other value&#8212; a definite value or another <span class="fixed">NULL</span>&#8212;the answer is always <span class="fixed">UNKNOWN</span>.</p>
+<p class="para">Instead, SQL has its own syntax for searching <span class="fixed">NULL</span>s. You can retrieve all records that don't have a <span class="fixed">PhoneNumber</span> specified with the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Customer WHERE PhoneNumber IS NULL;
+</pre>
+</div>
+<p class="para">If you want to find all records that do have a value for <span class="fixed">PhoneNumber</span>, this is the query that does the trick:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Customer WHERE PhoneNumber IS NOT NULL;
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="64"></a><a name="ch01lev3sec6"></a>Default Values</h4>
+<p class="first-para">Often you'll want to create tables that have default values for some columns. In other words, when inserting new records into a table, instead of <span class="fixed">NULL</span>, the database should insert a predefined value for the columns if the user specified no value.</p>
+<a name="65"></a><a name="IDX-16"></a>
+<p class="last-para">Most databases support this option, using the <span class="fixed">DEFAULT</span> constraint, which we'll discuss in detail in <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects." In some cases you can also supply a function for the default value. With SQL Server, for example, you can supply <span class="fixed">GETDATE</span> (say, to a column named <span class="fixed">DateInserted</span>) that always returns the current date and time. This way, when a new row is inserted into the table, <span class="fixed">GETDATE</span> is called, and the current date and time are supplied as the default value for the <span class="fixed">DateInserted</span> column.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="66"></a><a name="ch01lev3sec7"></a>Unique Constraints</h4>
+<p class="first-para">Like a primary key, <span class="fixed">UNIQUE</span> is also a constraint that doesn't allow columns containing repeating values. However, there are differences. You can have multiple unique columns in a table&#8212;as opposed to a single primary key.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Unique columns can sometimes be set to accept <i class="emphasis"><span class="fixed">NULL</span></i>s on SQL Server (in which case, the column can only accept one <i class="emphasis"><span class="fixed">NULL</span></i> value). MySQL and Oracle can accept <i class="emphasis"><span class="fixed">NULL</span></i>s on unique columns and can accept more than one row having a <i class="emphasis"><span class="fixed">NULL</span></i> for that column, but any data entered into that column on any row must be unique. DB2, on the other hand, won't let you create a table specifying that a column must be both unique and accept <i class="emphasis"><span class="fixed">NULL</span></i> values.</p>
+</td>
+</tr>
+</table>
+<p class="last-para">
+<span class="fixed">UNIQUE</span> columns are useful in cases where you already have a primary key but you still have columns for which you want to have unique values. This might the case for a column named <span class="fixed">Email</span> or <span class="fixed">MobilePhone</span> in the <span class="fixed">Customer</span> table, in a scenario where <span class="fixed">CustomerID</span> is the primary key.</p>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="67"></a><a name="ch01lev2sec7"></a>Defining Relationships between Tables</h3>
+<p class="first-para">Of course, databases are about much more than stuffing specific types of data in specific columns of a particular table and being able to identify each row. The power of relational databases comes, as the name suggests, from the ability to define relationships between data in different tables. These related tables form the relational database (the database object), which becomes an object with a significance of its own, rather than simply being a group of unrelated data tables. Relational databases store information. It's said that data becomes information only when you give significance to it, and establishing relations with other pieces of data is a good means of doing that. Moving from the concept of <a name="68"></a><a name="IDX-17"></a>a table to that of relational databases isn't a huge leap, but it's a crucial step for any serious SQL programmer.</p>
+<p class="para">It helps to think of the entities (the real "things") that database tables need to describe. For example:</p>
+<p class="para">You have <i class="emphasis">customers</i> who place <i class="emphasis">orders</i> for certain <i class="emphasis">products</i>.</p>
+<p class="para">Straight away, you start to see the sort of entities that you must describe and the relationships that exist between them. You might be able to map these entities directly to tables, creating a <span class="fixed">Customers</span> table, an <span class="fixed">Orders</span> table, and a <span class="fixed">Products</span> table.</p>
+<p class="para">In reality, although the underlying concept of identifying entities and their interrelationship is valid, it's likely to be slightly more complex than that. For example, how much information do you store in the <span class="fixed">Customers</span> table? Do you store customers' billing addresses there? What if they have more than one address?</p>
+<p class="para">In fact, there exists a whole bunch of rules that define how you can most effectively store your data to avoid repetition (storing the same information over and over again) and to safeguard against any possible infringement on the integrity of the data. The process is called <i class="emphasis">normalization,</i> and the rules are called <i class="emphasis">normal</i> <i class="emphasis">forms</i>. We aren't going to discuss this in detail in this book because we want to focus on SQL, not on the optimum design for relational databases.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">You can find a good treatment of normal forms in the book <I>Joe Celko's SQL for Smarties: Advanced SQL Programming</I>, Second Edition (Morgan Kaufmann, 1999).</p>
+</td>
+</tr>
+</table>
+<p class="para">However, we do need to introduce some of the fundamental relational data storage concepts that you simply must understand in order to write effective SQL queries against relational databases. For example, you'll investigate how to do the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<b class="bold">Create relationships between tables (<i class="emphasis">one</i> customer may create <i class="emphasis">many</i></b> <b class="bold">orders...)</b>: You can then use SQL to retrieve data that's spread across more than one table (for example, to retrieve all of the orders made by a specific customer).</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Safeguard against fundamental data integrity issues</b>: For example, you can ensure that you don't enter the same order twice (the customer would be unhappy to be billed twice for the same purchase) or enter an order for a customer who doesn't exist.</p>
+</li>
+</ul>
+<p class="para">Primary keys are central to your ability to define relationships. For example, a customer row in your <span class="fixed">Customer</span> table might refer to credit card details stored in <a name="69"></a><a name="IDX-18"></a>a <span class="fixed">CreditCards</span> table rather than including the information in a single place. The advantage is that is becomes much easier to make more complex associations between data.</p>
+<p class="para">Because one customer may own multiple credit cards, it's important to be able to link those cards to that exact customer who owns them, and primary keys help to ensure that this happens. However, there's more to it than this.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="70"></a><a name="ch01lev3sec8"></a>Relational Integrity and Data Normalization</h4>
+<p class="first-para">As we've discussed, information is rarely stored in a single data table. Most of the time, you try to store relatively independent pieces of information in separate tables&#8212;in something that you name to be a <i class="emphasis">normalized</i> form of the data.</p>
+<p class="para">Say that you want to create a database where you need to store information about some products and about the departments to which they belong. In a non-normalized database, you might simply create a table named <span class="fixed">ProductDepartment</span>, containing the data shown in <a class="internaljump" href="#ch01fig02">Figure 1-2</a>.</p>
+<div class="figure">
+<a name="71"></a><a name="ch01fig02"></a><span class="figuremediaobject"><a href="images/fig34%5F01%5F0%2Ejpg" NAME="IMG_5" target="_parent"><img src="images/fig34_01.jpg" height="152" width="274" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-2: </span>The <i class="emphasis"><span class="fixed">ProductDepartment</span></i> table</span>
+</div>
+<p class="para">Having data stored like this generates more problems than it solves&#8212;storing information this way is, most importantly, hard to maintain. Imagine that you had also stored descriptions and other attributes for departments and products.</p>
+<p class="para">Also, you're storing repeating groups of information. If you want to change the name of a department, instead of changing it in one place, you need to change it in every place it was used. If you want to get a list of all the different departments, you need to do a resources-heavy query on the <span class="fixed">ProductDepartment</span> table. And the list of potential problems has just begun....</p>
+<p class="para">In the process of <i class="emphasis">data normalization</i>, you split tables such as <span class="fixed">ProductDepartment</span> into separate tables to eliminate repeating groups of information.</p>
+<p class="para">The <span class="fixed">ProductDepartment</span> table shown earlier contains data about products and departments. In a normalized data structure, you would store them in separate tables, as shown in <a class="internaljump" href="#ch01fig03">Figure 1-3</a>.</p>
+<div class="figure">
+<a name="72"></a><a name="ch01fig03"></a><span class="figuremediaobject"><a href="images/fig35%5F01%5F0%2Ejpg" NAME="IMG_6" target="_parent"><img src="images/fig35_01.jpg" height="148" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-3: </span>The <i class="emphasis"><span class="fixed">Department</span></i> table and the <i class="emphasis"><span class="fixed">Product</span></i> table</span>
+</div>
+<a name="73"></a><a name="IDX-19"></a>
+<p class="para">In a normalized database, having primary keys that uniquely identify the records is a fundamental necessity. The problem with the previous tables is that, based on the data they offer, you can't find out which departments relate to which products.</p>
+<p class="last-para">Depending on the kind of relationship you want between departments and products, you may need to do further modifications to the tables' structures. Let's continue the journey by taking a closer look at table relationships and how you implement them in the database.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="74"></a><a name="ch01lev3sec9"></a>Types of Table Relationships</h4>
+<p class="first-para">So, what types of table relationships are there, after all? You always need to decide how your data relates before designing the database.</p>
+<p class="para">Let's continue with the example. Again, the problem is that, with the current structure, you have no way of knowing which departments relate to which products, as shown in <a class="internaljump" href="#ch01fig04">Figure 1-4</a>.</p>
+<div class="figure">
+<a name="75"></a><a name="ch01fig04"></a><span class="figuremediaobject"><a href="images/fig35%5F02%5F0%2Ejpg" NAME="IMG_7" target="_parent"><img src="images/fig35_02.jpg" height="129" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-4: </span>Two tables without a relationship</span>
+</div>
+<a name="76"></a><a name="IDX-20"></a>
+<p class="para">Two tables like the ones you see here can't be very helpful because they don't tell you which products belong to which departments. However, having a figure such as this containing the individual rows without the relationships helps you see what kind of relations should be implemented.</p>
+<p class="para">There are two main kinds of table relationships:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="para">
+<b>The one-to-many relationship:</b> One row in a table is related to one or more rows in the related table.</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>The many-to-many relationship:</b> Multiple rows in one table match multiple rows in the related table.</p>
+</li>
+</ul>
+<p class="para">Although relatively rare, there's also a one-to-one relationship, whereby one and only one row in a table is matched with a single row in its related table. For example, in a database that allowed patients to be assigned to beds, you would hope that there would be a one-to-one relationship between patients and beds!</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="77"></a><a name="ch01lev4sec4"></a>The One-to-Many Relationship</h5>
+<p class="first-para">With the one-to-many relationship, one record in a table can be associated with multiple records in the related table, but not vice versa.</p>
+<p class="para">If you decide that each department can contain more products, but a product belongs to exactly one department (a product can't belong to more departments), then the one-to-many relationship is the best choice for your tables.</p>
+<p class="para">This becomes clearer after visualizing the relationship (see <a class="internaljump" href="#ch01fig05">Figure 1-5</a>).</p>
+<div class="figure">
+<a name="78"></a><a name="ch01fig05"></a><span class="figuremediaobject"><a href="images/fig36%5F01%5F0%2Ejpg" NAME="IMG_8" target="_parent"><img src="images/fig36_01.jpg" height="122" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-5: </span>A one-to-many relationship</span>
+</div>
+<p class="para">With this graphic, you can see that for each department there are more related products: <i class="emphasis">One</i> department relates to <i class="emphasis">many</i> products, and thus you have a one-to-many relationship.</p>
+<a name="79"></a><a name="IDX-21"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The opposite must not be true: A product shouldn't relate to many departments. If it did, you'd have a many-to-many relationship (discussed in the <a class="internaljump" href="#ch01lev4sec5">next section</a>).</p>
+</td>
+</tr>
+</table>
+<p class="para">
+<a class="internaljump" href="#ch01fig05">Figure 1-5</a> showed which products belong to which departments using arrows&#8212;it's time to see how you can tell the database to store this information.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">You implement the one-to-many relationship by adding a column to the table in the <i class="emphasis">many</i> side of the relationship. The new column will store the ID (the primary key value) of the record in the one part of the relationship to which it relates.</p>
+</td>
+</tr>
+</table>
+<p class="para">In the sample scenario, you need to add a <span class="fixed">DepartmentID</span> column to the <span class="fixed">Product</span> table, as shown in <a class="internaljump" href="#ch01fig06">Figure 1-6</a>.</p>
+<div class="figure">
+<a name="80"></a><a name="ch01fig06"></a><span class="figuremediaobject"><a href="images/fig37%5F01%5F0%2Ejpg" NAME="IMG_9" target="_parent"><img src="images/fig37_01.jpg" height="122" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-6: </span>Adding a <i class="emphasis"><span class="fixed">DepartmentID</span></i> column to the <i class="emphasis"><span class="fixed">Product</span></i> table</span>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The table at the <i class="emphasis">many</i> part of the relation (<i class="emphasis"><span class="fixed">Product</span></i> in this case) is called the <i class="emphasis">referencing table</i>, and the other table is called the <i class="emphasis">referenced table</i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">You can visual this relationship in the form of a database diagram in different ways. For example, <a class="internaljump" href="#ch01fig07">Figure 1-7</a> shows how SQL Server's Enterprise Manager shows the relationship.</p>
+<div class="figure">
+<a name="81"></a><a name="ch01fig07"></a><span class="figuremediaobject"><a href="images/fig38%5F01%5F0%2Ejpg" NAME="IMG_10" target="_parent"><img src="images/fig38_01.jpg" height="82" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-7: </span>Illustrating primary key relationships</span>
+</div>
+<a name="82"></a><a name="IDX-22"></a>
+<p class="para">The golden key located next to column names show the primary key of the table. When the primary key is formed using a combination of more than one column, all the columns forming the primary key will be marked with the golden keys; remember that you can't have more than one primary key in a table, but a primary key can be formed from more than one column.</p>
+<p class="para">In the relationship line, the golden key shows the table whose primary key is involved in the relationship&#8212;in other words, it points to the table on the <i class="emphasis">one</i> side of the relationship. The infinity sign shows the table in the <i class="emphasis">many</i> side of the relationship.</p>
+<p class="para">Note that the relationship signs don't also show the table columns involved in the relationship&#8212;they only show the kind and direction of the relationship.</p>
+<p class="para">The same diagram looks like <a class="internaljump" href="#ch01fig08">Figure 1-8</a> when drawn differently.</p>
+<div class="figure">
+<a name="83"></a><a name="ch01fig08"></a><span class="figuremediaobject"><a href="images/fig38%5F02%5F0%2Ejpg" NAME="IMG_11" target="_parent"><img src="images/fig38_02.jpg" height="73" width="289" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-8: </span>A full representation of the primary key/foreign key relationship</span>
+</div>
+<p class="para">In this figure, primary keys are marked with <i class="emphasis">PK</i> and are listed separately at the beginning of the list, and the foreign keys with <i class="emphasis">FK</i> (foreign keys are discussed in the <a class="internaljump" href="#ch01lev4sec5">next section</a>) are listed next. Because there can be more than one foreign key, they're numbered. Columns that don't allow <span class="fixed">NULL</span>s are displayed in bold. The arrow points to the table at the <i class="emphasis">one</i> side of the relationship.</p>
+<p class="para">After <span class="fixed">DepartmentID</span> is added to <span class="fixed">Product</span>, the database has all the information it needs to find out which products belong to which departments. You can then query these two tables to see combined information from both tables. You could use the following SQL query to display a list containing the name of each product along with the name of the department to which it belongs:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Product.Name, Department.Name
+FROM Product, Department
+WHERE Product.DepartmentID = Department.DepartmentID
+<a name="84"></a><a name="IDX-23"></a>
+</pre>
+</div>
+<p class="para">This query returns these results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                                 Name
+
+   ----------------------------------   ------------------
+   Warcraft III                         Games
+   Need for Speed                       Games
+   Beginning ASP.NET E-Commerce         Books
+   Matrix                               Movies
+   Me, Myself, and Irene                Movies
+   ABBA - Greatest Hits                 Music
+   Ice Age                              Movies
+   Motorola V60                         Electronics
+   Aerosmith - Just Push Play           Music
+</pre>
+</div>
+<p class="last-para">Don't worry too much about how the SQL code works from now, but this should help to show how you can still see the same data you listed before, even though it's now stored in two different but related tables.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="85"></a><a name="ch01lev4sec5"></a>Enforcing Relationships using the Foreign Key Constraint</h5>
+<p class="first-para">You can enforce the one-to-many relationship by the database using <i class="emphasis">foreign key</i> <i class="emphasis">constraints</i>. A column that has a foreign key constraint defined on it is called a <i class="emphasis">foreign key</i> in that table. The foreign key is a column or combination of columns used to establish or enforce a link between data in two tables.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">The foreign key constraint is always defined for a column in the <i class="emphasis">referencing table</i>, and it references the primary key of the <i class="emphasis">referenced table</i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">Remember, the referenc<i class="emphasis">ing</i> table is the one at the <i class="emphasis">many</i> side of the relationship, and the referenc<i class="emphasis">ed</i> table is the one at the <i class="emphasis">one</i> side of the relationship. In the products/departments scenario, the foreign key is defined on the <span class="fixed">DepartmentID</span> column of the <span class="fixed">Product</span> table, and it references the <span class="fixed">DepartmentID</span> column of the <span class="fixed">Department</span> table.</p>
+<p class="para">You need to enforce table relationships in order to maintain the database in a consistent state. Without enforcing table relationships using foreign keys, you could end up deleting rows that are being referenced from other tables or referencing nonexistent rows, thus resulting in orphaned records. This is something <a name="86"></a><a name="IDX-24"></a>you need to avoid (for example, you don't want rows in the <span class="fixed">Product</span> table referencing nonexistent departments).</p>
+<p class="last-para">Unlike the constraints you learned about in the first part of the chapter, which apply to the table as an independent database object, the foreign key constraint applies restrictions on both referencing and referenced tables. When establishing a one-to-many relationship between the <span class="fixed">Department</span> and the <span class="fixed">Product</span> tables by using a foreign key constraint, the database will include this relationship as part of its integrity. It won't allow you to add a category to a nonexistent department, and it won't allow you to delete a department if there are categories that belong to it.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="87"></a><a name="ch01lev4sec6"></a>The Many-to-Many Relationship</h5>
+<p class="first-para">A many-to-many relationship happens when records in both tables of the relationship can have multiple matching records in the other table. While studying the many-to-many relationship, you'll see that depending on how the records in your data tables are related, you may need to implement the database structures to support the relationships differently.</p>
+
+<p class="para">With the one-to-many relationship, one department could contain many products (<i class="emphasis">one</i> department/<i class="emphasis">many</i> products). With the many-to-many relationship, the opposite is also true: One product can belong to more departments (<i class="emphasis">one</i> product/<i class="emphasis">many</i> departments).</p>
+<p class="para">You'd need this kind of relationship for the scenario if you want to support adding products that can be part of more than one department, such as a product named <i class="emphasis">Selection of Christmas Games and Music</i>. This product should be found in both the Games and Music departments. So how do you implement this into the database?</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Although logically the many-to-many relationship happens between two data tables, in practice you need to add a third table to the mix. This third table, named a <i class="emphasis">junction</i> table (also known as a <i class="emphasis">linking</i> table, <i class="emphasis">associate</i> table, or <i class="emphasis">bridge</i> table), associates records in the two tables you need to relate by implementing two one-to-many relationships, resulting in the many-to-many relationship.</p>
+</td>
+</tr>
+</table>
+<p class="para">The theory might sound a bit complicated, but actually it's quite simple. In <a class="internaljump" href="#ch01fig09">Figure 1-9</a>, you can see how the junction table associates the departments and products.</p>
+<div class="figure">
+<a name="88"></a><a name="ch01fig09"></a><span class="figuremediaobject"><a href="images/fig41%5F01%5F0%2Ejpg" NAME="IMG_12" target="_parent"><img src="images/fig41_01.jpg" height="111" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-9: </span>A many-to-many relationship</span>
+</div>
+<a name="89"></a><a name="IDX-25"></a>
+<p class="para">This figure shows how the junction table can be used to link products to departments. You can easily see that each department is linked to more products and that the newly added product is also linked to two departments. So, the magic has been done: The junction table successfully allowed you to implement the many-to-many relationship.</p>
+<p class="para">
+<a class="internaljump" href="#ch01fig10">Figure 1-10</a> presents the new database diagram containing the ProductDepartment junction table.</p>
+<div class="figure">
+<a name="90"></a><a name="ch01fig10"></a><span class="figuremediaobject"><a href="images/fig41%5F02%5F0%2Ejpg" NAME="IMG_13" target="_parent"><img src="images/fig41_02.jpg" height="61" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 1-10: </span>A full representation of a many-to-many relationship</span>
+</div>
+<p class="para">Because the many-to-many relationship is implemented as two one-to-many relationships, the foreign key constraint is all you need to enforce it. The junction table is the referencing table, and it references the two tables that form the many-to-many relationship.</p>
+<p class="last-para">In the junction table, both columns form the primary key, so each (<span class="fixed">ProductID</span>, <span class="fixed">DepartmentID</span>) pair is guaranteed to be unique. This makes sense because the junction table associates one product with one department&#8212; a product can either be or not be associated with a particular department. It wouldn't make sense to associate a product with a department twice.</p>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0009.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0011.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

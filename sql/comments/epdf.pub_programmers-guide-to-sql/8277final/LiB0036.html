@@ -1,0 +1,501 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Using Subqueries</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0035.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0037.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch06"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="379"></a><a name="ch06lev1sec1"></a>Using Subqueries</h2><p class="first-para">Any query embedded inside another in any way is termed a <i class="emphasis">subquery</i>. The subquery itself may include a subquery and so on, which is where you really start to see how the <i class="emphasis">Structured</i> part of SQL's name fits in! This is also the first time you start to see multitable queries creeping in because there's no reason why a subquery has to query the same table as any of its "parents" or "children." In the <a href="LiB0039.html#418" target="_parent" class="chapterjump">next chapter</a>, you'll see how you can include multiple tables in a single query by using table joins; both techniques have their benefits, so we'll present them separately.</p>
+<p class="para">All subqueries can be divided into one of two categories: <i class="emphasis">non-correlated</i> or <i class="emphasis">correlated</i>. The true meaning of each of these terms will become clearer as you work through some examples, but basically the following is true:</p>
+<a name="380"></a><a name="IDX-148"></a>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">A non-correlated subquery is one where the subquery is "independent" of the outer query. The subquery will execute once in total and simply pass on any value (or values) to the outer query.</p>
+</li>
+<li class="listitem">
+<p class="first-para">A correlated subquery relies on data from the outer query in order to execute. The subquery will execute once <i class="emphasis">for every row</i> returned by the outer query.</p>
+</li>
+</ul>
+<p class="para">It can be important to note this distinction in large databases because correlated queries typically take a lot longer to execute, and the time taken will increase dramatically as the volume of data increases. Let's look at some examples of how you can use subqueries. You'll see examples of each category along the way.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="381"></a><a name="ch06lev2sec1"></a>Subqueries as Calculated Columns</h3>
+<p class="first-para">One simple form of a subquery is where the inner query returns a single result for each row returned by the outer query, usually as a result inserted into a calculated column:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, (<i class="emphasis">SubQuery</i>) AS <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>;
+</pre>
+</div>
+<p class="para">This type of subquery is useful when you have relationships between one table and another. For example, let's say you have a <span class="fixed">Customers</span> table and a <span class="fixed">CreditCards</span> table, and records in the <span class="fixed">CreditCards</span> table are linked to individual customers via a foreign key. The following query enables you to see how many credit cards are on record for every customer in the database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName, (
+   SELECT COUNT(*) FROM CreditCards
+   WHERE CreditCards.CustomerID = Customers.CustomerID)
+   AS NumberOfCreditCards
+FROM Customers
+</pre>
+</div>
+<p class="para">Here the subquery (highlighted in bold type) is one that wouldn't work on its own because it requires data (the <span class="fixed">CustomerID</span> values) from the <span class="fixed">Customers</span> table in the outer query but nestles into the outer query without problems. This is an example of a correlated subquery. The subquery executes once <i class="emphasis">for each row</i> acted on by the outer query. Let's look at a quick example showing a similar query in action.</p>
+<a name="382"></a><a name="IDX-149"></a>
+<div class="example">
+<span class="example-title">SIMPLE SUBQUERIES</span><a name="383"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">You're going to construct a query that will allow you to find out the number of exams taken by each student. Enter and execute the following against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Name,
+   (SELECT COUNT(*) FROM StudentExam
+   WHERE StudentExam.StudentID = Student.StudentID)
+   AS ExamsTaken
+FROM Student
+ORDER BY ExamsTaken DESC;
+</pre>
+</div>
+<p class="para">This query works in the same way as the one detailed previously, counting records in one table (<span class="fixed">StudentExam</span>) with an aggregate function based on a value taken from a row in another table (<span class="fixed">Student</span>). Note that you need to qualify names used in the subquery so you're unambiguous when referring to records in a different table.</p>
+<p class="para">Here the data used in the subquery is the <span class="fixed">StudentID</span> column in the <span class="fixed">Student</span> table, referred to using full syntax as <span class="fixed">Student.StudentID</span>. This is compared with the <span class="fixed">StudentID</span> column in the <span class="fixed">StudentExam</span> table, referred to as <span class="fixed">StudentExam.StudentID</span>, such that the number of records in the <span class="fixed">StudentExam</span> table having the same <span class="fixed">StudentID</span> value as that in the current record in the <span class="fixed">Student</span> table is counted (using <span class="fixed">COUNT(*)</span>).</p>
+<p class="para">The same qualification of names is necessary when the subquery works with the same table as the outer query, but here it's essential to use aliases for clarity.</p>
+<p class="para">The output from this query is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID Name             ExamsTaken
+
+   <b class="bold">--------- ---------------- ----------</b>
+   1         John Jones       2
+   2         Gary Burton      3
+   3         Emily Scarlett   2
+   4         Bruce Lee        3
+   ...       ...              ...
+<a name="384"></a><a name="IDX-150"></a>
+</pre>
+</div>
+<p class="last-para">As always, you can use aliases for the columns and tables in the query. The advantages of table aliases become obvious when you're querying multiple tables. If there are relationships between the tables, then it's quite likely that there will be column names that occur in more than one table. In this case, you need to prefix the table name to the column name to make it clear about which column you're talking. Because this can involve a lot of typing, it's useful to be able to replace the table name with an abridged name (usually with one or two letters).</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="example">
+<span class="example-title">USING ALIASES WITH SIMPLE SUBQUERIES</span><a name="385"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute the following query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT e1.StudentID, e1.ClassID, (
+   SELECT COUNT(*) FROM Enrollment e2
+   WHERE e1.ClassID = e2.ClassID)&#8212;1
+   AS OtherStudentsInClass
+FROM Enrollment e1
+WHERE StudentID = 6;
+</pre>
+</div>
+<p class="para">Here you use aliases, even though you're only querying one table. Each time the outer query returns a row from <span class="fixed">Enrollment</span> in this example, the inner query looks for records that have an identical entry in the <span class="fixed">ClassID</span> column. In order to compare the <span class="fixed">ClassID</span> values from the inner and outer queries, you must distinguish between them. Because the table name is the same, the only way to do this is using aliases, which is why <span class="fixed">e1</span> and <span class="fixed">e2</span> are used in the example.</p>
+<p class="para">Oracle 9i doesn't support the use of the <span class="fixed">AS</span> keyword in this type of alias, even though it supports it elsewhere. This query will run on SQL Server, DB2, and Access with or without <span class="fixed">AS</span>.</p>
+<p class="para">Note that the subquery also counts the row that's currently being examined by the outer query, so if you want to get the number of other students enrolled in the same class, you must subtract one from the value returned.</p>
+<p class="para">There are three rows returned from this query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   ClassID     OtherStudentsInClass
+
+   ----------- ----------- --------------------
+   6           3           2
+   6           6           3
+   6           10          1
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="386"></a><a name="IDX-151"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="387"></a><a name="ch06lev2sec2"></a>Subqueries in the WHERE Clause</h3>
+<p class="first-para">There are a number of ways to use subqueries in your <span class="fixed">SELECT</span> statements. Another option is to use them in a <span class="fixed">WHERE</span> clause. In its simplest form, you have a query embedded in the <span class="fixed">WHERE</span> clause of another query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i> FROM <i class="emphasis">TableA</i>
+WHERE <i class="emphasis">ColumnB</i> = (<i class="emphasis">SubQuery</i>);
+</pre>
+</div>
+<p class="para">One extremely helpful way to use this is to utilize data from one record in the table as part of the search criteria to find other records, all in a single query. For example, the following query will return all exams sustained on the same date as, or before, the exam with an <span class="fixed">ExamID</span> of <span class="fixed">5</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ExamID, SustainedOn FROM Exam
+WHERE SustainedOn &lt;= (
+   SELECT SustainedOn FROM Exam WHERE ExamID = 5)
+ORDER BY SustainedOn DESC;
+</pre>
+</div>
+<p class="para">Note that you don't need semicolons at the end of subqueries because these are in fact part of the outer statement.</p>
+<p class="para">Here the inner query obtains a single value that's the <span class="fixed">SustainedOn</span> value of the exam with an <span class="fixed">ExamID</span> of <span class="fixed">5</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT SustainedOn FROM Exam WHERE ExamID = 5
+</pre>
+</div>
+<p class="para">This value is used by the outer query, which finds all exams with an equal or earlier <span class="fixed">SustainedOn</span> value. The results are ordered according to a descending value for <span class="fixed">SustainedOn</span>, so you can expect the exam with an <span class="fixed">ExamID</span> of <span class="fixed">5</span> to be at the top of the results, with subsequent records being earlier exams and the earliest appearing last in the list.</p>
+<p class="para">Note that MySQL doesn't support subqueries in this way. Instead, you need to use two queries (getting the date when that exam was taken and then passing this date into a second query). For correlated subqueries, you can generally use the <span class="fixed">JOIN</span> syntax presented in the <a href="LiB0039.html#418" target="_parent" class="chapterjump">next chapter</a>.</p>
+<p class="para">In this example, both queries work independently on the same data. The subquery does not rely on data from the outer query in order to execute (an easy way to tell this is that the subquery will execute perfectly well as a stand-alone query). This is an example of a non-correlated subquery. The subquery executes once in total and simply passes the resulting value to the outer query.</p>
+<p class="para">In the previous example, you worked on a single table, but there's nothing stopping you from using multiple tables. Say, for example, you know that an exam <a name="388"></a><a name="IDX-152"></a>was sustained on March 10, but you're not sure for which course and you need to know. The following query would do the trick:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Course
+WHERE CourseID =
+(
+SELECT CourseID from EXAM
+WHERE SustainedOn='10-MAR-03'
+);
+</pre>
+</div>
+<p class="para">In the inner query, you find out the <span class="fixed">CourseID</span> for the exam sustained on March 10. That value is passed to the outer query, which then returns the name of the course. The output should look like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+NAME
+----------------
+Core Mathematics
+</pre>
+</div>
+<p class="para">However, the previous query is only suitable if you know for a fact that the query will return only a <i class="emphasis">single row</i>. If, in fact, it returns multiple rows, then the query will fail:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Course
+WHERE CourseID =
+(
+SELECT CourseID from EXAM
+WHERE SustainedOn='10-MAR-03'
+);
+select courseid from exam
+*
+ERROR at line 4:
+ORA-01427: single-row subquery returns more than one row
+</pre>
+</div>
+<p class="last-para">Fortunately, it's quite easy to get around this problem.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="389"></a><a name="ch06lev2sec3"></a>Subqueries that Return Multiple Results</h3>
+<p class="first-para">When you have a subquery that returns multiple rows, you simply use the <span class="fixed">IN</span> keyword to check for set membership. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">ColumnC</i> IN (SELECT <i class="emphasis">ColumnD</i> FROM <i class="emphasis">Table2</i>);
+<a name="390"></a><a name="IDX-153"></a>
+</pre>
+</div>
+<p class="para">Thus, you can easily rewrite the previous query so that it works for both single row and multiple row cases:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Course
+WHERE CourseID IN
+(
+SELECT CourseID from EXAM
+WHERE SustainedOn='26-MAR-03'
+);
+</pre>
+</div>
+<p class="para">Let's see a full example that uses this syntax; to add a bit of excitement, you'll use three nested subqueries.</p>
+<div class="example">
+<span class="example-title">USING SET MEMBERSHIP WITH SUBQUERIES</span><a name="391"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Say you want to obtain a list of the students who are taught by Professor Williams. Let's build the query up in stages. First, you find out the ID of Professor Williams:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ProfessorID FROM Professor
+WHERE Name LIKE '%Williams%';
+</pre>
+</div>
+<p class="para">You use this value (in this case, the <span class="fixed">ProfessorID</span> is <span class="fixed">2</span>) to find out the classes that Professor Williams teaches:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID FROM Class WHERE ProfessorID IN
+  (SELECT ProfessorID FROM Professor
+  WHERE Name LIKE '%Williams%');
+</pre>
+</div>
+<p class="para">This query gets the <span class="fixed">ClassID</span> values from the <span class="fixed">Class</span> table that match your criteria. The set of values returned is passed to the next query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID FROM Enrollment WHERE ClassID IN
+  (SELECT ClassID FROM Class WHERE ProfessorID IN
+    (SELECT ProfessorID FROM Professor
+    WHERE Name LIKE '%Williams%'));
+</pre>
+</div>
+<p class="para">This query uses that set of <span class="fixed">ClassID</span> values to obtain from the <span class="fixed">Enrollment</span> table the IDs of the students who take these classes. Finally, these IDs are passed to the outermost query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Name FROM Student WHERE StudentID IN
+  (SELECT StudentID FROM Enrollment WHERE ClassID IN<a name="392"></a><a name="IDX-154"></a>
+        (SELECT ClassID FROM Class WHERE ProfessorID IN
+          (SELECT ProfessorID FROM Professor
+          WHERE Name LIKE '%Williams%')));
+</pre>
+</div>
+<p class="para">If you execute the whole query against <span class="fixed">InstantUniversity</span>, you should obtain the following results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   Name
+
+   ----------- -----------------
+   2           Gary Burton
+   4           Bruce Lee
+   6           Vic Andrews
+   8           Julia Picard
+   10          Maria Fernandez
+</pre>
+</div>
+<p class="last-para">This may seem quite a complicated way to go about things, but it works. In fact, you can achieve the same results using simpler syntax with a multiple table <span class="fixed">JOIN</span> query. You'll be looking at this subject in the <a href="LiB0039.html#418" target="_parent" class="chapterjump">next chapter</a>.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">Again, the previous example illustrates the use of non-correlated subqueries. No component query relies on its outer query in order to execute. Each query that makes up your subquery executes only once, and each in turn simply passes a value, or a set of values, to an outer query.</p>
+<p class="last-para">Before moving on, it's worth noting that the use of subqueries isn't restricted to the <span class="fixed">SELECT</span> statement. You can include subqueries in any other SQL statement, such as an <span class="fixed">INSERT</span> or <span class="fixed">DELETE</span> statement, if appropriate.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="393"></a><a name="ch06lev2sec4"></a>Using Operators with Subqueries</h3>
+<p class="first-para">You saw previously how you can use subqueries in conjunction with the <span class="fixed">IN</span> operator to find rows where a field value belongs to a certain set of values. However, this isn't the only operator you can use with subqueries. In fact, there are four more: <span class="fixed">EXISTS</span>, <span class="fixed">ALL</span>, <span class="fixed">ANY</span>, and <span class="fixed">SOME</span> (although <span class="fixed">SOME</span> is merely a synonym for <span class="fixed">ANY</span>).</p>
+<a name="394"></a><a name="IDX-155"></a>
+<div class="section">
+<h4 class="sect4-title">
+<a name="395"></a><a name="ch06lev3sec1"></a>Using the EXISTS Operator</h4>
+<p class="first-para">The <span class="fixed">EXISTS</span> operator allows you to find rows that match a particular criterion. <span class="fixed">EXISTS</span> is always followed by a subquery and evaluates to true if the subquery returns any rows at all.</p>
+<div class="example">
+<span class="example-title">USING THE EXISTS OPERATOR</span><a name="396"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">This query returns the names and IDs of all the students who scored less than 40 in any one of their exams:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Name FROM Student s
+WHERE EXISTS (
+   SELECT StudentID FROM StudentExam e
+   WHERE Mark &lt; 40 AND e.StudentID = s.StudentID);
+</pre>
+</div>
+<p class="para">The basic subquery here returns the IDs of all the students who scored less than 40 in an exam:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID FROM StudentExam e
+WHERE Mark &lt; 40
+</pre>
+</div>
+<p class="para">However, this is a correlated subquery, so you want this query to run once for every row in the outer query. You do this by using table aliases and matching the value of the <span class="fixed">StudentID</span> in the <span class="fixed">Student</span> and <span class="fixed">StudentExam</span> tables:</p>
+<div class="informalexample">
+<pre class="literallayout">
+AND e.StudentID = s.StudentID
+</pre>
+</div>
+<p class="para">This query will execute once for every row in the <span class="fixed">Student</span> table, so if a particular student scored less than 40 in one or more exam, the <span class="fixed">EXISTS</span> condition for this query will be true, and the row for that student will be returned for the outer query. In total, you've got three of these underperforming students:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   Name
+
+   <b class="bold">----------- ------------</b>
+   2           Gary Burton
+   5           Anna Wolff
+   8           Julia Picard
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="397"></a><a name="IDX-156"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="398"></a><a name="ch06lev3sec2"></a>Using the ALL Operator</h4>
+<p class="first-para">You're now quite well equipped if you want to find rows where the value in a particular column matches the values in a certain set. But what if you want to find rows where a column value is greater than or less than any or all of the values in a particular set? This is where the remaining operators come in&#8212;<span class="fixed">ALL</span> and <span class="fixed">ANY</span>.</p>
+<p class="para">The <span class="fixed">ALL</span> operator is used with a subquery and a comparison operator such as <span class="fixed">=</span>, <span class="fixed">&gt;</span>, or <span class="fixed">&gt;=</span> (and so on) and evaluates to true if the value being checked is greater than (or whatever) <i class="emphasis">all</i> the rows returned by the subquery. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i> FROM <i class="emphasis">TableA</i>
+WHERE <i class="emphasis">ColumnA</i> &gt; ALL (SELECT <i class="emphasis">ColumnB</i> FROM <i class="emphasis">TableB</i>);
+</pre>
+</div>
+<p class="para">This query will return all the rows from <i class="emphasis"><span class="fixed">TableA</span></i> where the value in <i class="emphasis"><span class="fixed">ColumnA</span></i> is greater than every single value in <i class="emphasis"><span class="fixed">ColumnB</span></i> of <i class="emphasis"><span class="fixed">TableB</span></i>.</p>
+<div class="example">
+<span class="example-title">USING THE ALL OPERATOR</span><a name="399"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter and execute the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Grade FROM Enrollment e
+WHERE Grade &gt; ALL (
+   SELECT Mark FROM StudentExam s
+   WHERE s.StudentID = e.StudentID);
+</pre>
+</div>
+<p class="para">Here you're looking for discrepancies between the overall performance of students and their marks in particular exams. In particular, you're looking to find the students whose overall grade for any class is greater than the top mark they received in all their exams.</p>
+<p class="para">Again, you use a correlated subquery with table aliases to achieve this. The subquery returns all the exam marks for each student in the outer query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Mark FROM StudentExam s
+WHERE s.StudentID = e.StudentID
+</pre>
+</div>
+<p class="para">You use this subquery with the <span class="fixed">ALL</span> operator to find any rows in the <span class="fixed">Enrollment</span> table where the <span class="fixed">Grade</span> is greater than the highest exam mark received by the same student. This finds just one student in the sample data:</p>
+<a name="400"></a><a name="IDX-157"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   Grade
+
+   ----------- -----------
+   2           68
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="401"></a><a name="ch06lev3sec3"></a>Using the ANY Operator</h4>
+<p class="first-para">
+<span class="fixed">ANY</span> works in the same way as <span class="fixed">ALL</span> but evaluates to true if the condition is true of <i class="emphasis">any</i> single value returned by the subquery. For example, the query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i> FROM <i class="emphasis">TableA</i>
+WHERE <i class="emphasis">ColumnA</i> &gt; ANY (SELECT <i class="emphasis">ColumnB</i> FROM <i class="emphasis">TableB</i>);
+</pre>
+</div>
+<p class="para">will return all the rows from <i class="emphasis"><span class="fixed">TableA</span></i> where the value in <i class="emphasis"><span class="fixed">ColumnA</span></i> is greater than any one of the individual values in <i class="emphasis"><span class="fixed">ColumnB</span></i> of <i class="emphasis"><span class="fixed">TableB</span></i>.</p>
+<div class="example">
+<span class="example-title">USING THE ANY OPERATOR</span><a name="402"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Type in this query and execute it against the <span class="fixed">InstantUniversity</span> database:</p>
+
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Grade FROM Enrollment e
+WHERE Grade &lt; ANY (
+   SELECT Mark/2 FROM StudentExam s
+   WHERE s.StudentID = e.StudentID);
+</pre>
+</div>
+<p class="para">Again, you're looking for discrepancies between students' exam marks and their overall grades. In this example, you retrieve the ID and grade of any student where that grade is less than half of the mark they got for any one exam.</p>
+<p class="para">The example works in a similar way to the previous example: The subquery returns the set of marks that each student in the outer query scored in their exams, divided by two:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Mark/2 FROM StudentExam s
+WHERE s.StudentID = e.StudentID
+</pre>
+</div>
+<p class="para">You use the <span class="fixed">ANY</span> operator to find out whether a student's grade is less than any single value in this set and, if so, return the student's ID and the grade:</p>
+<a name="403"></a><a name="IDX-158"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   Grade
+
+   ----------- -----------
+   5           33
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0035.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0037.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

@@ -1,0 +1,15 @@
+body {
+    margin-right: 20px;
+    margin-left:  20px;
+    max-width: 960px;
+    padding-right: 10px;
+    padding-left:  10px;
+    background: grey;
+  }
+
+.wrapper {
+    margin: 20px; /* 1 */
+    width: auto; /* 2 */
+    padding: 10px; /* 3 */
+    border: 2px solid #ccc; /* Параметры линии */ 
+}

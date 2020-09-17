@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<!-- saved from url=(0084)https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793 -->
+<html class="js js-dom-ready" lang="en-GB"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link rel="preload" href="./SQL 2_files/application-8c20b5a8de4bacca91c6-1.0.css" as="style">
+<link rel="preload" href="./SQL 2_files/europa-6433422d527e85dc2b31-1.0.css" as="style">
+<meta content="FutureLearn" name="author">
+<meta content="" name="keywords">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<meta content="656604567744389" property="fb:app_id">
+<meta content="website" property="og:type">
+<meta content="en_GB" property="og:locale">
+<meta content="FutureLearn" property="og:site_name">
+<meta content="SQL injections - Introduction to Databases and SQL - Raspberry Pi Foundation" property="og:title">
+<meta content="Enjoy free online courses from leading UK and international universities." property="og:description">
+<meta content="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793" property="og:url">
+
+<link href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793" rel="canonical">
+<meta content="Enjoy free online courses from leading UK and international universities." name="description">
+
+<link rel="shortcut icon" type="image/x-icon" href="https://cdn.futurelearn.com/packs/app/assets/images/favicon-b2fb27893f6e2eb670902fafcbb30dfd.ico">
+<link rel="apple-touch-icon" type="image/png" href="https://cdn.futurelearn.com/packs/app/assets/images/apple-touch-icon-57x57-b029779362bd1a4e0884703a3df786ec.png" sizes="57x57">
+<link rel="apple-touch-icon" type="image/png" href="https://cdn.futurelearn.com/packs/app/assets/images/apple-touch-icon-114x114-7a376c6e299bc3f119bb040625473802.png" sizes="114x114">
+<link rel="apple-touch-icon" type="image/png" href="https://cdn.futurelearn.com/packs/app/assets/images/apple-touch-icon-72x72-f0883f1d0c20e57f5e16bec64e5db696.png" sizes="72x72">
+<link rel="apple-touch-icon" type="image/png" href="https://cdn.futurelearn.com/packs/app/assets/images/apple-touch-icon-144x144-5205e8a2cfc043da7d11702956f54d74.png" sizes="144x144">
+
+<title>SQL injections - Introduction to Databases and SQL - Raspberry Pi Foundation</title>
+
+<link rel="stylesheet" media="screen, projection" href="./SQL 2_files/application-8c20b5a8de4bacca91c6-1.0.css">
+<link rel="stylesheet" media="print" href="./SQL 2_files/print-8c48721ef505cbfd5415-1.0.css">
+
+
+<link rel="stylesheet" media="screen" href="./SQL 2_files/styles-636fb160bc2ab55f17db-1.0.css">
+<link rel="stylesheet" media="screen" href="./SQL 2_files/npm.futurelearn-7d94c14df4f1aa092dd1-1.0.css">
+
+<link rel="stylesheet" media="screen" href="./SQL 2_files/Form_co_0c8a20f8-5bc8069d5650b602fb1c-1.0.css">
+<link rel="stylesheet" media="screen" href="./SQL 2_files/StepCom_a066fde1-f754adffb707f56f5df5-1.0.css">
+<link rel="stylesheet" media="screen" href="./SQL 2_files/npm.video.js-5b0cf55d8836a5752e87-1.0.css">
+<link rel="stylesheet" media="screen" href="./SQL 2_files/Promo_c_6406cee0-6710a8ba1a73d0e48d43-1.0.css">
+
+
+
+
+
+
+
+<script src="https://connect.facebook.net/signals/config/2441936382724811?v=2.9.18&amp;r=stable" async=""></script><script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="https://www.googleadservices.com/pagead/conversion_async.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script src="https://script.crazyegg.com/pages/scripts/0032/6542.js?441856" async="" type="text/javascript"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-TDF2LGF&amp;l=gtmDataLayer"></script><script type="text/javascript" async="" src="https://intljs.rmtag.com/114483.ct.js"></script><script src="./SQL 2_files/safari-nomodule.min.js"></script>
+<script src="./SQL 2_files/ahoy.min.js"></script>
+<script>
+  // Initialise Ahoy ASAP without waiting for DOM ready
+  window.ahoy.start();
+  window.ahoy.configure({startOnReady: false});
+</script>
+
+<script>
+  window.honeybadgerConfig = {
+    api_key: 'c497c536',
+    environment: 'production',
+    disabled: 'false',
+    onerror: true,
+  };
+</script>
+
+<script>
+  setTimeout(function() {
+    var a = document.createElement('script');
+    var b = document.getElementsByTagName('script')[0];
+    a.src = document.location.protocol + '//script.crazyegg.com/pages/scripts/0032/6542.js?' + Math.floor(new Date().getTime() / 3600000);
+    a.async = true;
+    a.type = 'text/javascript';
+    b.parentNode.insertBefore(a, b);
+  }, 1);
+</script>
+
+  <script type="text/javascript">
+    (function (url) {
+      /*Tracking Bootstrap
+      Set Up DataLayer objects/properties here*/
+      if(!window.DataLayer){
+        window.DataLayer = {};
+      }
+      if(!DataLayer.events){
+        DataLayer.events = {};
+      }
+      DataLayer.events.SiteSection = "1";
+
+      var loc, ct = document.createElement("script");
+      ct.type = "text/javascript";
+      ct.async = true;
+      ct.src = url;
+      loc = document.getElementsByTagName('script')[0];
+      loc.parentNode.insertBefore(ct, loc);
+    }(document.location.protocol + "//intljs.rmtag.com/114483.ct.js"));
+  </script>
+
+<script>
+  gtmDataLayer = [{"loginStatus":"loggedIn","registered":null,"pageType":"Course content"}];
+</script>
+
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','gtmDataLayer','GTM-TDF2LGF');</script>
+
+
+
+
+<script charset="utf-8" src="./SQL 2_files/npm.prop-types-5776d07b4260784b5999-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/npm.classnames-8422908f15b98cad1cef-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/styles-f7f7de56a952855621b0-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/icons-95df1d0ffa367ef05349-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/Partials-MainNavigation-UserCorner-index-a2c028483d0b41f05bbb-1.0.js"></script><link rel="stylesheet" type="text/css" href="./SQL 2_files/DesignSystem-FeedbackAndNotices-InCourseHeadsUp-index-1529414d14bf892a561f-1.0.css"><script charset="utf-8" src="./SQL 2_files/DesignSystem-FeedbackAndNotices-InCourseHeadsUp-index-5bf3b1e70ad878d5258e-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/DesignSystem-ProgressIndicators-MarkAsComplete-index-98b90c76625d4e12f41f-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/DesignSystem-Navigation-StepNav-index-36c77736e041b4c26c27-1.0.js"></script><link rel="stylesheet" type="text/css" href="./SQL 2_files/Partials-StepComments-index-fe757300ab3826b7da3c-1.0.css"><script charset="utf-8" src="./SQL 2_files/Partials-StepComments-index-dedd64c88330ec81a8bc-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/Partials-Footer-index-d69bd5a0b6a5ba597265-1.0.js"></script><link rel="stylesheet" type="text/css" href="./SQL 2_files/Partials-Zendesk-index-c6b4123964ca8aa415d9-1.0.css"><script charset="utf-8" src="./SQL 2_files/Partials-Zendesk-index-1d739d16ce8c169704d1-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/npm.js-cookie-f6cf72afadb4bbcfc538-1.0.js"></script><script charset="utf-8" src="./SQL 2_files/setTimeZoneCookie-ddf6a4a1a88ca934f5fd-1.0.js"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+.MathJax_Display {text-align: left !important; margin: 0 !important}
+</style><script charset="utf-8" src="./SQL 2_files/npm.tributejs-31879158551ed1d474ac-1.0.js"></script><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover, .MJXp-munder {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > *, .MJXp-munder > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><script src="https://googleads.g.doubleclick.net/pagead/viewthroughconversion/973080445/?random=1590682901491&amp;cv=9&amp;fst=1590682901491&amp;num=1&amp;guid=ON&amp;resp=GooglemKTybQhCsO&amp;u_h=1080&amp;u_w=1920&amp;u_ah=1080&amp;u_aw=1920&amp;u_cd=24&amp;u_his=2&amp;u_tz=180&amp;u_java=false&amp;u_nplug=3&amp;u_nmime=4&amp;gtm=2wg5k1&amp;sendb=1&amp;ig=1&amp;frm=0&amp;url=https%3A%2F%2Fwww.futurelearn.com%2Fcourses%2Fintroduction-to-databases-and-sql%2F1%2Fsteps%2F761793&amp;tiba=SQL%20injections%20-%20Introduction%20to%20Databases%20and%20SQL%20-%20Raspberry%20Pi%20Foundation&amp;hn=www.googleadservices.com&amp;async=1&amp;rfmt=3&amp;fmt=4"></script></head>
+<body><div id="MathJax_Message" style="display: none;"></div>
+<a class="a-skip-link" href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793#main-content">Skip main navigation</a>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="icon-bookmark" viewBox="0 0 32 32">
+  <path d="M25 10v17.83l-9-7.4-9 7.4V2.03h18V5h2V.03H5v32l11-9 11 9V10h-2z"></path>
+</symbol><symbol id="icon-bookmark_solid" viewBox="0 0 32 32">
+  <path d="M27 .03H5v32l11-9 11 9v-32z"></path>
+</symbol><symbol id="icon-like_solid" viewBox="0 0 32 32">
+  <path d="M23 2.09a9 9 0 00-7 3.31A9 9 0 000 11c0 8.18 14.77 19.42 15.4 19.9l.59.44.59-.44C17.23 30.41 32 19.17 32 11a9 9 0 00-9-8.91z"></path>
+</symbol><symbol id="icon-pin" viewBox="0 0 32 32">
+  <path d="M25.5 14h-1.42l-2.2-7.14A3 3 0 0021 1H11a3 3 0 00-.88 5.86L7.92 14H6.5a3.5 3.5 0 100 7H15v8l2 2V19H6.5a1.5 1.5 0 010-3h2.81l3.38-11H11a.94.94 0 01-.29 0A1 1 0 0110 4a1 1 0 011-1h10a1 1 0 011 1 1 1 0 01-.71.94A.94.94 0 0121 5h-1.69l3.38 11h2.81a1.5 1.5 0 010 3H22v2h3.5a3.5 3.5 0 000-7z"></path>
+</symbol><symbol id="icon-pin_solid" viewBox="0 0 32 32">
+  <path d="M25.5 14h-1.42l-2.2-7.14A3 3 0 0021 1H11a3 3 0 00-.88 5.86L7.92 14H6.5a3.5 3.5 0 100 7H15v8l2 2V21h8.5a3.5 3.5 0 000-7z"></path>
+</symbol><symbol id="icon-reply" viewBox="0 0 32 32">
+  <path d="M31.82 26.41C30.63 16.61 22.89 9 13.5 9H13v2h.5c7.32 0 13.5 5.26 15.69 12.48C25.34 20.15 19.51 18 13 18v7.24L2.77 15 15 3V0L-.06 15 15 30v-9.89c6.51.47 12 3.2 14.91 7a10.22 10.22 0 011.94 4.34A21.75 21.75 0 0032 29a20.58 20.58 0 00-.18-2.59z"></path>
+</symbol><symbol id="icon-todo" viewBox="0 0 32 32">
+  <path d="M13.33 21.68L8.55 16.9l1.41-1.41 3.37 3.36 8.69-8.69 1.41 1.42-10.1 10.1z"></path>
+  <path d="M29 11v18H3V3h26v3h2V1H1v30h30V11h-2z"></path>
+</symbol><symbol id="icon-activity" viewBox="0 0 32 32">
+  <path d="M23.47 1.78L20.74.65l-1.4 4.11a13.08 13.08 0 012.18 1zM25 8.69l3.36-3-2.1-2.06L23.29 7A12.27 12.27 0 0125 8.69zm6.34 2.53l-1.13-2.73-4 2a12 12 0 011 2.18z"></path>
+  <path d="M32 14.5l-4.21.27A12.67 12.67 0 0128 17v.21A13 13 0 1114.76 4H15a13.33 13.33 0 012.2.2l.26-4.2h-3l.13 2A15 15 0 1030 17.33l2 .13z"></path>
+</symbol><symbol id="icon-progress" viewBox="0 0 32 32">
+  <path d="M16 0a16 16 0 1013.63 24.35l-1.71-1A14 14 0 1116 2v4a10 10 0 1010 10h6A16 16 0 0016 0zm0 24a8 8 0 118-8 8 8 0 01-8 8z"></path>
+</symbol>
+</svg>
+
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TDF2LGF"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+
+
+<div id="search-bar-portal">
+<div class="a-section a-section--nav a-section--overflow o-search-bar"><div class="o-search-bar__content"><div><form action="https://www.futurelearn.com/search" method="GET" class="SearchForm-searchForm_3zvKe" role="form" accept-charset="UTF-8" novalidate="" enctype="application/x-www-form-urlencoded"><span class="visuallyHidden-wrapper_s-Kvx"><label for="search-bar-input">Search term</label></span><input type="search" name="q" id="search-bar-input" class="SearchForm-input_3wX5k" placeholder="Explore FutureLearn" autocomplete="off" value=""><div class="SearchForm-button_2qTyI"><button class="ButtonTag-button_1EfYL ButtonTag-sBreakpointFullWidthfalse_-lDBm ButtonTag-isFullHeight_2Y-cY"><span class="ButtonStyles-button_2w0It ButtonStyles-primary_233BW ButtonStyles-small_2pIzw ButtonStyles-sBreakpointFullWidthfalse_eFtQI ButtonStyles-isFullHeight_1zV6A"><span class="ButtonStyles-content_39Mtu"><span class="visuallyHidden-wrapper_s-Kvx">Search</span><svg class="Icon-icon_ISNxI Icon-sBreakpointSizexlarge_1AHOO" height="32" viewBox="0 0 32 32" width="32"><path d="M28 26.07l-6.9-6.85a9.56 9.56 0 10-1.36 1.46l6.8 6.81zM6.11 13.53a7.39 7.39 0 117.39 7.39 7.4 7.4 0 01-7.39-7.39z"></path></svg></span></span></button></div></form></div><button class="o-search-bar__close" type="button" title="close"><svg class="a-svg-icon a-svg-icon--cross" height="32" viewBox="0 0 32 32" width="32"><path d="M25.98 3.98l-9.95 9.95L6.05 3.9 3.92 6.02l9.99 10.03-9.94 9.94 2.12 2.12 9.92-9.92 9.86 9.92 2.14-2.1-9.88-9.94L28.1 6.1l-2.12-2.12z"></path></svg></button></div></div>
+
+</div>
+<div id="fl-canvas">
+
+
+
+
+<div class="m-run-header">
+<h1 class="is-visually-hidden">To do</h1>
+
+<header class="o-main-header o-main-header--run">
+<div class="o-main-header__logo">
+<a class="a-steps-logo a-steps-logo--no-text" href="https://www.futurelearn.com/" title="FutureLearn - Learning For Life">
+<svg class="a-steps-logo" space="preserve" version="1.1" viewBox="0 0 475.9 167.3" x="0px" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" y="0px">
+<g class="a-steps-logo__text">
+<path d="M213.2,28.2h27.2v11.2h-27.2v29.7h-11.8V0h41v11.2h-29.1V28.2z" fill="#1D1D1B"></path>
+<path d="M267,70.3c-2.2,0-4.4-0.4-6.5-1.2c-2.1-0.8-3.9-1.9-5.5-3.5c-1.6-1.5-2.8-3.4-3.8-5.5
+        c-1-2.2-1.4-4.7-1.4-7.5V22.3h11.8v27.1c0,3.5,0.8,6,2.4,7.6c1.6,1.6,3.9,2.3,6.9,2.3c1.5,0,2.8-0.3,4-0.9c1.2-0.6,2.1-1.3,2.9-2
+        c0.9-0.8,1.7-1.7,2.4-2.9V22.3h11.9v46.8H281v-6.8c-1,1.5-2.1,2.9-3.5,4c-1.1,1-2.6,1.9-4.3,2.7C271.4,69.9,269.4,70.3,267,70.3z" fill="#1D1D1B"></path>
+<path d="M299.9,22.3h9.2V8.4h11.9v13.9H335V33h-14.1v18.9c0,1.5,0.2,2.6,0.5,3.6c0.3,0.9,0.8,1.7,1.4,2.3
+        c0.6,0.6,1.2,1,2,1.2c0.7,0.2,1.5,0.3,2.3,0.3c0.7,0,1.3-0.1,1.9-0.2c0.6-0.2,1.1-0.3,1.6-0.6c0.5-0.3,1-0.6,1.5-0.9l4.3,9.7
+        c-0.9,0.6-1.9,1.1-3.1,1.6c-1,0.4-2.2,0.7-3.5,1c-1.4,0.3-2.9,0.5-4.6,0.5c-2.3,0-4.4-0.4-6.4-1.2c-1.9-0.8-3.6-1.9-5-3.4
+        c-1.4-1.4-2.5-3.2-3.4-5.2c-0.8-2-1.2-4.3-1.2-6.8V33h-9.2V22.3z" fill="#1D1D1B"></path>
+<path d="M360.7,70.3c-2.2,0-4.4-0.4-6.5-1.2c-2.1-0.8-3.9-1.9-5.5-3.5c-1.6-1.5-2.8-3.4-3.8-5.5
+        c-1-2.2-1.4-4.7-1.4-7.5V22.3h11.9v27.1c0,3.5,0.8,6,2.4,7.6c1.6,1.6,3.9,2.3,6.9,2.3c1.5,0,2.8-0.3,4-0.9c1.2-0.6,2.1-1.3,2.9-2
+        c0.9-0.8,1.7-1.7,2.4-2.9V22.3h11.9v46.8h-11.1v-6.8c-1,1.5-2.1,2.9-3.5,4c-1.1,1-2.6,1.9-4.3,2.7
+        C365.1,69.9,363.1,70.3,360.7,70.3z" fill="#1D1D1B"></path>
+<path d="M420.5,21.1c1.1,0,2.1,0.1,3.1,0.2c1,0.2,1.8,0.4,2.6,0.5c0.9,0.3,1.7,0.5,2.5,0.7l-4.2,10.7
+        c-0.4-0.1-0.9-0.3-1.5-0.5c-0.5-0.1-1.1-0.3-1.8-0.4c-0.7-0.1-1.5-0.2-2.3-0.2c-1.8,0-3.4,0.3-4.7,1c-1.3,0.7-2.4,1.4-3.2,2.2
+        c-1,0.9-1.8,2-2.6,3.2v30.6h-11.8V22.3h11.3v6.8c0.9-1.4,1.9-2.8,3.1-4c1.1-1,2.4-1.9,4-2.8C416.5,21.6,418.4,21.1,420.5,21.1z" fill="#1D1D1B"></path>
+<path d="M452.3,21.1c3.2,0,6.3,0.6,9.1,1.8c2.9,1.2,5.4,2.9,7.5,5c2.1,2.1,3.8,4.7,5.1,7.7c1.2,3,1.9,6.3,1.9,9.9
+        c0,0.5,0,1.1,0,1.9c0,0.8,0,1.6-0.1,2.6h-34.9c0.2,1.1,0.6,2.1,1.4,3.3c0.7,1.1,1.6,2.1,2.8,3.1c1.1,0.9,2.4,1.7,3.9,2.3
+        c1.5,0.6,3.2,0.9,5,0.9c2,0,3.8-0.2,5.4-0.7c1.6-0.5,2.9-1,4-1.6c1.3-0.7,2.4-1.5,3.4-2.4l5.9,8.9c-1.5,1.2-3.2,2.4-5.1,3.4
+        c-1.6,0.9-3.6,1.6-5.9,2.3c-2.3,0.7-4.9,1-7.7,1c-3.6,0-6.9-0.6-9.9-1.9c-3.1-1.3-5.7-3-8-5.2c-2.3-2.2-4-4.8-5.3-7.8
+        c-1.3-3-1.9-6.2-1.9-9.6c0-3.4,0.6-6.6,1.8-9.6c1.2-3,2.8-5.6,4.9-7.8c2.1-2.2,4.6-4,7.5-5.2C445.9,21.8,449,21.1,452.3,21.1z
+         M464.1,41.4c-0.1-1-0.3-2-0.8-3.2c-0.5-1.1-1.2-2.2-2.2-3.1c-0.9-0.9-2.2-1.7-3.6-2.3c-1.5-0.6-3.2-0.9-5.1-0.9
+        c-1.9,0-3.6,0.3-4.9,0.9c-1.4,0.6-2.6,1.4-3.5,2.3c-0.9,0.9-1.7,2-2.2,3.1c-0.5,1.1-0.8,2.2-0.8,3.3H464.1z" fill="#1D1D1B"></path>
+<path d="M201.4,93.4h11.8V155h29.4v11.2h-41.3V93.4z" fill="#1D1D1B"></path>
+<path d="M269.7,118.2c3.2,0,6.3,0.6,9.1,1.8c2.9,1.2,5.4,2.8,7.5,5c2.1,2.1,3.8,4.7,5.1,7.7c1.2,3,1.9,6.3,1.9,9.9
+        c0,0.5,0,1.1,0,1.9c0,0.8,0,1.6-0.1,2.6h-34.9c0.2,1.1,0.7,2.1,1.4,3.3c0.7,1.1,1.6,2.1,2.8,3.1c1.1,0.9,2.4,1.7,3.9,2.3
+        c1.5,0.6,3.2,0.9,5,0.9c2,0,3.8-0.2,5.4-0.7c1.6-0.5,2.9-1,4-1.6c1.2-0.7,2.4-1.5,3.4-2.4l5.9,8.9c-1.5,1.2-3.2,2.4-5.1,3.4
+        c-1.6,0.9-3.6,1.6-5.9,2.3c-2.3,0.7-4.9,1-7.7,1c-3.6,0-6.9-0.6-9.9-1.9c-3.1-1.3-5.7-3-8-5.2c-2.3-2.2-4-4.8-5.3-7.8
+        c-1.3-3-1.9-6.2-1.9-9.6c0-3.4,0.6-6.6,1.8-9.6c1.2-3,2.8-5.6,4.9-7.8c2.1-2.2,4.6-4,7.5-5.2C263.2,118.8,266.3,118.2,269.7,118.2z
+         M281.4,138.4c-0.1-1-0.3-2-0.8-3.2c-0.5-1.1-1.2-2.2-2.2-3.1c-1-1-2.2-1.7-3.6-2.3c-1.5-0.6-3.2-0.9-5.1-0.9
+        c-1.9,0-3.5,0.3-4.9,0.9c-1.4,0.6-2.6,1.3-3.5,2.3c-0.9,0.9-1.7,1.9-2.2,3.1c-0.5,1.1-0.8,2.2-0.8,3.3H281.4z" fill="#1D1D1B"></path>
+<path d="M347.5,119.3v46.8h-11V160c-0.9,1.4-1.9,2.6-3.3,3.7c-1.1,0.9-2.6,1.8-4.4,2.5c-1.8,0.8-4,1.1-6.5,1.1
+        c-3,0-5.9-0.6-8.7-1.8c-2.8-1.2-5.2-2.9-7.3-5.1c-2.1-2.2-3.7-4.8-5-7.7c-1.2-3-1.9-6.3-1.9-9.9c0-3.6,0.6-6.9,1.9-9.9
+        c1.2-3,2.9-5.6,5-7.7c2.1-2.2,4.5-3.9,7.3-5.1c2.8-1.2,5.7-1.8,8.7-1.8c2.4,0,4.6,0.4,6.4,1.1c1.8,0.8,3.3,1.6,4.4,2.5
+        c1.3,1.1,2.4,2.3,3.4,3.7v-6.1H347.5z M335.6,135.7c-0.7-1.2-1.6-2.3-2.7-3.3c-0.9-0.8-2.1-1.5-3.4-2.2c-1.4-0.7-3-1-4.9-1
+        c-2,0-3.8,0.4-5.4,1c-1.6,0.7-3,1.6-4.1,2.9c-1.1,1.2-2,2.6-2.6,4.3c-0.6,1.6-0.9,3.4-0.9,5.3c0,1.9,0.3,3.7,0.9,5.3
+        c0.6,1.6,1.4,3.1,2.6,4.3c1.1,1.2,2.5,2.2,4.1,2.9c1.6,0.7,3.4,1,5.4,1c1.9,0,3.6-0.3,4.9-1c1.4-0.7,2.5-1.4,3.4-2.3
+        c1.1-0.9,1.9-2,2.7-3.3V135.7z" fill="#1D1D1B"></path>
+<path d="M381.8,118.2c1,0,2.1,0.1,3.1,0.2c1,0.2,1.8,0.3,2.6,0.5c0.9,0.3,1.7,0.5,2.5,0.7l-4.1,10.7
+        c-0.4-0.1-0.9-0.3-1.5-0.5c-0.5-0.1-1.1-0.3-1.8-0.4c-0.7-0.1-1.5-0.2-2.3-0.2c-1.8,0-3.4,0.3-4.7,1c-1.3,0.7-2.4,1.4-3.2,2.2
+        c-1,0.9-1.8,2-2.6,3.2v30.6h-11.8v-46.8h11.2v6.8c0.8-1.4,1.9-2.8,3.1-3.9c1-1,2.4-1.9,4-2.8C377.8,118.6,379.6,118.2,381.8,118.2z
+        " fill="#1D1D1B"></path>
+<path d="M421,118.2c2.2,0,4.4,0.4,6.5,1.2c2.1,0.8,3.9,1.9,5.5,3.5c1.6,1.5,2.8,3.4,3.8,5.5
+        c0.9,2.2,1.4,4.7,1.4,7.5v30.3h-11.9v-27.3c0-3.4-0.9-5.8-2.7-7.3c-1.8-1.5-4-2.3-6.6-2.3c-1.5,0-2.8,0.3-4,1
+        c-1.2,0.7-2.1,1.4-2.9,2.1c-0.9,0.9-1.7,1.8-2.4,3v30.9H396v-46.8H407v6.8c0.9-1.4,1.9-2.8,3.3-3.9c1.1-1,2.6-1.9,4.3-2.8
+        C416.4,118.6,418.5,118.2,421,118.2z" fill="#1D1D1B"></path>
+</g>
+<polygon class="a-steps-logo__steps" fill="#DE00A5" points="161.1,0 161.1,55.2 108.4,55.2 108.4,103.8 55.2,103.8 55.2,152.2 0,152.2 0,166.2 69.1,166.2
+    69.1,117.7 122.4,117.7 122.4,69.1 175.1,69.1 175.1,0 "></polygon>
+</svg>
+
+</a>
+
+</div>
+<div class="o-main-header__tools">
+<div data-react-component-path="components/Partials/MainNavigation/UserCorner">
+<div data-hypernova-key="componentsPartialsMainNavigationUserCorner" data-hypernova-id="1a3c83a9-8a82-41dd-aedd-4112befad9dc"><div class="UserCorner-userCorner_2KYQU"><div class="UserCorner-notifications_3opnR"><div class="UserNotifications-notifications_2_b3G"><a aria-controls="user-notifications" aria-expanded="false" class="js-notifications-toggle" href="https://www.futurelearn.com/notifications" title="Your notifications"><svg class="Icon-icon_ISNxI Icon-sBreakpointSizemedium_3wZLF" height="32" viewBox="0 0 32 32" width="32"><path d="M11.42 29a5 5 0 009.16 0zM27 20v-6A11 11 0 0017 3.05V0h-2v3.05A11 11 0 005 14v6l-3 7h28zM5 25l2-5v-6a9 9 0 0118 0v6l2 5z"></path></svg></a></div><div class="m-popover m-popover--notifications" id="user-notifications"></div></div>&nbsp;<div class="UserCorner-avatar_E52yt"><div class="UserOptions-avatar_3-jak avatar-wrapper_1zpzN avatar-regular_25nhH"><a class="avatar-link_24BOm" href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793#user-options" title="Your account" aria-expanded="false" aria-controls="user-options"><img src="./SQL 2_files/thumbnail_aec14a7e-fb7b-436e-9c09-a779150d478c.jpg" alt="Abay Reushenov"></a></div><nav class="UserOptions-popover_1S7jU" id="user-options"><ul class="UserOptions-list_14kEQ"><li class="UserOptions-listItem_2muoN"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/your-learning" role="button" data-js-ahoy-track="true" data-ahoy-event="$click" data-ahoy-event-properties="{&quot;click_event_name&quot;:&quot;user-options-item-click&quot;}"><span class="ButtonStyles-button_2w0It ButtonStyles-tertiary_IVIeu ButtonStyles-medium_1bCjQ ButtonStyles-sBreakpointFullWidthtrue_3EZHP"><span class="ButtonStyles-content_39Mtu">Your learning</span></span></a></li><li class="UserOptions-listItem_2muoN"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/your-wishlist" role="button" data-js-ahoy-track="true" data-ahoy-event="$click" data-ahoy-event-properties="{&quot;click_event_name&quot;:&quot;user-options-item-click&quot;}"><span class="ButtonStyles-button_2w0It ButtonStyles-tertiary_IVIeu ButtonStyles-medium_1bCjQ ButtonStyles-sBreakpointFullWidthtrue_3EZHP"><span class="ButtonStyles-content_39Mtu">Wishlist</span></span></a></li><li class="UserOptions-listItem_2muoN"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/profile" role="button" data-js-ahoy-track="true" data-ahoy-event="$click" data-ahoy-event-properties="{&quot;click_event_name&quot;:&quot;user-options-item-click&quot;}"><span class="ButtonStyles-button_2w0It ButtonStyles-tertiary_IVIeu ButtonStyles-medium_1bCjQ ButtonStyles-sBreakpointFullWidthtrue_3EZHP"><span class="ButtonStyles-content_39Mtu">Profile</span></span></a></li><li class="UserOptions-listItem_2muoN"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/settings" role="button" data-js-ahoy-track="true" data-ahoy-event="$click" data-ahoy-event-properties="{&quot;click_event_name&quot;:&quot;user-options-item-click&quot;}"><span class="ButtonStyles-button_2w0It ButtonStyles-tertiary_IVIeu ButtonStyles-medium_1bCjQ ButtonStyles-sBreakpointFullWidthtrue_3EZHP"><span class="ButtonStyles-content_39Mtu">Settings</span></span></a></li><li class="UserOptions-listItem_2muoN"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/account" role="button" data-js-ahoy-track="true" data-ahoy-event="$click" data-ahoy-event-properties="{&quot;click_event_name&quot;:&quot;user-options-item-click&quot;}"><span class="ButtonStyles-button_2w0It ButtonStyles-tertiary_IVIeu ButtonStyles-medium_1bCjQ ButtonStyles-sBreakpointFullWidthtrue_3EZHP"><span class="ButtonStyles-content_39Mtu">Account</span></span></a></li><li class="UserOptions-listItem_2muoN"><form action="https://www.futurelearn.com/sign-in" method="POST" role="form" accept-charset="UTF-8" novalidate="" enctype="application/x-www-form-urlencoded" data-prevent-double-submission="true"><input type="hidden" name="_method" value="DELETE"><input type="hidden" name="authenticity_token" value="aXOSRl7aE1yTroY+DbxM2GQY3zJKGBL5M6EvjELuipyJzoE3ISe2EJVAlpeLiizk/WoU1s+mW5lq2KhjiKEYug=="><input type="hidden" name="utf8" value="✓"><button class="ButtonTag-button_1EfYL ButtonTag-sBreakpointFullWidthtrue_3Bt-x" type="submit"><span class="ButtonStyles-button_2w0It ButtonStyles-tertiary_IVIeu ButtonStyles-medium_1bCjQ ButtonStyles-sBreakpointFullWidthtrue_3EZHP"><span class="ButtonStyles-content_39Mtu">Sign out</span></span></button></form></li></ul></nav></div></div></div>
+<script type="application/json" data-hypernova-key="componentsPartialsMainNavigationUserCorner" data-hypernova-id="1a3c83a9-8a82-41dd-aedd-4112befad9dc"><!--{"userOptions":{"avatar":{"profileImage":{"colour":"ultramarine","fullName":"Abay Reushenov","imageUrl":"https://ugc.futurelearn.com/uploads/images/ae/c1/thumbnail_aec14a7e-fb7b-436e-9c09-a779150d478c.jpg","initials":"AR"},"profilePath":"/profiles/6957128","isBubble":false,"isReply":false,"isSmall":false,"isGrey":false},"signOut":"/sign-in"},"userNotifications":{"unreadCount":"0","unreadText":"You have 0 notifications","showBadge":false},"namespace":"fnWeQ6ylCQ3w","csrfToken":"aXOSRl7aE1yTroY+DbxM2GQY3zJKGBL5M6EvjELuipyJzoE3ISe2EJVAlpeLiizk/WoU1s+mW5lq2KhjiKEYug==","location":"/courses/introduction-to-databases-and-sql/1/steps/761793","prerender":true}--></script>
+</div>
+
+</div>
+<div class="m-run-header__title-wrapper">
+<div class="m-run-header__title">
+<h2 class="headline headline-primary m-run-header__title-text m-run-header__title-text--primary" lang="en">
+<a href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/todo/73876">Introduction to Databases and SQL</a>
+</h2>
+<span class="headline headline-secondary m-run-header__title-text">
+<a href="https://www.futurelearn.com/partners/raspberry-pi">Raspberry Pi Foundation</a>
+</span>
+
+</div>
+</div>
+</header>
+<div class="a-content a-content--contiguous">
+<nav aria-label="Course" class="m-run-nav__container m-run-nav__container--stretching">
+<ul class="m-run-nav">
+<li class="m-run-nav__item "><a class="m-run-nav__link" href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/todo/73876"><span class="a-icon a-icon--todo"><svg class="a-svg-icon a-svg-icon--todo " height="32.0" width="32.0"><use href="#icon-todo" xlink:href="#icon-todo"></use></svg></span> To do</a></li>
+<li class="m-run-nav__item "><a class="m-run-nav__link" href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/activity-feed"><span class="a-icon a-icon--activity"><svg class="a-svg-icon a-svg-icon--activity " height="32.0" width="32.0"><use href="#icon-activity" xlink:href="#icon-activity"></use></svg></span> Activity</a></li>
+<li class="m-run-nav__item "><a class="m-run-nav__link" href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/progress"><span class="a-icon a-icon--progress"><svg class="a-svg-icon a-svg-icon--progress " height="32.0" width="32.0"><use href="#icon-progress" xlink:href="#icon-progress"></use></svg></span> Progress</a></li>
+</ul>
+</nav>
+</div>
+</div>
+
+<div class="full-width-wrapper" id="main-content" lang="en" role="main" tabindex="-1">
+<article class="article-step" role="article">
+<div data-react-component-path="components/DesignSystem/FeedbackAndNotices/InCourseHeadsUp">
+<div data-hypernova-key="componentsDesignSystemFeedbackAndNoticesInCourseHeadsUp" data-hypernova-id="47a64dcd-0d1c-4dff-95e4-4375a8ce77f2"><div class="sectionContainer-wrapper_1ZqCW sectionContainer-alt_1jZd9"><div class="ApplicationContainer-wrapper_3i4UW"><div class="dismissable-dismissable_2bEF_"><div><form action="https://www.futurelearn.com/dismissed-messages?message=in_course_promotion%2F12874%2Fsecond_last" method="POST" class="dismissable-form_gaIlZ" role="form" accept-charset="UTF-8" novalidate="" enctype="application/x-www-form-urlencoded" data-prevent-double-submission="true"><input type="hidden" name="_method" value=""><input type="hidden" name="authenticity_token" value="Fizeo+TDeVHEmSdeemi17II1IjkQlYkv61JkM4qGb5j2kc3Smz7cHcJ3N/f8XtXQG0fp3ZUrwE+yK+PcQMn9vg=="><input type="hidden" name="utf8" value="✓"><div class="spacer-default_OnzHE spacer-all-1_9i2Nm"><button type="submit" class="dismissable-button_2ZSEP"><svg class="Icon-icon_ISNxI" height="32" viewBox="0 0 32 32" width="32"><path d="M25.98 3.98l-9.95 9.95L6.05 3.9 3.92 6.02l9.99 10.03-9.94 9.94 2.12 2.12 9.92-9.92 9.86 9.92 2.14-2.1-9.88-9.94L28.1 6.1l-2.12-2.12z"></path></svg><span class="dismissable-buttonLabel_26cts">Dismiss</span></button></div><input type="hidden" name="_iefix" value=""></form><div class="ApplicationContainer-wrapper_3i4UW"><div class="promo-wrapper_zXayW promo-isWide_2-59N"><div class="promo-mediaContainer_2Ne5B"><div class="Badge-wrapper_1FlSz Badge-lightGrey_FVww0"><svg class="Icon-icon_ISNxI Icon-sBreakpointSizexlarge_1AHOO Icon-black_1thkH" viewBox="0 0 32 32" height="32" width="32"><path d="M30.8 10.59h-7.52L18.16 4h6.72L23 2H8.88L.05 12l1.35 1.56 13.5 15.82 1.17 1.38 1.17-1.38 14.3-16.9.47-.55zM16.06 4.67l4.62 5.92h-9.24zM9.81 4H14l-5.15 6.59H4zm-6.5 8.61h5.33L13 24zm12.76 13.7l-5.24-13.67h10.46zm3.1-2.38l4.32-11.29h5.23z"></path></svg></div></div><h2 class="heading-wrapper_1at_r heading-sBreakpointAlignmentleft_Gh9ud heading-sBreakpointSizesmall_ig5_f heading-black_6_KIa heading-isRegular_1inPG">Keep access to this course.</h2><div class="promo-content_3SrYm">You have <strong>25 days left</strong> on this course. Upgrade or buy Unlimited now to learn at your own pace and keep access to this course after it expires.</div><div class="promo-cta_2_0YS"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/extra-benefits" role="button" data-js-ahoy-track="true" data-ahoy-event="$click" data-ahoy-event-properties="{&quot;promotion_position&quot;:&quot;step&quot;,&quot;promotion_type&quot;:&quot;access_expiring_soon&quot;,&quot;run_slug&quot;:&quot;introduction-to-databases-and-sql-1&quot;,&quot;click-event-name&quot;:&quot;in_course_promotion-cta&quot;}"><span class="ButtonStyles-button_2w0It ButtonStyles-primary_233BW ButtonStyles-medium_1bCjQ ButtonStyles-sBreakpointFullWidthfalse_eFtQI"><span class="ButtonStyles-content_39Mtu">Find out more</span></span></a></div></div></div></div></div></div></div></div>
+<script type="application/json" data-hypernova-key="componentsDesignSystemFeedbackAndNoticesInCourseHeadsUp" data-hypernova-id="47a64dcd-0d1c-4dff-95e4-4375a8ce77f2"><!--{"promoProps":{"media":{"type":"icon","icon":"extra_benefits"},"headingText":"Keep access to this course.","contentText":{"__html":"You have <strong&gt;25 days left</strong&gt; on this course. Upgrade or buy Unlimited now to learn at your own pace and keep access to this course after it expires."},"ctaText":"Find out more","ctaHref":"/courses/introduction-to-databases-and-sql/1/extra-benefits","tracking":{"data-ahoy-event":"$click","data-ahoy-event-properties":"{\"promotion_position\":\"step\",\"promotion_type\":\"access_expiring_soon\",\"run_slug\":\"introduction-to-databases-and-sql-1\",\"click-event-name\":\"in_course_promotion-cta\"}"}},"closePath":"/dismissed-messages?message=in_course_promotion%2F12874%2Fsecond_last","namespace":"eOV5RZervjHt","csrfToken":"Fizeo+TDeVHEmSdeemi17II1IjkQlYkv61JkM4qGb5j2kc3Smz7cHcJ3N/f8XtXQG0fp3ZUrwE+yK+PcQMn9vg==","location":"/courses/introduction-to-databases-and-sql/1/steps/761793","prerender":true}--></script>
+</div>
+
+
+<section class="a-section a-section--overflow">
+<div class="a-content">
+
+<div class="m-step-header">
+<div class="m-step-header__main">
+<div class="m-step-header__stepnumber">
+<div class="a-stepnumber " title="Not Started">2.9</div>
+</div>
+</div>
+<div class="m-learner-progress">
+<span class="m-learner-progress__label">
+4 more steps to go
+</span>
+<div class="m-learner-progress__bar">
+<span class="m-learner-progress__bar__fill" style="width: 67%"></span>
+</div>
+</div>
+
+</div>
+
+<div class="body">
+<div class="u-clearfix">
+<div class="a-step-title">
+<h1 class="a-article-h1 title">
+SQL injections
+</h1>
+<div id="comments-link-heading"><div><a href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793/comments" class="m-icon-with-text m-icon-with-text--comments m-icon-with-text--comments-top"><span class="m-icon-with-text__text">50 comments</span></a></div></div>
+</div>
+
+<div class="u-typography-bold-intro">
+<p>You have seen how to create SQL statements in a DBMS; you can also SQL to gain unauthorised access to a DBMS stored online. In this step, you will learn about how SQL statements can be used to compromise SQL databases, using the internet.</p>
+
+<h3 id="tricking-the-database">Tricking the database</h3>
+<p>When a user signs into a website that requires a username and password, SQL is used to send a request to the database containing their username and password. If the combination is found, the user’s account is returned, and if it isn’t found, an error is returned (for example, ‘Wrong username or password’).</p>
+
+<p>An <strong>SQL injection</strong> is an attack that exploits the way in which requests to the database are formed. Instead of submitting a username and password, the attacker can submit two strings that trick the database into giving up its information. The characters in the strings that allow this attack are called <strong>bad characters</strong>.</p>
+
+<p>The request to the database might look something like this:</p>
+
+<pre><code>SELECT row FROM database WHERE Username = "username" and Password = "password"
+</code></pre>
+
+<p>When the user enters their username and password, these values replace ‘username’ and ‘password’ in the request. For example, if your username is ‘GoTfan’ and your password is ‘password1’, the request becomes:</p>
+
+<pre><code>SELECT row FROM database WHERE Username = "GoTfan" and Password = "password1"
+</code></pre>
+
+<p>This request says, ‘Go through each row in the database and if both statements below are true, return the account.’</p>
+
+<ul>
+  <li>Username = “GoTfan”</li>
+  <li>Password = “password1”</li>
+</ul>
+
+<p><img src="https://rpf-futurelearn.s3-eu-west-1.amazonaws.com/Databases+and+SQL/Animations/FL-Databases-2.9-SQL_Injection_gif_1.gif" alt="An animated gif displaying a username and password being entered into a website and comparing them to entries in a database."></p>
+
+<p>If an attacker was able to input a string such that both statements are always true, it would trick the database into returning all of the accounts.</p>
+
+<p>To do this, the attacker could submit the following for both the username and password:</p>
+
+<pre><code>"x or ""x=x"
+</code></pre>
+
+<p>If you input these values into the request, you get:</p>
+
+<pre><code>SELECT row FROM database WHERE Username = ""x or ""x=x"" and Password = ""x or ""x=x""
+</code></pre>
+
+<p>This request says, ‘Go through each row in the database and if both the statements below are true, return the account.’</p>
+
+<ul>
+  <li>(Username = x) OR (x=x)</li>
+  <li>(Password = x) OR (x=x)</li>
+</ul>
+
+<p>This query is requesting an account where the username and password are both “x or x=x”.</p>
+
+<p><img src="https://rpf-futurelearn.s3-eu-west-1.amazonaws.com/Databases+and+SQL/Animations/FL-Databases-2.9-SQL_Injection_gif_2.gif" alt="An animated gif showing the statement &quot;&quot;x or&quot; &quot;x=x&quot;&quot; being entered into a website and gaining access to the database by returning a TRUE statement for both fields."></p>
+
+<p>Alternatively, you could work out which characters cannot be used to carry out an SQL attack, and only allow users to create usernames and passwords from these characters. You could then reject any submission that contains anything other than good characters.</p>
+
+<h3 id="question">Question</h3>
+
+<p>There are many other forms of SQL injection. Can you find an example to share in the comments section?</p>
+
+</div>
+
+<div class="step-progress">
+<div class="m-form__form-actions u-clearfix">
+<div id="comments-link-step"><div><a href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793/comments" class="m-icon-with-text m-icon-with-text--comments"><span class="m-icon-with-text__text">50 comments</span></a></div></div>
+<div data-react-component-path="components/DesignSystem/ProgressIndicators/MarkAsComplete">
+<div data-hypernova-key="componentsDesignSystemProgressIndicatorsMarkAsComplete" data-hypernova-id="331c1ab3-b025-4937-8a0f-7e73d949bef3"><form action="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793/progress?from_react=true" method="POST" class="markAsComplete-wrapper_iaXzH markAsComplete-isStepProgress_2KwnL" role="form" accept-charset="UTF-8" novalidate="" enctype="application/x-www-form-urlencoded"><input type="hidden" name="authenticity_token" value="mswUaEnwj5vTOh0KxTxvBNBdSer16RLHPeYrdwdqS5N6cQcZNg0q19XUDaNDCg84SS+CDnBXW6dkn6yYzSXZtQ=="><input type="hidden" name="utf8" value="✓"><button type="submit" class="markAsComplete-trigger_2gzZV" aria-live="polite" pressed="false"><span class="markAsComplete-label_1qx5k">Mark as complete</span></button><svg class="markAsComplete-tick_U235E" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 31.3"><path fill="#fff" d="M31.2 2.3L12.4 21.9l-7-6.7L2 18.7l10.6 10.2L34.7 5.8z"></path></svg><input type="hidden" name="_iefix" value=""></form></div>
+<script type="application/json" data-hypernova-key="componentsDesignSystemProgressIndicatorsMarkAsComplete" data-hypernova-id="331c1ab3-b025-4937-8a0f-7e73d949bef3"><!--{"stepCompleted":false,"canCompleteStep":true,"action":{"action":"/courses/introduction-to-databases-and-sql/1/steps/761793/progress?from_react=true","method":"POST"},"isStepProgress":true,"namespace":"YLQG8y2Lm6AC","csrfToken":"mswUaEnwj5vTOh0KxTxvBNBdSer16RLHPeYrdwdqS5N6cQcZNg0q19XUDaNDCg84SS+CDnBXW6dkn6yYzSXZtQ==","location":"/courses/introduction-to-databases-and-sql/1/steps/761793","prerender":true}--></script>
+</div>
+
+</div>
+<div data-react-component-path="components/DesignSystem/Navigation/StepNav">
+<div data-hypernova-key="componentsDesignSystemNavigationStepNav" data-hypernova-id="7a1a04d3-9e66-4a20-a7ce-caf9ac33667d"><div class="stepNav-wrapper_3QQar"><a href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761789" class="stepNav-item_XdjX7 stepNav-previousItem_1044q"><div class="stepNav-arrow_78NS9"><svg class="Icon-icon_ISNxI" viewBox="0 0 32 32"><path d="M10.35 29.47l-1.41-1.42 12.02-12.02L8.94 4.01l1.41-1.41 13.44 13.43-13.44 13.44z"></path></svg></div><span class="stepNav-itemLabel_3whwc">Changing the database<span class="stepNav-itemSubLabel_eWpO1">video</span></span></a><a href="https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761795" class="stepNav-item_XdjX7 stepNav-nextItem_38pde"><div class="stepNav-arrow_78NS9"><svg class="Icon-icon_ISNxI" viewBox="0 0 32 32"><path d="M10.35 29.47l-1.41-1.42 12.02-12.02L8.94 4.01l1.41-1.41 13.44 13.43-13.44 13.44z"></path></svg></div><span class="stepNav-itemLabel_3whwc">Find the SQL statement<span class="stepNav-itemSubLabel_eWpO1">quiz</span></span></a></div></div>
+<script type="application/json" data-hypernova-key="componentsDesignSystemNavigationStepNav" data-hypernova-id="7a1a04d3-9e66-4a20-a7ce-caf9ac33667d"><!--{"previousLink":{"label":"Changing the database","subLabel":"video","href":"/courses/introduction-to-databases-and-sql/1/steps/761789","direction":"previous"},"nextLink":{"label":"Find the SQL statement","subLabel":"quiz","href":"/courses/introduction-to-databases-and-sql/1/steps/761795","classes":[],"active":false,"direction":"next"},"namespace":"T3PoRWmeGeil","csrfToken":"c2XwGHseU/unquIhJjTUIK3/ZpA8dvIKzDPkwHCy2TWT2ONpBOP2t6FE8oigArQcNI2tdLnIu2qVSmMvuv1LEw==","location":"/courses/introduction-to-databases-and-sql/1/steps/761793","prerender":true}--></script>
+</div>
+
+</div>
+
+</div>
+<div class="a-content a-content--tight-top">
+<section class="meta">
+</section>
+</div>
+
+</div>
+</div>
+</section>
+</article>
+<section class="a-section comments-container" id="fl-comments-container">
+<div class="a-content a-content--contiguous-top">
+<div data-react-component-path="components/Partials/StepComments">
+<div data-hypernova-key="componentsPartialsStepComments" data-hypernova-id="be1034c1-60c5-467a-afa1-bad66ac6d2c8"><div><div class="feedbackMessage-wrapper_DkAhL" tabindex="0"><div class="feedbackMessage-message_5oVJl"><div class="feedbackMessage-iconWrapper_r-aaJ" aria-hidden="true"><svg class="Icon-icon_ISNxI Icon-sBreakpointSizemedium_3wZLF Icon-black_1thkH" height="32" viewBox="0 0 32 32" width="32"><path d="M16 4.7C9.7 4.7 4.7 9.7 4.7 16s5 11.3 11.3 11.3 11.3-5 11.3-11.3S22.3 4.7 16 4.7zm0 21.1c-5.4 0-9.8-4.4-9.8-9.8s4.4-9.8 9.8-9.8 9.8 4.4 9.8 9.8-4.4 9.8-9.8 9.8z" stroke-width="0"></path><path d="M17.3 11.6c-.4.4-.8.5-1.3.5s-.9-.1-1.3-.5-.5-.8-.5-1.3.1-.9.5-1.3.8-.5 1.3-.5.9.1 1.3.5.5.8.5 1.3c0 .6-.2.9-.5 1.3zm-2.7 1.9h2.6v9.8h-2.6z" stroke-width="0"></path></svg></div><p class="feedbackMessage-text_jPIGF">Your session has expired, please sign in again to see comments.</p></div></div></div></div>
+<script type="application/json" data-hypernova-key="componentsPartialsStepComments" data-hypernova-id="be1034c1-60c5-467a-afa1-bad66ac6d2c8"><!--{"ctaLink":"","type":"Comments","commentsCount":50,"commentLinks":[{"commentsCount":50,"commentsOpen":false,"commentsLink":"/courses/introduction-to-databases-and-sql/1/steps/761793/comments","id":"comments-link-step","type":"step"},{"commentsCount":50,"commentsOpen":false,"commentsLink":"/courses/introduction-to-databases-and-sql/1/steps/761793/comments","id":"comments-link-heading","type":"heading"}],"commentsUrl":"/courses/introduction-to-databases-and-sql/1/steps/761793/comments","commentsEndpoint":"/courses/introduction-to-databases-and-sql/1/steps/761793/comments","synchronous":false,"commentHint":{"hasDismissedHint":true,"action":"/user/navigation_hint","method":"DELETE","commentDataSharingHint":"comment-data-sharing","originalUrl":"https://www.futurelearn.com/courses/introduction-to-databases-and-sql/1/steps/761793"},"pinnedComments":[],"comments":[],"filters":{"action":"/courses/introduction-to-databases-and-sql/1/steps/761793/comments","method":"GET","selectedFilter":"everyone","selectedSort":"newest","options":{"filter":{"label":"Show","name":"filter","choices":[{"name":"All comments","value":"everyone"},{"name":"Bookmarked","value":"bookmarked"},{"name":"Your comments","value":"your_comments"},{"name":"Following","value":"following_comments"}]},"sort":{"label":"Sort by","name":"sort","choices":[{"name":"Newest","value":"newest"},{"name":"Oldest","value":"oldest"},{"name":"Most liked","value":"most_liked"}]}},"placeholderMessages":{"emptyMessages":{"everyone":"Nobody has commented on this step yet. Why not be the first?","bookmarked":"You haven't bookmarked any comments on this step yet.","your_comments":"You haven’t commented on this step yet.","following_comments":"People you’re following haven’t commented on this step yet. Try following more people."},"disabledMessages":{"everyone":"It is no longer possible to add comments to this course.","bookmarked":"You haven't bookmarked any comments on this step yet.","your_comments":"It is no longer possible to add comments to this course.","following_comments":"People you’re following haven’t commented on this step."}}},"pagination":{"currentPage":null,"total":null,"href":"/courses/introduction-to-databases-and-sql/1/steps/761793/comments"},"currentUser":{"userName":"Abay Reushenov","avatar":{"profileImage":{"colour":"ultramarine","fullName":"Abay Reushenov","imageUrl":"https://ugc.futurelearn.com/uploads/images/ae/c1/thumbnail_aec14a7e-fb7b-436e-9c09-a779150d478c.jpg","initials":"AR"},"profilePath":"/profiles/6957128","isBubble":false,"isReply":false,"isSmall":true,"isGrey":true},"profilePath":"/profiles/6957128","handle":"AbayReushenov","publicRole":null},"actions":{"post":{"action":{"href":"/courses/introduction-to-databases-and-sql/1/steps/761793/comments","method":"POST"}},"mention":{"action":{"href":"/mentionable-users?commentable_sgid=BAh7CEkiCGdpZAY6BkVUSSIjZ2lkOi8vZnV0dXJlLWxlYXJuL1N0ZXAvNzYxNzkzBjsAVEkiDHB1cnBvc2UGOwBUSSIMZGVmYXVsdAY7AFRJIg9leHBpcmVzX2F0BjsAVEkiHTIwMjAtMDYtMjhUMTY6MjE6MzUuNDIwWgY7AFQ%3D--ca962c1c242f13ff23f7618830ed2f3a61537e65","method":"GET"}}},"commentingDisabled":false,"namespace":"JrGig2ICom3r","csrfToken":"cpr4pqFsO1UM98ALhSD3SgzGt71eGnB6CDInfhLyAbiSJ+vX3pGeGQoZ0KIDFpd2lbR8WdukORpRS6CR2L2Tng==","location":"/courses/introduction-to-databases-and-sql/1/steps/761793","prerender":true}--></script>
+</div>
+
+</div>
+</section>
+
+
+
+
+</div>
+</div>
+
+
+<footer class="m-page-footer">
+<div data-react-component-path="components/Partials/Footer">
+<div data-hypernova-key="componentsPartialsFooter" data-hypernova-id="5d69f42e-3060-479a-a1fd-420fc79feb23"><div><div class="background-background_3k8ZA background-cool-grey_2jVQi"><div class="background-offsetPadding_3ZPLw"><div class="Footer-spacer_1KTX4"><div class="Footer-container_3_IRm"><div class="Grid-grid_3812y Grid-sBreakpointColumns1_dGocb Grid-mBreakpointColumns3_2pBFb Grid-lBreakpointColumns6_2nQHl Grid-sBreakpointSpacing5_2pPJo Grid-mBreakpointSpacing5_7Tn6u Grid-lBreakpointSpacing7_OQPjC"><div class="Footer-links_1dY7N"><div class="stack-wrapper_3QJH3"><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><h3 class="heading-wrapper_1at_r heading-sBreakpointAlignmentleft_Gh9ud heading-sBreakpointSizesmall_ig5_f heading-white_2sQJF heading-isRegular_1inPG">About FutureLearn</h3></div><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><ul class="stack-wrapper_3QJH3"><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/about-futurelearn"><div class="Footer-link_lJwYo">Our story</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/about-futurelearn/team"><div class="Footer-link_lJwYo">Our team</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/about-futurelearn/our-values"><div class="Footer-link_lJwYo">Our values</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/about-futurelearn/our-learners"><div class="Footer-link_lJwYo">Our learners</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/blog"><div class="Footer-link_lJwYo">Our blog</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/about/jobs"><div class="Footer-link_lJwYo">Jobs</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/press-releases"><div class="Footer-link_lJwYo">Press</div></a></li></ul></div></div></div><div class="Footer-links_1dY7N"><div class="stack-wrapper_3QJH3"><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><h3 class="heading-wrapper_1at_r heading-sBreakpointAlignmentleft_Gh9ud heading-sBreakpointSizesmall_ig5_f heading-white_2sQJF heading-isRegular_1inPG">Learning with FutureLearn</h3></div><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><ul class="stack-wrapper_3QJH3"><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/using-futurelearn"><div class="Footer-link_lJwYo">Using our platform</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/using-futurelearn/why-it-works"><div class="Footer-link_lJwYo">An effective way to&nbsp;learn</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/learning-guide"><div class="Footer-link_lJwYo">Learning guide</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/proof-of-learning/certificate-of-achievement"><div class="Footer-link_lJwYo">Certificates</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/unlimited"><div class="Footer-link_lJwYo">Unlimited</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://shop.futurelearn.com/"><div class="Footer-link_lJwYo">Shop</div></a></li></ul></div></div></div><div class="Footer-links_1dY7N"><div class="stack-wrapper_3QJH3"><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><h3 class="heading-wrapper_1at_r heading-sBreakpointAlignmentleft_Gh9ud heading-sBreakpointSizesmall_ig5_f heading-white_2sQJF heading-isRegular_1inPG">Need some help?</h3></div><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><ul class="stack-wrapper_3QJH3"><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://futurelearn.zendesk.com/hc/"><div class="Footer-link_lJwYo">FAQ</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/about/child-safety"><div class="Footer-link_lJwYo">Child safety</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/about/contact-us"><div class="Footer-link_lJwYo">Contact</div></a></li></ul></div></div></div><div class="Footer-links_1dY7N"><div class="stack-wrapper_3QJH3"><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><h3 class="heading-wrapper_1at_r heading-sBreakpointAlignmentleft_Gh9ud heading-sBreakpointSizesmall_ig5_f heading-white_2sQJF heading-isRegular_1inPG">Developing Skills</h3></div><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><ul class="stack-wrapper_3QJH3"><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/career-advice"><div class="Footer-link_lJwYo">Career advice</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/business"><div class="Footer-link_lJwYo">FutureLearn for Business</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://try.futurelearn.com/courses-and-campus"><div class="Footer-link_lJwYo">FutureLearn Campus</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://try.futurelearn.com/students-and-schools"><div class="Footer-link_lJwYo">FutureLearn Schools</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/healthcare-training"><div class="Footer-link_lJwYo">Healthcare training</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/courses/collections"><div class="Footer-link_lJwYo">Course collections</div></a></li></ul></div></div></div><div class="Footer-links_1dY7N"><div class="stack-wrapper_3QJH3"><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><h3 class="heading-wrapper_1at_r heading-sBreakpointAlignmentleft_Gh9ud heading-sBreakpointSizesmall_ig5_f heading-white_2sQJF heading-isRegular_1inPG">Course Providers</h3></div><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><ul class="stack-wrapper_3QJH3"><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/partners"><div class="Footer-link_lJwYo">Current partners</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/partners/become-a-partner"><div class="Footer-link_lJwYo">Become a partner</div></a></li></ul></div></div></div><div class="Footer-links_1dY7N"><div class="stack-wrapper_3QJH3"><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><h3 class="heading-wrapper_1at_r heading-sBreakpointAlignmentleft_Gh9ud heading-sBreakpointSizesmall_ig5_f heading-white_2sQJF heading-isRegular_1inPG">Small Print</h3></div><div class="stack-item_2B8j2 stack-sBreakpointSpacing4_dNW0N"><ul class="stack-wrapper_3QJH3"><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/terms"><div class="Footer-link_lJwYo">Terms and conditions</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/terms/privacy-policy"><div class="Footer-link_lJwYo">Privacy policy</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/terms/cookie-policy"><div class="Footer-link_lJwYo">Cookies</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/terms/code-of-conduct"><div class="Footer-link_lJwYo">Code of conduct</div></a></li><li class="stack-item_2B8j2 stack-sBreakpointSpacing2_1CtM-"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/terms/accessibility-policy"><div class="Footer-link_lJwYo">Accessibility policy</div></a></li></ul></div></div></div></div></div></div></div></div><div class="background-background_3k8ZA background-black_3Og3D"><div class="background-offsetPadding_3ZPLw"><div class="Footer-spacer_1KTX4"><div class="Footer-container_3_IRm"><div class="align-wrapper_2JXrs align-sBreakpointDirectionvertical_2FqWe align-mBreakpointDirectionhorizontal_1TKqI"><div class="align-itemsWrapper_1CwEr align-sBreakpointSpacing5_2IghE align-sBreakpointAlignspaceBetween_Ymup7 align-sBreakpointAlignItemscenter_VlU-J align-noWrap_1NLM4"><div class="align-item_2NQyS"><div class="align-wrapper_2JXrs align-sBreakpointDirectionhorizontal_U72_n"><ul class="align-itemsWrapper_1CwEr align-sBreakpointSpacing4_2h1pW align-sBreakpointAlignstart_1MiBm align-sBreakpointAlignItemscenter_VlU-J align-noWrap_1NLM4"><li class="align-item_2NQyS"><a href="https://twitter.com/FutureLearn" target="_blank" rel="noopener noreferrer" title="@futurelearn on Twitter"><span class="visuallyHidden-wrapper_s-Kvx">Twitter</span><svg viewBox="0 0 32 32" class="Icon-icon_ISNxI Icon-sBreakpointSizexlarge_1AHOO Icon-white_qsGzQ"><path d="M25.92 7.57a8.57 8.57 0 01-2.73 1 4.32 4.32 0 00-3.13-1.34 4.26 4.26 0 00-4.29 4.23 3.77 3.77 0 00.11 1A12.22 12.22 0 017 8a4.16 4.16 0 001.33 5.64 4.39 4.39 0 01-1.95-.53 4.25 4.25 0 003.45 4.15 4.67 4.67 0 01-1.13.15 4.28 4.28 0 01-.81-.08 4.3 4.3 0 004 2.93 8.7 8.7 0 01-5.29 1.9 8.47 8.47 0 01-1-.06 12.29 12.29 0 006.56 1.9 12 12 0 0012.21-12v-.55a8.57 8.57 0 002.13-2.21 8.52 8.52 0 01-2.5.67 4.25 4.25 0 001.89-2.34z"></path></svg></a></li><li class="align-item_2NQyS"><a href="https://www.facebook.com/FutureLearn" target="_blank" rel="noopener noreferrer" title="FutureLearn on Facebook"><span class="visuallyHidden-wrapper_s-Kvx">Facebook</span><svg viewBox="0 0 32 32" class="Icon-icon_ISNxI Icon-sBreakpointSizexlarge_1AHOO Icon-white_qsGzQ"><path d="M13.31 26h4V16h3l.36-4h-3.21v-1.6a.85.85 0 01.88-1h2.24V6H17.5a3.91 3.91 0 00-4.22 4.19V12h-2v4h2v10z"></path></svg></a></li><li class="align-item_2NQyS"><a href="http://www.linkedin.com/company/futurelearn" target="_blank" rel="noopener noreferrer" title="FutureLearn on LinkedIn"><span class="visuallyHidden-wrapper_s-Kvx">LinkedIn</span><svg viewBox="0 0 32 32" class="Icon-icon_ISNxI Icon-sBreakpointSizexlarge_1AHOO Icon-white_qsGzQ"><path d="M6 12.67h4.67V26H6zm2.33-2A2.33 2.33 0 106 8.35a2.33 2.33 0 002.33 2.33zm17.66 8c0-3.6-.77-6-5-6-2 0-3.37.75-3.92 1.8h-.06v-1.8h-3.68V26h3.89v-6.61c0-1.74.33-3.43 2.48-3.43S22 18 22 19.5V26h4v-7.32z"></path></svg></a></li><li class="align-item_2NQyS"><a href="http://www.youtube.com/channel/UC3i5AS_kCaFppoMwULYb99g" target="_blank" rel="noopener noreferrer" title="FutureLearn on YouTube"><span class="visuallyHidden-wrapper_s-Kvx">YouTube</span><svg viewBox="0 0 32 32" class="Icon-icon_ISNxI Icon-sBreakpointSizexlarge_1AHOO Icon-white_qsGzQ"><path class="cls-1" d="M28.31 9.81a3.2 3.2 0 00-2.26-2.27c-2-.54-10-.54-10-.54s-8 0-10 .54a3.18 3.18 0 00-2.22 2.27A33.34 33.34 0 003.29 16a33.34 33.34 0 00.54 6.19 3.18 3.18 0 002.26 2.27c2 .54 10 .54 10 .54s8 0 10-.54a3.2 3.2 0 002.26-2.27 34 34 0 00.49-6.19 34 34 0 00-.53-6.19zm-14.85 10V12.2l6.67 3.8z"></path></svg></a></li></ul></div></div><div class="align-item_2NQyS"><a href="https://www.futurelearn.com/" title="FutureLearn - Learning For Life"><svg class="Footer-logo_TOLYL" height="40" viewBox="0 0 475.9 167.6"><g fill="white"><path d="M213.2 28.2h27.2v11.2h-27.2v29.7h-11.8V0h41v11.2h-29.1l-.1 17z" class="st0"></path><path d="M267 70.3c-2.2 0-4.4-.4-6.5-1.2-2.1-.8-3.9-1.9-5.5-3.5-1.6-1.5-2.8-3.4-3.8-5.5-1-2.2-1.4-4.7-1.4-7.5V22.3h11.8v27.1c0 3.5.8 6 2.4 7.6s3.9 2.3 6.9 2.3c1.5 0 2.8-.3 4-.9 1.2-.6 2.1-1.3 2.9-2 .9-.8 1.7-1.7 2.4-2.9V22.3h11.9v46.8H281v-6.8c-1 1.5-2.1 2.9-3.5 4-1.1 1-2.6 1.9-4.3 2.7-1.8.9-3.8 1.3-6.2 1.3z" class="st0"></path><path d="M299.9 22.3h9.2V8.4H321v13.9h14V33h-14.1v18.9c0 1.5.2 2.6.5 3.6.3.9.8 1.7 1.4 2.3s1.2 1 2 1.2c.7.2 1.5.3 2.3.3.7 0 1.3-.1 1.9-.2.6-.2 1.1-.3 1.6-.6l1.5-.9 4.3 9.7c-.9.6-1.9 1.1-3.1 1.6-1 .4-2.2.7-3.5 1-1.4.3-2.9.5-4.6.5-2.3 0-4.4-.4-6.4-1.2-1.9-.8-3.6-1.9-5-3.4-1.4-1.4-2.5-3.2-3.4-5.2-.8-2-1.2-4.3-1.2-6.8V33H300l-.1-10.7z" class="st0"></path><path d="M360.7 70.3c-2.2 0-4.4-.4-6.5-1.2-2.1-.8-3.9-1.9-5.5-3.5-1.6-1.5-2.8-3.4-3.8-5.5-1-2.2-1.4-4.7-1.4-7.5V22.3h11.9v27.1c0 3.5.8 6 2.4 7.6s3.9 2.3 6.9 2.3c1.5 0 2.8-.3 4-.9 1.2-.6 2.1-1.3 2.9-2 .9-.8 1.7-1.7 2.4-2.9V22.3h11.9v46.8h-11.1v-6.8c-1 1.5-2.1 2.9-3.5 4-1.1 1-2.6 1.9-4.3 2.7-1.9.9-3.9 1.3-6.3 1.3z" class="st0"></path><path d="M420.5 21.1c1.1 0 2.1.1 3.1.2 1 .2 1.8.4 2.6.5.9.3 1.7.5 2.5.7l-4.2 10.7c-.4-.1-.9-.3-1.5-.5-.5-.1-1.1-.3-1.8-.4-.7-.1-1.5-.2-2.3-.2-1.8 0-3.4.3-4.7 1-1.3.7-2.4 1.4-3.2 2.2-1 .9-1.8 2-2.6 3.2v30.6h-11.8V22.3h11.3v6.8c.9-1.4 1.9-2.8 3.1-4 1.1-1 2.4-1.9 4-2.8 1.5-.7 3.4-1.2 5.5-1.2z" class="st0"></path><path d="M452.3 21.1c3.2 0 6.3.6 9.1 1.8 2.9 1.2 5.4 2.9 7.5 5s3.8 4.7 5.1 7.7c1.2 3 1.9 6.3 1.9 9.9v1.9c0 .8 0 1.6-.1 2.6h-34.9c.2 1.1.6 2.1 1.4 3.3.7 1.1 1.6 2.1 2.8 3.1 1.1.9 2.4 1.7 3.9 2.3s3.2.9 5 .9c2 0 3.8-.2 5.4-.7s2.9-1 4-1.6c1.3-.7 2.4-1.5 3.4-2.4l5.9 8.9c-1.5 1.2-3.2 2.4-5.1 3.4-1.6.9-3.6 1.6-5.9 2.3-2.3.7-4.9 1-7.7 1-3.6 0-6.9-.6-9.9-1.9-3.1-1.3-5.7-3-8-5.2s-4-4.8-5.3-7.8-1.9-6.2-1.9-9.6c0-3.4.6-6.6 1.8-9.6 1.2-3 2.8-5.6 4.9-7.8s4.6-4 7.5-5.2c2.8-1.6 5.9-2.3 9.2-2.3zm11.8 20.3c-.1-1-.3-2-.8-3.2-.5-1.1-1.2-2.2-2.2-3.1-.9-.9-2.2-1.7-3.6-2.3-1.5-.6-3.2-.9-5.1-.9s-3.6.3-4.9.9c-1.4.6-2.6 1.4-3.5 2.3-.9.9-1.7 2-2.2 3.1s-.8 2.2-.8 3.3l23.1-.1z" class="st0"></path><path d="M201.4 93.4h11.8V155h29.4v11.2h-41.3V93.4h.1z" class="st0"></path><path d="M269.7 118.2c3.2 0 6.3.6 9.1 1.8 2.9 1.2 5.4 2.8 7.5 5 2.1 2.1 3.8 4.7 5.1 7.7 1.2 3 1.9 6.3 1.9 9.9v1.9c0 .8 0 1.6-.1 2.6h-34.9c.2 1.1.7 2.1 1.4 3.3.7 1.1 1.6 2.1 2.8 3.1 1.1.9 2.4 1.7 3.9 2.3s3.2.9 5 .9c2 0 3.8-.2 5.4-.7s2.9-1 4-1.6c1.2-.7 2.4-1.5 3.4-2.4l5.9 8.9c-1.5 1.2-3.2 2.4-5.1 3.4-1.6.9-3.6 1.6-5.9 2.3s-4.9 1-7.7 1c-3.6 0-6.9-.6-9.9-1.9-3.1-1.3-5.7-3-8-5.2s-4-4.8-5.3-7.8-1.9-6.2-1.9-9.6c0-3.4.6-6.6 1.8-9.6s2.8-5.6 4.9-7.8c2.1-2.2 4.6-4 7.5-5.2 2.7-1.7 5.8-2.3 9.2-2.3zm11.7 20.2c-.1-1-.3-2-.8-3.2-.5-1.1-1.2-2.2-2.2-3.1-1-1-2.2-1.7-3.6-2.3-1.5-.6-3.2-.9-5.1-.9s-3.5.3-4.9.9c-1.4.6-2.6 1.3-3.5 2.3-.9.9-1.7 1.9-2.2 3.1-.5 1.1-.8 2.2-.8 3.3h23.1v-.1z" class="st0"></path><path d="M347.5 119.3v46.8h-11V160c-.9 1.4-1.9 2.6-3.3 3.7-1.1.9-2.6 1.8-4.4 2.5-1.8.8-4 1.1-6.5 1.1-3 0-5.9-.6-8.7-1.8-2.8-1.2-5.2-2.9-7.3-5.1-2.1-2.2-3.7-4.8-5-7.7-1.2-3-1.9-6.3-1.9-9.9 0-3.6.6-6.9 1.9-9.9 1.2-3 2.9-5.6 5-7.7 2.1-2.2 4.5-3.9 7.3-5.1s5.7-1.8 8.7-1.8c2.4 0 4.6.4 6.4 1.1 1.8.8 3.3 1.6 4.4 2.5 1.3 1.1 2.4 2.3 3.4 3.7v-6.1h11v-.2zm-11.9 16.4c-.7-1.2-1.6-2.3-2.7-3.3-.9-.8-2.1-1.5-3.4-2.2-1.4-.7-3-1-4.9-1-2 0-3.8.4-5.4 1-1.6.7-3 1.6-4.1 2.9-1.1 1.2-2 2.6-2.6 4.3-.6 1.6-.9 3.4-.9 5.3s.3 3.7.9 5.3 1.4 3.1 2.6 4.3c1.1 1.2 2.5 2.2 4.1 2.9s3.4 1 5.4 1c1.9 0 3.6-.3 4.9-1 1.4-.7 2.5-1.4 3.4-2.3 1.1-.9 1.9-2 2.7-3.3v-13.9z" class="st0"></path><path d="M381.8 118.2c1 0 2.1.1 3.1.2 1 .2 1.8.3 2.6.5.9.3 1.7.5 2.5.7l-4.1 10.7c-.4-.1-.9-.3-1.5-.5-.5-.1-1.1-.3-1.8-.4-.7-.1-1.5-.2-2.3-.2-1.8 0-3.4.3-4.7 1-1.3.7-2.4 1.4-3.2 2.2-1 .9-1.8 2-2.6 3.2v30.6H358v-46.8h11.2v6.8c.8-1.4 1.9-2.8 3.1-3.9 1-1 2.4-1.9 4-2.8 1.5-.9 3.3-1.3 5.5-1.3z" class="st0"></path><path d="M421 118.2c2.2 0 4.4.4 6.5 1.2 2.1.8 3.9 1.9 5.5 3.5 1.6 1.5 2.8 3.4 3.8 5.5.9 2.2 1.4 4.7 1.4 7.5v30.3h-11.9v-27.3c0-3.4-.9-5.8-2.7-7.3-1.8-1.5-4-2.3-6.6-2.3-1.5 0-2.8.3-4 1s-2.1 1.4-2.9 2.1c-.9.9-1.7 1.8-2.4 3v30.9H396v-46.8h11v6.8c.9-1.4 1.9-2.8 3.3-3.9 1.1-1 2.6-1.9 4.3-2.8 1.8-1 3.9-1.4 6.4-1.4z" class="st0"></path><path d="M161.1 0v55.2h-52.7v48.6H55.2v48.4H0v14h69.1v-48.5h53.3V69.1h52.7V0z" class="st0"></path></g></svg></a></div></div></div></div></div></div></div></div></div>
+<script type="application/json" data-hypernova-key="componentsPartialsFooter" data-hypernova-id="5d69f42e-3060-479a-a1fd-420fc79feb23"><!--{"routes":{"aboutFuturelearnPath":"/about-futurelearn","aboutFuturelearnTeamPath":"/about-futurelearn/team","aboutFuturelearnOurValuesPath":"/about-futurelearn/our-values","aboutFuturelearnOurLearnersPath":"/about-futurelearn/our-learners","usingFuturelearnPath":"/using-futurelearn","usingFuturelearnWhyItWorksPath":"/using-futurelearn/why-it-works","learningGuidePath":"/learning-guide","certificatePromoPath":"/proof-of-learning/certificate-of-achievement","unlimitedPath":"/unlimited","careerAdvicePagesPath":"/career-advice","futurelearnForBusinessPath":"/business","healthcareTrainingPath":"/healthcare-training","collectionsPath":"/courses/collections","partnersPath":"/partners","becomeAPartnerPath":"/partners/become-a-partner"},"namespace":"dXAIOmFMSEYs","csrfToken":"UIlFywApXSwKvEQiZSGjhelNZ6ig8lZaWzIGFlYaf2OwNFa6f9T4YAxSVIvjF8O5cD+sTCVMHzoCS4H5nFXtRQ==","location":"/courses/introduction-to-databases-and-sql/1/steps/761793","prerender":true}--></script>
+</div>
+
+</footer>
+
+  <script>
+    window.zESettings = {
+      webWidget: {
+        contactForm: {
+          user: {
+            zendeskFieldId: 80378867,
+          },
+          title: {
+            '*': 'Support'
+          }
+        }
+      }
+    };
+
+      window.zESettings.webWidget.contactForm.user.id = '6957128'
+      window.zendeskIdentify = {
+        name: 'Abay Reushenov',
+        email: 'abay.reushenov@gmail.com'
+      };
+  </script>
+
+  <div data-react-component-path="components/Partials/Zendesk">
+<div data-hypernova-key="componentsPartialsZendesk" data-hypernova-id="4783ead5-897a-49c8-9c82-825b465c5a82"><div class="zendesk-wrapper_2-lEe"><a class="LinkTag-anchor_1cZ9o" href="https://www.futurelearn.com/info/about/contact" role="button"><span class="ButtonStyles-button_2w0It ButtonStyles-primary_233BW ButtonStyles-small_2pIzw ButtonStyles-sBreakpointFullWidthfalse_eFtQI"><span class="ButtonStyles-content_39Mtu"><span><span class="is-visually-hidden">Contact FutureLearn for </span>Support</span></span></span></a></div></div>
+<script type="application/json" data-hypernova-key="componentsPartialsZendesk" data-hypernova-id="4783ead5-897a-49c8-9c82-825b465c5a82"><!--{"aboutPath":"/info/about/contact","namespace":"kWSF6Sibsqip","csrfToken":"K8RciMIJRMgtt0CtRKNw9AtLV2DTfUHY3zS6q7VaB7XLeU/5vfThhCtZUATClRDIkjmchFbDCLiGTT1EfxWVkw==","location":"/courses/introduction-to-databases-and-sql/1/steps/761793","prerender":true}--></script>
+</div>
+
+
+
+<script src="./SQL 2_files/runtime-29194ca820c65e46a726-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.core-js-2549631ad095c0fff59b-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.react-738ab5e544db6e9ba43e-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.object-assign-4b632ed2847d435f3692-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.webpack-a89c6f5bf254476d4c71-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.react-dom-988994bac101854be9e3-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.scheduler-d15cb4f966724f23fa7e-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.futurelearn-7f655ad281933e215cf1-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.hypernova-d95980f27f558be000bc-1.0.js" type="module"></script>
+<script src="./SQL 2_files/DesignSystem-Structure-KeyInfo-KeyInfoLink-index_Partials-DegreesCtaWrapper-index_Partials-StepComme_086dae54-83d611f27373464d3aaf-1.0.js" type="module"></script>
+<script src="./SQL 2_files/dynamicPolyfills-313950a254839114ec3c-1.0.js" type="module"></script><script src="https://cdn.futurelearn.com/packs/legacy/runtime-36d4b8a1f8106a1f4dc4-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.core-js-e9564e0f2fd876c17767-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.react-d41cbe72aa4e93da3b3d-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.object-assign-00755ec0db584c8fbba0-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.webpack-e268ab13c54b36ed4efe-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.react-dom-d9480d61c7be21071dd5-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.scheduler-f199227ba8c63a471a84-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.futurelearn-8ebe0e1e5d287c935cee-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.hypernova-db7eb93e0fdad4921cc8-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/DesignSystem-Structure-KeyInfo-KeyInfoLink-index~Partials-DegreesCtaWrapper-index~Partials-StepComme~086dae54-81768eb6ed4d495db5fb-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/packs/dynamicPolyfills-3aa137849953e99109b8-1.0.es5.js" nomodule="true"></script>
+<script src="./SQL 2_files/npm.honeybadger-js-d3810b398bd1a3ab73f8-1.0.js" type="module"></script>
+<script src="./SQL 2_files/honeybadger-2065d4ed20f2d458214e-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.autosize-290aac04f609af794776-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.jquery-5e20e43fef71edba0dbd-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.when-dom-ready-6281641d76dda872c2bc-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.rails-ujs-f5ea469b399d4d9edad4-1.0.js" type="module"></script>
+<script src="./SQL 2_files/npm.vanilla-lazyload-1867a5f960baad20330b-1.0.js" type="module"></script>
+<script src="./SQL 2_files/DesignSystem-Forms-OldForm-index_Partials-Comment-MuteButton-index_Partials-CommentSection-OptionsPa_f12b7da4-7b09326718dd66d08767-1.0.js" type="module"></script>
+<script src="./SQL 2_files/FeedbackAndNot_fa23099e-14942f5f725c1ab51610-1.0.js" type="module"></script>
+<script src="./SQL 2_files/Re_1e24a99e-85e691eb77a0e322a387-1.0.js" type="module"></script>
+<script src="./SQL 2_files/Pro_a78ca36f-174d57285135341a99e7-1.0.js" type="module"></script>
+<script src="./SQL 2_files/Mark_997e1cb0-e50c6aff0a85cf59b304-1.0.js" type="module"></script>
+<script src="./SQL 2_files/exercise-d57136056e3f47d01e1e-1.0.js" type="module"></script>
+<script src="./SQL 2_files/application-00c9bdda17a92a8a6442-1.0.js" type="module"></script>
+<script src="./SQL 2_files/assets-08d48f7f2e69475d3428-1.0.js" type="module"></script>
+<script src="./SQL 2_files/purchase-3170b2a08e4ab9dcb145-1.0.js" type="module"></script>
+<script src="./SQL 2_files/application-9ee633fa6443b0ef7ff4-1.0.js" type="module"></script><script src="https://cdn.futurelearn.com/packs/legacy/npm.autosize-d8555321cc1982423c5a-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.jquery-1a9423036e0c4b854852-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.when-dom-ready-b23c545e16be0e3cb19c-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.rails-ujs-4305306bd1b67353a32b-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/npm.vanilla-lazyload-45e06b36dcc9948f8718-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/DesignSystem-Forms-OldForm-index~Partials-Comment-MuteButton-index~Partials-CommentSection-OptionsPa~f12b7da4-0713bb10c54d5b6285ee-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/Shared-Tabs-index~components/DesignSystem/Actions/Dismissable~components/DesignSystem/FeedbackAndNot~fa23099e-aeb0764249879e076996-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/Partials-DegreesCtaWrapper-index~Shared-SmoothScrollLink-index~components/DesignSystem/Navigation/Re~1e24a99e-d1a96a74820202de528c-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/blueimp-file-upload~components/DesignSystem/Navigation/RelatedLinksQuiet~components/DesignSystem/Pro~a78ca36f-2849dbefdf64ba33e39e-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/components/DesignSystem/Navigation/RelatedLinksQuiet~components/DesignSystem/ProgressIndicators/Mark~997e1cb0-a57d853ccb26c90ea2dc-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/packs/admin~packs/application~packs/exercise-3b58b80d6db69f1742fb-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/packs/admin~packs/application-40dcd69868ed01875635-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/packs/application~packs/assets-776b9480a1ac3c362255-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/packs/application~packs/purchase-24348d4a272f9e632300-1.0.es5.js" nomodule="true"></script>
+<script src="https://cdn.futurelearn.com/packs/legacy/packs/application-7086cd653567ae2fca36-1.0.es5.js" nomodule="true"></script>
+<script src="./SQL 2_files/components-563d6d232b78f884b768-1.0.js" type="module"></script><script src="https://cdn.futurelearn.com/packs/legacy/packs/components-d79514ad3482f150c4fe-1.0.es5.js" nomodule="true"></script>
+
+
+
+<script>
+  (function(console) {
+    // Add a console message to encourage awesome job applicants
+    console.log('Interested in what makes us tick? Then we are interested in you! See our jobs page for more info: https://www.futurelearn.com/jobs');
+  })(window.console);
+</script>
+
+<link rel="stylesheet" media="screen, projection" href="./SQL 2_files/europa-6433422d527e85dc2b31-1.0.css">
+
+
+
+
+
+<script type="text/x-mathjax-config;executed=true">
+MathJax.Hub.Config({
+messageStyle: "none",
+CommonHTML: { linebreaks: { automatic: true } },
+"HTML-CSS": { linebreaks: { automatic: true } },
+SVG: { linebreaks: { automatic: true } },
+extensions: ["Safe.js"],
+styles: {
+".MathJax_Display": {
+"text-align": "left !important",
+margin: "0 !important"
+}
+}
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><iframe height="0" width="0" style="display: none; visibility: hidden;" src="./SQL 2_files/activityi.html"></iframe>
+
+<script type="text/javascript" id="">!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","2441936382724811");fbq("track","PageView");</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2441936382724811&amp;ev=PageView&amp;noscript=1"></noscript></body></html>

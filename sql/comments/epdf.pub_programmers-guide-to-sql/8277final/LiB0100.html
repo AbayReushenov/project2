@@ -1,0 +1,179 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Implementing Role-Based Security</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0099.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0101.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch15"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1052"></a><a name="ch15lev1sec3"></a>Implementing Role-Based Security</h2><p class="first-para">Now that we've discussed <i class="emphasis">why</i> you want to use RBS, let's get on to <i class="emphasis">how</i> you're going to use it. In this case study, we'll build the security system in two basic stages:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="para">
+<b>Database tables:</b> We'll build the tables needed to support the users and the required roles and permissions.</p>
+</li>
+<li class="listitem">
+<p class="para">
+<b>Stored procedures:</b> We'll build the stored procedures required to allow you to create, alter and query these users, roles and permissions.</p>
+</li>
+</ul>
+<p class="para">However, before you get started with the actual implementation of your database, we need to discuss some of the basic assumptions that underpin this implementation as well as some essential background information. In this case study, you're going to store and use bitmasked values to determine how a particular permission is mapped to a role. Therefore, we'll discuss some of the technology and math you're going to use for <i class="emphasis">bitmasked access modes</i>, as well as the naming convention you'll use for all of your stored procedures.</p>
+<a name="1053"></a><a name="IDX-455"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1054"></a><a name="ch15lev2sec1"></a>Understanding Bitmasked Access Modes</h3>
+<p class="first-para">Before talking about a bitmasked access mode, we need to define what a <i class="emphasis">bitmask</i> actually is. As you know, the computer stores numbers in binary, which are all just long runs of zeros and ones. A bitmask uses the run of zeros and ones as the meaningful characteristic of that number rather than its decimal value.</p>
+<p class="para">For example, let's say you have the following value, in binary:</p>
+<div class="informalexample">
+<pre class="literallayout">
+001100
+</pre>
+</div>
+<p class="para">In decimal, that value is <span class="fixed">12</span>. The value <span class="fixed">12</span> has no meaning to you in terms of a bitmask. What you're actually looking at is a series of Boolean values. Each of the places in the binary number is actually going to be used as a Boolean value, or a <i class="emphasis">flag</i>. Rather than reading it in binary, you can look at the previous number as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+False False True True False False
+</pre>
+</div>
+<p class="para">So, instead of being able to store the single numeric value <span class="fixed">12</span> in an integer-type data column, what you're actually storing is a large number of Boolean flags, or <i class="emphasis">bits</i>.</p>
+<p class="para">You might be thinking: Why would you use an <span class="fixed">Integer</span> field to store a collection of bit flags when your database server allows you to create single columns that contain small fields that can be used as Booleans? After all, eight columns of the type <span class="fixed">Bit</span> are going to take up just as much space as a single column of the type <span class="fixed">Byte</span>, and each can store eight Boolean flags. So, why would you go to all the trouble of using a complex number that you have to perform bitwise operations on to figure out the Boolean values? Two words: extensibility and flexibility.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="1055"></a><a name="ch15lev4sec1"></a>Extensibility and Flexibility</h5>
+<p class="first-para">Let's say that for a sample Web site, you want users to have the following permission flags:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">Create</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Retrieve</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Update</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">Delete</span>
+</p>
+</li>
+</ul>
+<a name="1056"></a><a name="IDX-456"></a>
+<p class="para">You're confident that the users are never going to need more permission assignments than this because this list covers the four basic types of operations you can perform on data. However, what happens if, six months after you build the application, you have to modify this list of flags so that there's a distinction between single items and batch items? In this system, you'd have to add four new columns to the database (<span class="fixed">Create Batch</span>, <span class="fixed">Retrieve Batch</span>, <span class="fixed">Update Batch</span>, and <span class="fixed">Delete Batch</span>), as well as add all of the extra stored procedure code to handle it. The programmers would probably have a fairly difficult task upgrading all of their code to work with the new data structure.</p>
+<p class="para">However, if you have a single column called <span class="fixed">Mode</span> (or something similar) that was an integer, then in your database, if you have a 4-byte integer (32 bits), you actually have room to store up to 32 different permission flags (one for each bit) without having to worry about changing the data structure. Other database servers might have different size numeric value types available. You can create a column that will hold as many bits as you need flags for your security system. In addition, it's easier for programmers to pass around a single integer than it is to pass around a collection of Boolean values.</p>
+<p class="para">For the RBS system you're building in this case study, which could easily be the security system for an intranet or e-commerce Web site, you'll store permission grants on roles with a <i class="emphasis">mode</i>. <a class="internaljump" href="#ch15table01">Table 15-1</a> describes the bitmask values with which you're going to start.</p>
+<a name="1057"></a><a name="ch15table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 15-1: </span>Bitmask Values</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Mode</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Bitmask Value</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Create</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">1 (2<sup>0</sup>)</p>
+</td><td class="td" align="left">
+<p class="table-para">This permission mode allows the grantee to create a new item. What kind of item is determined by the permission granted&#8212;for example, a new user, new product, and so on.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Transmit</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">2 (2<sup>1</sup>)</p>
+</td><td class="td" align="left">
+<p class="table-para">This permission mode allows the grantee to create copies of one or more items in a portable transfer format, such as Extensible Markup Language (XML).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Read</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">4 (2<sup>2</sup>)</p>
+</td><td class="td" align="left">
+<p class="table-para">This permission mode allows the grantee to examine an item. Typically this means that the grantee is allowed to view lists of the item as well as individual items.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Update</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">8 (2<sup>3</sup>)</p>
+</td><td class="td" align="left">
+<p class="table-para">This permission mode allows the grantee to modify data belonging to a previously existing item.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Delete</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">16 (2<sup>4</sup>)</p>
+</td><td class="td" align="left">
+<p class="table-para">This permission mode allows the grantee to modify data belonging to a previously existing item.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1058"></a><a name="IDX-457"></a>
+<p class="last-para">As you can see, you're only using five out of a potential 32 values. This gives you plenty of room to expand if you need to later. If you remember a little bit about binary math, a role that has <span class="fixed">Create</span>, <span class="fixed">Transmit</span>, and <span class="fixed">Delete</span> permissions is going to have a mode value of 19 (simply add the numeric value assigned to <span class="fixed">Create</span>(1), <span class="fixed">Transmit</span>(2), and <span class="fixed">Delete</span>(16) for the total). Note that there's no way of summing any of the other permission values to come up with a value of 19, so the combination of access modes is guaranteed to be unique.</p>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1059"></a><a name="ch15lev2sec2"></a>Naming Conventions</h3>
+<p class="first-para">A non-uniform naming convention will come back to haunt you. How many of you have created a suite of procedures for a particular application and later had someone else create more procedures for another application, which shared the same database, using a different naming convention? The result is confusion. For this case study, all stored procedures are prefixed with <span class="fixed">RBS_</span> (because this is a case study on RBS). Immediately following the <span class="fixed">RBS_</span> prefix is a description of the <i class="emphasis">type</i> of stored procedure, such as <span class="fixed">Select</span> (multiple retrieve), <span class="fixed">Load</span> (single retrieve), <span class="fixed">Update</span>, <span class="fixed">Create</span>, and <span class="fixed">Delete</span>.</p>
+<p class="para">For example, a stored procedure to create a user might be called <span class="fixed">RBS_CreateUser</span>, and a procedure to retrieve a list of users might be called <span class="fixed">RBS_SelectUsers</span>.</p>
+<p class="last-para">Oracle has the concept of <i class="emphasis">packages</i>, which allow you to create logical groupings for your stored procedures and functions. So, in Oracle you could create a package called <span class="fixed">RBS</span> and not need the prefix on the stored procedure names. You would refer to the stored procedures in such a package as <span class="fixed">RBS.CreateUser</span> or <span class="fixed">RBS.SelectUsers</span>. Other database servers have their own ways of distinguishing stored procedures for different applications.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0099.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0101.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

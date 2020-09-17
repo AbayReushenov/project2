@@ -1,0 +1,81 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>What is a Transaction?</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0056.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0058.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch10"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="637"></a><a name="ch10lev1sec1"></a>What is a Transaction?</h2><p class="first-para">
+<i class="emphasis">Transactions</i> are all about data being transformed from one state to another. Before giving an accurate definition for transactions, let's look at yet another scenario involving transactions&#8212;this time, an example that's not necessarily related to databases. Imagine what happens when a user who is visiting an e-commerce shop decides to buy the items in his or her shopping cart. From the user's perspective, all that's required is a simple action such as clicking the Order Items button. However, the actual processes that happen behind the scenes could be something like the following:</p>
+<ol class="orderedlist">
+<li class="first-listitem">
+<p class="first-para">Create a new order in the database by assigning an identifier, storing a customer ID and storing the current date.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Clear the customer's shopping cart.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Charge the customer's credit card.</p>
+<a name="638"></a><a name="IDX-267"></a>
+</li>
+<li class="listitem">
+<p class="first-para">Send a request to the supplier (or the warehouse) that the ordered items be shipped to the customer.</p>
+
+</li>
+<li class="listitem">
+<p class="first-para">Update database statistics and perform various other operations depending on the way the e-shop is designed to work.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Finally, send the customer a confirmation e-mail containing details about his or her order.</p>
+</li>
+</ol>
+<p class="para">Of course, this list of individual tasks is purely hypothetical, but it gives you an idea about the work that needs to be done after the customer clicks a single button. This is another example of a complex operation that's composed of many smaller ones.</p>
+<p class="para">You need to be sure that the specified operations execute either in their entirety or not at all. The process outcome should be black or white, success or failure, nothing in between.</p>
+<p class="para">So, in more formal terms, a transaction is a logical unit of work consisting of a sequence of separate operations that brings a system from one consistent state to another. The data should be, at any moment, in a consistent state. The transaction is successful if all of its constituent operations are successful. If any of the operations fail (because of any kind of software or hardware problem), all the changes made by the successful operations are reversed, and the system is brought back to its original state. A transaction can either succeed or fail, but nothing in between. In both cases, the system is brought to a consistent state.</p>
+<p class="para">If a problem occurs, all the successful operations are reversed, and everything goes back to the way it was before starting the transaction. This process of reversing the successful operations is called a <i class="emphasis">transaction rollback</i>.</p>
+<p class="para">If, instead, everything goes just fine and all operations complete successfully, the changes are declared to be permanent, and you say that the transaction has been <i class="emphasis">committed</i>. After a transaction is committed, it can't be rolled back.</p>
+<p class="para">Transactions (not only the database ones) must conform to a set of properties, collectively known as the <i class="emphasis">ACID properties</i>.</p>
+<a name="639"></a><a name="IDX-268"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="640"></a><a name="ch10lev2sec1"></a>The ACID Properties</h3>
+<p class="first-para">ACID is an acronym used to describe the four properties of a transaction:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">
+<b class="bold">Atomicity</b> refers to the all-or-nothing nature of a transaction: The transaction executes completely, or it doesn't execute at all. In the case of a failed transaction, all the successful individual actions need to be reverted, and the transaction is rolled back to the original state. Atomicity is perhaps the most representative property of transactions and it's typically used when describing and defining transactions. Nevertheless, the other three properties are just as important as this one.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Consistency</b> refers to the fact that a transaction must take the system from one consistent state to another consistent state. That is, the transaction as a whole must not break any business rules specified for the environment. Contrary to the atomicity property, consistency isn't a rule that the database system can take care of: You, the programmer, must make sure the system gets to a consistent state (in respect to the rules that you define) after the transaction successfully completes.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Isolation</b> specifies that each transaction should perform independently of the other transactions and operations that happen at the same time. In practice, this means that the outside world shouldn't see individual changes to the database while the transaction is happening. In other words, changes made by the active transaction aren't visible to other concurrently running transactions&#8212;this is essential, especially because you can't know ahead of time if the transaction will be successful. The changes made by a transaction are declared permanent and become visible to the other transactions and processes only <i class="emphasis">after</i> the transaction is committed.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Durability</b> ensures that after the transaction is completed, its outcome is persisted and resists even in the event of a system failure. So, after a transaction is committed, you can be sure its results are persisted even if the power goes down one second later.</p>
+</li>
+</ul>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0056.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0058.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

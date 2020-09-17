@@ -1,0 +1,42 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Chapter 9: Using Stored Procedures</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0048.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0050.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch09"></a>
+<h1 class="chapter-title"><span class="chapter-titlelabel">Chapter 9: </span>Using Stored Procedures</h1><div class="section">
+<h2 class="sect2-title">
+<a name="494"></a>Highlights</h2>
+<a name="495"></a><a name="IDX-203"></a>
+<p class="para">In the <a href="LiB0043.html#471" target="_parent" class="chapterjump">previous chapter</a>, you saw how you can store a SQL query in a Relational Database Management System (RDBMS) as a view, making it easy to access complex, shaped data without having to use a lengthy query. Stored procedures fulfill a similar role but do so in a much more powerful way. With stored procedures, you're not limited to queries or even single statements. A single stored procedure could add a record, modify some data, perform some calculation or other, and return some data&#8212;all with a single command from the user. Unfortunately, they can't make you dinner and record <i class="emphasis">Buffy</i> while you're out shopping, but they're pretty useful nevertheless.</p>
+<p class="para">Effectively, what you're doing when you create a stored procedure is creating a function, complete with input and output parameters, that you can call in the same way as you execute a standard SQL statement, simply by telling the RDBMS to execute it and sitting back while it gets on with it. A stored procedure itself contains one or more SQL statements that are processed as part of the stored procedure execution. However, when a stored procedure is processed, you have access to additional functionality, such as controlling the flow of execution with loops and conditional execution, which can provide enormous benefits.</p>
+<div class="highlights">
+<p class="first-para">There is, however, one problem when it comes to stored procedures. Unfortunately, pretty much every RDBMS does things its own way. Although the basic ideas are the same across systems, the way they're implemented isn't. You'll examine these differences as you work through this chapter.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">At the time of this writing, stored procedures aren't supported in the latest version of MySQL. However, support for stored procedures is planned for a future version.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0048.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0050.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

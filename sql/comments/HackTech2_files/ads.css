@@ -1,0 +1,30 @@
+/* CMSWire */
+* {font-family: "museo-sans",sans-serif;}
+a, a:hover {text-decoration:none;color: #007fa5;cursor: pointer;}
+a:hover {text-decoration: none !important;}
+td {vertical-align: top;}
+td:first-child {padding-right:10px;}
+.ad-container-300x250 {width:300px;height:250px;overflow: hidden;text-align:center;}
+.ad-container-300x600 {width:300px;height:600px;overflow: hidden;}
+.cw-ad-txtlnk {font-size:15px;font-weight:300;display:block;color:red;font-family: museo-sans, sans-serif; text-decoration:none;}
+.cw-ad-txtlnk:hover {text-decoration:underline;color:red;}
+.header {font-size:18px; color:#666666;font-weight:400;font-family:helvetica,sans-serif;}
+a.button {
+	display: inline-block;
+	background-color: #f6f7f9;
+	border-color: #ced0d4;
+	color: #4b4f56;
+	border: 1px solid;
+	border-radius: 2px;
+	box-sizing: content-box;
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	font-weight: bold;
+	padding: 5px 12px;
+	position: relative;
+	text-align: center;
+	text-shadow: none;
+	vertical-align: middle;
+	margin-top: 3px;	
+	text-decoration:none;
+}

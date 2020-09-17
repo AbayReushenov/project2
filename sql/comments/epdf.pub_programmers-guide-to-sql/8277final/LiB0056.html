@@ -1,0 +1,67 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Chapter 10: Transactions</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0055.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0057.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch10"></a>
+<h1 class="chapter-title"><span class="chapter-titlelabel">Chapter 10: </span>Transactions</h1><div class="section">
+<h2 class="sect2-title">
+<a name="634"></a>Overview</h2>
+<a name="635"></a><a name="IDX-265"></a>
+<p class="para">Although it's generally considered to be an advanced topic, the concept of transactions is easy to understand because it models natural processes that happen in our everyday lives.</p>
+<p class="para">Transactions aren't necessarily related to financial operations, but this is the simplest way to look at them. For example, every time you buy something, a transaction happens&#8212;you pay an amount of money and then receive in return the product for which you paid. The two operations (paying the money and receiving the product) form the transaction.</p>
+<p class="para">Imagine that a customer called Sally wants to transfer $1,000 from her checking account to her savings account. From Sally's point of view, this operation is a single operation (<i class="emphasis">one</i> money transfer operation), but in fact inside the database something like this happens:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Checking
+   SET Balance = Balance - 1000
+   WHERE Account = 'Sally';
+UPDATE Savings
+   SET Balance = Balance + 1000
+   WHERE Account = 'Sally';
+</pre>
+</div>
+<p class="para">Of course, this piece of SQL code is a simplified version of what really happens inside a production database, but it demonstrates how a set of simple operations can form a single larger operation. In this example you have only two operations, but in reality there are likely to be many more. When you perform such a complex operation, you need to be assured it really executes as a single, atomic operation.</p>
+<p class="para">This isn't as easy as it sounds because you need to make sure all the constituent operations execute successfully&#8212;if any of them don't (and this can happen because of a wide area of reasons such as operating system or database software crashes, computer viruses, or hardware crashes), the larger operation fails.</p>
+<p class="para">In the bank scenario, two database operations need to happen in order to correctly transfer the money&#8212;if one of the two operations fails (say, a hardware failure happens after the first <span class="fixed">UPDATE</span>), Sally would lose $1,000. You need to find a way to ensure the two <span class="fixed">UPDATE</span> statements both either execute successfully or don't execute at all.</p>
+<a name="636"></a><a name="IDX-266"></a>
+<p class="para">Fortunately, modern databases have the technology to protect transactions for you&#8212;you just need to tell the database about the statements that form a transaction, and the database will do everything for you.</p>
+<div class="highlights">
+<p class="first-para">In this chapter, you'll learn what transactions are and how they're implemented in databases. More specifically, this chapter answers the following questions:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">What are transactions? Why do you need them?</p>
+</li>
+<li class="listitem">
+<p class="first-para">What are the rules that transactions must follow?</p>
+</li>
+<li class="listitem">
+<p class="first-para">How can you implement database transactions?</p>
+</li>
+<li class="listitem">
+<p class="first-para">What are the performance problems associated with database transactions, and what are the best practices to avoid them?</p>
+</li>
+</ul>
+<p class="para">This chapter also looks at the differences between the database platforms that you've been working with when it comes to implementing transactions.</p>
+<p class="last-para">Let's start with the basics....</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0055.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0057.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

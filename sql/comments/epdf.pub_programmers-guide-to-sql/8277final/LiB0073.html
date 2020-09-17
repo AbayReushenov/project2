@@ -1,0 +1,433 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Creating and Dropping Data Tables</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0072.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0074.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="788"></a><a name="ch12lev1sec2"></a>Creating and Dropping Data Tables</h2><p class="first-para">Fortunately, SQL Server, Oracle, DB2, and MySQL have similar ways to create data tables. As for dropping tables, they're identical.</p>
+<p class="para">Let's start with the basics....</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="789"></a><a name="ch12lev2sec3"></a>Understanding the Basic Syntax</h3>
+<p class="first-para">The basic syntax for creating tables is simple:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE &lt;<i class="emphasis">table name</i>&gt;
+   (&lt;column name&gt; &lt;column data type&gt; [&lt;column constraints&gt;]);
+</pre>
+</div>
+<p class="para">Deleting database tables is even simpler:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP TABLE &lt;<i class="emphasis">table name</i>&gt;;
+</pre>
+</div>
+<p class="para">Tables being linked by <span class="fixed">FOREIGN KEY</span> constraints can't be dropped. The constraints need to be dropped before dropping the table. You'll learn more about <a name="790"></a><a name="IDX-332"></a><span class="fixed">FOREIGN KEY</span> constraints later in this chapter, but for now it's enough to know they're the means to enforce table relationships. You need to be the owner of the table or have administrative rights in order to be allowed to drop the table.</p>
+<p class="para">In MySQL, dropping a table can't be undone. However, if a table is dropped inside a SQL Server, Oracle, or DB2 transaction, the table will be re-created if you roll back the transaction.</p>
+<p class="para">Using SQL Server, Oracle, or MySQL, you can also truncate a table instead of dropping it. This means that all the records in the table are deleted (the table itself isn't dropped), but the operation isn't logged in the transaction log. In other words, truncation works just like a fast <span class="fixed">DELETE</span> that clears the entire table but can't be rolled back.</p>
+<p class="para">Because it isn't a logged operation, truncating a table also doesn't fire any triggers that would normally be executed when deleting rows from the table (you'll learn about triggers in the <a href="LiB0083.html#859" target="_parent" class="chapterjump">next chapter</a>). When a table is truncated, the identity values used for auto-increment are also reset to their default values.</p>
+<p class="para">With MySQL, <span class="fixed">TRUNCATE</span> drops the table and re-creates it again, thus deleting all its rows much faster than a <span class="fixed">DELETE</span> command. Even though the internal procedure might be different for the other databases systems, truncating works just like dropping the table and creating it again.</p>
+<p class="para">The syntax of <span class="fixed">TRUNCATE</span> is simple:</p>
+<div class="informalexample">
+<pre class="literallayout">
+TRUNCATE TABLE &lt;<i class="emphasis">table name</i>&gt;;
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="791"></a><a name="ch12lev2sec4"></a>Creating Simple Tables</h3>
+<p class="first-para">If you connect to your favorite database, you can create a table called <span class="fixed">Friend</span> using this syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (Name VARCHAR(50), PhoneNo VARCHAR(15));
+</pre>
+</div>
+<p class="para">By default, there are no constraints defined when a new table is created, and the columns accept <span class="fixed">NULL</span> values. So, all of the following commands will execute successfully:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend (Name, PhoneNo) VALUES ('John Doe', '555 2323');
+INSERT INTO Friend (Name) VALUES ('John Doe');
+INSERT INTO Friend (Name, PhoneNo) VALUES ('John Doe', NULL);
+</pre>
+</div>
+<p class="para">Executing these commands will populate the <span class="fixed">Friend</span> table as shown in <a class="internaljump" href="#ch12table01">Table 12-1</a>.</p>
+<a name="792"></a><a name="ch12table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 12-1: </span>The <i class="emphasis"><span class="fixed">Friend</span></i> Table</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">PhoneNo</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">'John Doe'</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">'555 2323'</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">'John Doe'</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">NULL</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">'John Doe'</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">NULL</span>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="793"></a><a name="IDX-333"></a>
+<p class="para">The second two <span class="fixed">INSERT</span> statements are only allowed because <span class="fixed">NULL</span>s are accepted by default, so <span class="fixed">NULL</span>s are allowed for <span class="fixed">PhoneNo</span>. They would also be allowed for <span class="fixed">Name</span>, so you could have a statement like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend (PhoneNo) VALUES ('123 4567');
+</pre>
+</div>
+<p class="para">and end up with a record like that shown in <a class="internaljump" href="#ch12table02">Table 12-2</a>.</p>
+<a name="794"></a><a name="ch12table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 12-2: </span>The New Record</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Name</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">PhoneNo</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">NULL</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">'123 4567'</span>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">If you try a <i class="emphasis"><span class="fixed">SELECT * FROM Friend</span></i> statement, SQL Server Query Analyzer and the MySQL command prompt will display <i class="emphasis"><span class="fixed">NULL</span></i> for the second and third entries of the <i class="emphasis"><span class="fixed">PhoneNo</span></i> column. The DB2 Command Center displays a dash (-). Oracle SQL*Plus and Access, on the other hand, will leave the spaces blank, and this might get you thinking that you have empty strings for that column. This is a bit confusing because <i class="emphasis"><span class="fixed">NULL</span></i> isn't the same as an empty string&#8212;it means something closer to "unknown."</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="795"></a><a name="ch12lev2sec5"></a>Disallowing NULLs</h3>
+<p class="first-para">If you don't want to accept <span class="fixed">NULL</span> values in a column, you should append <span class="fixed">NOT NULL </span>to the definition. To test this, let's first drop the <span class="fixed">Friend</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP TABLE Friend;
+</pre>
+</div>
+<p class="para">Now let's re-create the <span class="fixed">Friend</span> table, but this time you won't allow <span class="fixed">NULL</span> values for <span class="fixed">Name</span> or <span class="fixed">PhoneNo</span>:</p>
+<a name="796"></a><a name="IDX-334"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (Name VARCHAR(50) <b class="bold">NOT NULL</b>,
+                     PhoneNo VARCHAR(15) <b class="bold">NOT NULL</b>);
+</pre>
+</div>
+<p class="para">After creating the new table, let's do the little test again:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend (Name, PhoneNo)
+       VALUES ('John Doe', '555 2323');
+INSERT INTO Friend (Name) VALUES ('John Doe');
+INSERT INTO Friend (Name, PhoneNo) VALUES ('John Doe', NULL);
+</pre>
+</div>
+<p class="para">If you execute these three statements, you'll probably be surprised to find out that your databases behave differently:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">The first statement executes just fine on all database systems.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The second statement doesn't specify a value for <span class="fixed">PhoneNo</span>. SQL Server, DB2, Access, and Oracle generate an error because a value must be specified for <span class="fixed">NOT NULL</span> columns. MySQL, on the other hand, breaks the rules a little bit (even when running in ANSI mode) and executes the statement by adding an empty string for <span class="fixed">PhoneNo</span>. In other words, MySQL tries to second-guess what you mean.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The third statement is rejected by all databases because you specifically try to insert <span class="fixed">NULL</span> for <span class="fixed">PhoneNo</span>.</p>
+</li>
+</ul>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="797"></a><a name="ch12lev2sec6"></a>Specifying Default Values</h3>
+<p class="first-para">Let's suppose the following: If no phone number is specified when adding new rows, you want the database to add the value <span class="fixed">'Unknown phone'</span> for that column. How can you do that? First, once again, drop the <span class="fixed">Friend</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DROP TABLE Friend;
+</pre>
+</div>
+<p class="para">Second, re-create it with the following statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name   VARCHAR(50) NOT NULL,
+   PhoneNo VARCHAR(15) <b class="bold">DEFAULT 'Unknown Phone'</b> NOT NULL);
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">With SQL Server, DB2, Access, and MySQL, you can switch the order of the <i class="emphasis"><span class="fixed">DEFAULT</span></i> and <i class="emphasis"><span class="fixed">NOT NULL</span></i> clauses, but Oracle requires the <i class="emphasis"><span class="fixed">DEFAULT</span></i> clause to appear first.</p>
+</td>
+</tr>
+</table>
+<a name="798"></a><a name="IDX-335"></a>
+<p class="para">Now let's test again with your three friends:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend (Name, PhoneNo) VALUES ('John Doe', '555 2323');
+INSERT INTO Friend (Name) VALUES ('John Doe');
+INSERT INTO Friend (Name, PhoneNo) VALUES ('John Doe', NULL);
+</pre>
+</div>
+<p class="para">The first statement succeeds, and the specified values are inserted in the table. The second also succeeds, and <span class="fixed">'Unknown Phone'</span> is supplied by default for <span class="fixed">PhoneNo</span> because no value was explicitly provided. The third statement will fail because you tried to insert <span class="fixed">NULL</span> into a column that doesn't support <span class="fixed">NULL</span>s.</p>
+<p class="para">In SQL Server, Oracle, and DB2, you can use functions or system variables instead of fixed values to provide the default value for a column. The typical example is to use a function or variable that returns the current date and time, such as <span class="fixed">GETDATE()</span> for SQL Server, <span class="fixed">CURRENT_DATE</span> for DB2, or <span class="fixed">SYSDATE</span> for Oracle. Newer versions of Oracle also support <span class="fixed">CURRENT_DATE</span>, which performs the same as <span class="fixed">SYSDATE</span>. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+-- Oracle
+CREATE TABLE LibraryLoans (
+   BookID       INT  NOT NULL,
+   CustomerID   INT  NOT NULL,
+   DateBorrowed DATE DEFAULT SYSDATE NOT NULL);
+-- DB2
+CREATE TABLE LibraryLoans (
+   BookID       INT  NOT NULL,
+   CustomerID   INT  NOT NULL,
+   DateBorrowed DATE DEFAULT CURRENT_DATE NOT NULL);
+-- SQL Server
+CREATE TABLE LibraryLoans (
+   BookID       INT      NOT NULL,
+   CustomerID   INT      NOT NULL,
+   DateBorrowed DATETIME DEFAULT GETDATE() NOT NULL);
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">You learned about working with dates and times in <a href="LiB0031.html#267" target="_parent" class="chapterjump">Chapter 5</a>, "Performing Calculations and Using Functions."</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="799"></a><a name="ch12lev2sec7"></a>Setting the Primary Key</h3>
+<p class="first-para">So far, the <span class="fixed">Friend</span> table has a significant disadvantage: It doesn't have a primary key. As you saw in <a href="LiB0009.html#31" target="_parent" class="chapterjump">Chapter 1</a>, "Understanding SQL and Relational Databases," every table in a relational database should have a primary key so that each record <a name="800"></a><a name="IDX-336"></a>can be uniquely identified by the value in one (or a group) of its columns. There are no exceptions to this rule in a relational database.</p>
+<p class="para">For the purposes of this exercise, you won't add an additional column (such as <span class="fixed">FriendID</span>) as the primary key. Instead, you want each friend of yours to have unique names, so set <span class="fixed">Name</span> as the primary key.</p>
+<p class="para">Remember that the primary key is a <i class="emphasis">constraint</i> that applies to table columns. The following command creates the <span class="fixed">Friend</span> table and associates a <span class="fixed">PRIMARY KEY</span> constraint named <span class="fixed">MyPrimaryKey</span> to the <span class="fixed">Name</span> field (remember to drop the <span class="fixed">Friend</span> table before re-creating it):</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name    VARCHAR(50) NOT NULL,
+   PhoneNo VARCHAR(15) DEFAULT 'Unknown Phone' NOT NULL,
+   CONSTRAINT MyPrimaryKey PRIMARY KEY (Name));
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">For multi-column primary keys, you just list the constituent columns separated by commas. You'll look at working with multivalued primary keys in <a href="LiB0089.html#915" target="_parent" class="chapterjump">Chapter 14</a>, "Case Study: Building a Product Catalog."</p>
+</td>
+</tr>
+</table>
+<p class="para">If you aren't interested in supplying a name for the <b class="bold"><span class="fixed">PRIMARY KEY</span></b> constraint, you can use this syntax:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name    VARCHAR(50) NOT NULL,
+   PhoneNo VARCHAR(15) DEFAULT 'Unknown Phone' NOT NULL,
+   PRIMARY KEY (Name));
+</pre>
+</div>
+<p class="para">Also, you can use this shorter form, which has the same effect:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name    VARCHAR(50) <b class="bold">PRIMARY KEY</b> NOT NULL,
+   PhoneNo VARCHAR(15) DEFAULT 'Unknown Phone' NOT NULL);
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Remember that primary key columns aren't allowed to store <i class="emphasis"><span class="fixed">NULL</span></i> values. For this reason, SQL Server, Oracle, MySQL, and Access don't require you to include the <span class="fixed"><i class="emphasis">NOT</i> <i class="emphasis">NULL</i></span> clause on primary key columns. However, for DB2 you must specify <span class="fixed"><i class="emphasis">NOT</i> <i class="emphasis">NULL</i></span> when creating primary key columns.</p>
+</td>
+</tr>
+</table>
+<p class="para">To test your newly created table, try to add a <span class="fixed">NULL</span> for the name and then two identical names:</p>
+<a name="801"></a><a name="IDX-337"></a>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend (PhoneNo) VALUES ('555 2323');
+INSERT INTO Friend (Name, PhoneNo) VALUES ('John Doe', '12345678');
+INSERT INTO Friend (Name, PhoneNo) VALUES ('John Doe', '87654321');
+</pre>
+</div>
+<p class="para">The first command fails on SQL Server, DB2, Access, and Oracle because you tried to insert <span class="fixed">NULL</span> for the name; however, it works with MySQL, which breaks the rules (remember the earlier exercise) and automatically inserts an empty string instead of <span class="fixed">NULL</span>.</p>
+<p class="para">The second statement works just fine, but the last one throws an error because you tried to insert a duplicate value on the primary key column. So, the database takes care of its integrity, just like you expected.</p>
+<p class="last-para">When a <span class="fixed">PRIMARY KEY</span> constraint is defined, a unique index is automatically created for it. We'll discuss indexes later in this chapter.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="802"></a><a name="ch12lev2sec8"></a>Setting the UNIQUE Constraint</h3>
+<p class="first-para">Apart from the primary key, you can have one or more unique columns. In this scenario, this can apply to the <span class="fixed">PhoneNo</span> column; this, of course, isn't representative enough to be used as a primary key (and anyway you couldn't use it as a primary key because you can have only one primary key in the table, and that primary key is set on the <span class="fixed">Name</span> column). However, you can mark it as unique to ensure you don't have more than one friend with the same phone number. Maybe this rule wouldn't be very good in a real-world example, but still it's an example of a rule that you can enforce within the database.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">We briefly discussed unique columns in <a href="LiB0009.html#31" target="_parent" class="chapterjump">Chapter 1</a>, "Understanding SQL and Relational Databases."</p>
+</td>
+</tr>
+</table>
+<p class="para">After dropping the current <span class="fixed">Friend</span> table, create it like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name    VARCHAR(50) PRIMARY KEY NOT NULL,
+   PhoneNo VARCHAR(15) <b class="bold">UNIQUE</b>);
+</pre>
+</div>
+<p class="para">Now duplicate phone numbers will be rejected by the database because they violate the <span class="fixed">UNIQUE</span> constraint. The <span class="fixed">UNIQUE</span> constraint works fine when combined with <span class="fixed">DEFAULT</span> values, but the default value can be added only once.</p>
+<p class="para">There's a difference in the way that <span class="fixed">NULL</span> values are accepted by the different databases on columns having the <span class="fixed">UNIQUE</span> constraint&#8212;a detail that may affect how you use it in real-world scenarios.</p>
+<a name="803"></a><a name="IDX-338"></a>
+<p class="para">Oracle, MySQL, and Access allow you to have as many <span class="fixed">NULL</span> values as you like in a unique column, as long as the column isn't set with <span class="fixed">NOT NULL</span>. DB2 doesn't permit <span class="fixed">NULL</span> values in a unique column at all.</p>
+<p class="last-para">SQL Server, on the other hand, permits only a single <span class="fixed">NULL</span> value in a unique column. Although in <span class="fixed">SELECT</span> queries a <span class="fixed">NULL</span> value doesn't equal another <span class="fixed">NULL</span> (as you learned in <a href="LiB0009.html#31" target="_parent" class="chapterjump">Chapter 1</a>, "Understanding SQL and Relational Databases"), SQL Server regards two <span class="fixed">NULL</span> values as identical with regard to the <span class="fixed">UNIQUE</span> constraint.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="804"></a><a name="ch12lev2sec9"></a>Setting CHECK Constraints</h3>
+<p class="first-para">
+<span class="fixed">CHECK</span> constraints are the most flexible kind of constraints. They allow you to pose a wide range of restrictions on the rows you modify or insert into the database.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">CHECK</span></i> constraints aren't yet enforced in MySQL.</p>
+</td>
+</tr>
+</table>
+<p class="para">The main points to keep in mind about <span class="fixed">CHECK</span> constraints are the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">The way you define a <span class="fixed">CHECK</span> constraint is similar to the conditions you place in the <span class="fixed">WHERE</span> clause, and they're evaluated at the time a new row is added to the table or an existing row is modified.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CHECK</span> constraints can contain in their definition a logical expression or a number of logical expressions combined with <span class="fixed">AND</span> or <span class="fixed">OR</span>, parentheses, and so on; the condition expressed by <span class="fixed">CHECK</span> must evaluate to true or to false.</p>
+</li>
+<li class="listitem">
+<p class="first-para">A <span class="fixed">CHECK</span> constraint can refer only to columns of the row being introduced or modified in a table&#8212;other tables can't be referenced in a <span class="fixed">CHECK</span> constraint.</p>
+</li>
+<li class="listitem">
+<p class="first-para">You can place multiple <span class="fixed">CHECK</span> constraints on a single column.</p>
+</li>
+<li class="listitem">
+<p class="first-para">You can place table-level <span class="fixed">CHECK</span> constraints that can then be associated with more than one column.</p>
+</li>
+<li class="listitem">
+<p class="first-para">The <span class="fixed">CHECK</span> constraint isn't enforced for columns that don't receive a value (in other words, for columns that are <span class="fixed">NULL</span>).</p>
+</li>
+</ul>
+<p class="para">The following command creates the <span class="fixed">Friend</span> table with a field named <span class="fixed">Age</span> and a constraint called <span class="fixed">AgeConstraint</span>, which prevents the <span class="fixed">Age</span> column having a value of less than 10 or more than 100:</p>
+<a name="805"></a><a name="IDX-339"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name    VARCHAR(50) PRIMARY KEY NOT NULL,
+   PhoneNo VARCHAR(15) DEFAULT 'Unknown Phone',
+   Age     INT,
+   CONSTRAINT CheckAge CHECK (Age BETWEEN 10 and 100));
+</pre>
+</div>
+<p class="para">If you don't want to provide a name for the constraint, you can remove the <span class="fixed">CONSTRAINT</span> keyword from <span class="fixed">CREATE TABLE</span> and optionally remove the comma between the column definition and the <span class="fixed">CHECK</span> keyword:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name    VARCHAR(50) PRIMARY KEY NOT NULL,
+   PhoneNo VARCHAR(15) DEFAULT 'Unknown Phone',
+   Age     INT CHECK (Age BETWEEN 10 and 100));
+</pre>
+</div>
+<p class="para">The following <span class="fixed">CREATE TABLE</span> statement specifies an <span class="fixed">SSN</span> field with a <span class="fixed">CHECK</span> constraint that ensures proper Social Security number formatting:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE Friend (
+   Name    VARCHAR(50) PRIMARY KEY NOT NULL,
+   PhoneNo VARCHAR(15) DEFAULT 'Unknown Phone',
+   SSN     VARCHAR(15) NOT NULL,
+   CHECK (SSN LIKE '[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]'));
+</pre>
+</div>
+<p class="para">You can use <span class="fixed">CHECK</span> constraints with any expression that returns true or false. For example, you can use them to restrict the possible values of a column, with a condition such as <span class="fixed">CHECK (SEX IN ('Male', 'Female'))</span>, or compare the values of two columns such as in <span class="fixed">CHECK (ShipDate &lt;= OrderDate)</span>.</p>
+<p class="last-para">You can use the <span class="fixed">CHECK</span> constraint with both <span class="fixed">NULL</span> and <span class="fixed">NOT NULL</span> columns. However, if you insert <span class="fixed">NULL</span> for a field that has a <span class="fixed">CHECK</span> constraint on it, it really means that you're not inserting any value&#8212;so the <span class="fixed">CHECK</span> constraint doesn't do anything in this case.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0072.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0074.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

@@ -1,0 +1,442 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Returning Calculated Columns</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0015.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0017.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="116"></a><a name="ch02lev1sec3"></a>Returning Calculated Columns</h2><p class="first-para">It's also possible to execute <span class="fixed">SELECT</span> queries that return <i class="emphasis">calculated columns</i>. Retrieving calculated columns means getting data that doesn't necessarily exist in the database but can be constructed or calculated from data that's there. You might, for example, combine the <span class="fixed">FirstName</span> and <span class="fixed">LastName</span> columns in a database to a single <span class="fixed">Name</span> column, built from the content of the two original columns.</p>
+<p class="para">To do this, you simply specify the new column name in the usual way but equate it to the result of some processing or other:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">Details</i> AS <i class="emphasis">CustomColumn</i> FROM <i class="emphasis">Table</i>;
+</pre>
+</div>
+<p class="para">Here you create a column called <i class="emphasis"><span class="fixed">CustomColumn</span></i> based on the information specified in <i class="emphasis"><span class="fixed">Details</span></i>, which can include all sorts of mathematical and string operations, as well as calling on certain built-in functions for data processing.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">You'll be looking at performing calculations and using built-in SQL functions in more detail in <a href="LiB0031.html#267" target="_parent" class="chapterjump">Chapter 5</a>, "Performing Calculations and Using Functions."</p>
+</td>
+</tr>
+</table>
+<a name="117"></a><a name="IDX-38"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="118"></a><a name="ch02lev2sec6"></a>Performing Mathematics</h3>
+<p class="first-para">For example, you could perform an automatic calculation as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ItemName, Amount, Amount * ItemCost AS TotalCost
+FROM Items;
+</pre>
+</div>
+<p class="para">Here you create a new column called <span class="fixed">TotalCost</span>, which is the product of the values from two other columns, <span class="fixed">Amount</span> and <span class="fixed">ItemCost</span>, taken from the <span class="fixed">Items</span> table.</p>
+<p class="para">As another example, let's return to the <span class="fixed">InstantUniversity</span> database. Consider the following SQL query that combines data from the <span class="fixed">Mark</span> and <span class="fixed">IfPassed</span> columns to give either the actual mark if the exam is passed or zero if not. You place this data in a custom <span class="fixed">MarkIfPassed</span> calculated column:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, ExamID, Mark * IfPassed AS MarkIfPassed FROM StudentExam;
+</pre>
+</div>
+<p class="para">The results from this query are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   ExamID      MarkIfPassed
+
+   ----------- ----------- ------------
+   1           1           55
+   1           2           73
+   2           3           44
+   2           5           0
+   2           6           63
+   ...         ...         ...
+</pre>
+</div>
+<p class="para">As you can see, the data returned in the result set looks different from that in the original table. Through your result set, you have access to a column of data, <span class="fixed">MarkIfPassed</span>, that doesn't actually exist in the database.</p>
+<a name="119"></a><a name="IDX-39"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="120"></a><a name="ch02lev2sec7"></a>Concatenating String Values</h3>
+<p class="first-para">For example, you could perform an automatic calculation as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ItemName, Amount, Amount * ItemCost AS TotalCost
+FROM Items;
+</pre>
+</div>
+<p class="para">Here you create a new column called <span class="fixed">TotalCost</span>, which is the product of the values from two other columns, <span class="fixed">Amount</span> and <span class="fixed">ItemCost</span>, taken from the <span class="fixed">Items</span> table.</p>
+<p class="para">As another example, let's return to the <span class="fixed">InstantUniversity</span> database. Consider the following SQL query that combines data from the <span class="fixed">Mark</span> and <span class="fixed">IfPassed</span> columns to give either the actual mark if the exam is passed or zero if not. You place this data in a custom <span class="fixed">MarkIfPassed</span> calculated column:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, ExamID, Mark * IfPassed AS MarkIfPassed FROM StudentExam;
+</pre>
+</div>
+<p class="para">The results from this query are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID   ExamID      MarkIfPassed
+
+   ----------- ----------- ------------
+   1           1           55
+   1           2           73
+   2           3           44
+   2           5           0
+   2           6           63
+   ...         ...         ...
+</pre>
+</div>
+<p class="para">As you can see, the data returned in the result set looks different from that in the original table. Through your result set, you have access to a column of data, <span class="fixed">MarkIfPassed</span>, that doesn't actually exist in the database.</p>
+<a name="121"></a><a name="IDX-40"></a>
+<div class="section">
+<h4 class="sect4-title">
+<a name="122"></a><a name="ch02lev3sec1"></a>SQL Server</h4>
+<p class="first-para">SQL Server uses the plus sign (<span class="fixed">+</span>) to perform string concatenation:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName + ' ' + LastName AS FullName FROM People;
+</pre>
+</div>
+<p class="para">In this example, you create a full name string in a column called <span class="fixed">FULLNAME</span> by concatenating the strings in the <span class="fixed">FirstName</span> and <span class="fixed">LastName</span> columns of <span class="fixed">People</span> using the <span class="fixed">+</span> operator. For neatness, you also put a space in the middle, which is achieved by including a literal string value enclosed in ' or <span class="fixed">"</span> characters.</p>
+<p class="para">However, because the <span class="fixed">+</span> sign is also used for numeric addition, you can't use it for concatenation if any numeric values are involved. For example, this query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT 'Room ' + RoomID AS RoomName
+FROM Room;
+</pre>
+</div>
+<p class="para">causes the following error:</p>
+<div class="informalexample">
+<pre class="literallayout">
+Syntax error converting the varchar value 'Room ' to a column of data type int.
+</pre>
+</div>
+<p class="para">The easiest way around this is to convert the numeric value to a string explicitly using SQL Server's <span class="fixed">STR()</span> function:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT 'Room ' + STR(RoomID) AS RoomName
+FROM Room;
+</pre>
+</div>
+<div class="example">
+<span class="example-title">JOINING STRINGS (SQL SERVER)</span><a name="123"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter this query into Query Analyzer and execute it against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID,
+        Time + ', Room ' + STR(RoomID) AS ClassDetails
+FROM Class;
+</pre>
+</div>
+<p class="para">Here you retrieve the ID for each row in the <span class="fixed">Class</span> table, together with a new column called <span class="fixed">ClassDetails</span>, which you create by concatenating the <span class="fixed">Time</span> field with the string literal <span class="fixed">', Room '</span>, followed by the ID for the room where that class <a name="124"></a><a name="IDX-41"></a>is held. Because <span class="fixed">RoomID</span> is an integer field, you need to convert the value to a string before you can use it in a concatenation. The output from this query is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ClassID  ClassDetails
+
+   -------- -----------------------------------------
+   1        Mon 09:00-11:00, Room 6
+   2        Mon 11:00-12:00, Thu 09:00-11:00, Room 5
+   3        Mon 14:00-16:00, Room 3
+   4        Tue 10:00-12:00, Thu 14:00-15:00, Room 2
+   ...      ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="125"></a><a name="ch02lev3sec2"></a>MySQL</h4>
+<p class="first-para">When run in the default (that is, not ANSI) mode, MySQL also uses <span class="fixed">+</span> as the concatenation operator:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName + ' ' + LastName AS FullName FROM People;
+</pre>
+</div>
+<p class="para">Naturally, using <span class="fixed">+</span> has the same drawback as in SQL Server&#8212;you'll get unpredictable results if any numeric values are involved. MySQL automatically converts numeric values to strings (and vice versa) as necessary, so it doesn't have any direct equivalent to SQL Server's <span class="fixed">STR()</span> function. You therefore need a different solution to this problem.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">When run in ANSI mode, MySQL uses the same string concatenation operator as Oracle (<i class="emphasis"><span class="fixed">||</span></i>).</p>
+</td>
+</tr>
+</table>
+<p class="para">The answer comes in the form of the <span class="fixed">CONCAT()</span> function. This function takes a variable number of arguments and joins them to form a single string. The arguments will automatically be converted to strings, so you can pass in arguments of any data type.</p>
+<a name="126"></a><a name="IDX-42"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">This feature allows you to use this function to simulate the SQL Server <i class="emphasis"><span class="fixed">STR()</span></i> function&#8212;you can concatenate an empty string to the value you want to convert (say, a number), and that value will be returned as a string.</p>
+</td>
+</tr>
+</table>
+<p class="para">So, to join the string literal <span class="fixed">'Room '</span> and the <span class="fixed">RoomID</span> into a single value, you'd use this statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CONCAT('Room ', RoomID) AS RoomName
+FROM Room;
+</pre>
+</div>
+<p class="para">You'll look at using SQL functions in more detail in <a href="LiB0031.html#267" target="_parent" class="chapterjump">Chapter 5</a>, "Performing Calculations and Using Functions."</p>
+<div class="example">
+<span class="example-title">JOINING STRINGS (MYSQL)</span><a name="127"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute this query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID,
+       CONCAT(Time, ', Room ', RoomID) AS ClassDetails
+FROM Class;
+</pre>
+</div>
+<p class="para">Again, you retrieve the ID for each class, together with the calculated <span class="fixed">ClassDetails</span> that represents the details of where and when the class is held. Again, because <span class="fixed">RoomID</span> is an integer field, you need to use the <span class="fixed">CONCAT()</span> function rather than the <span class="fixed">+</span> operator to perform the concatenation. The output from this query is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ClassID  ClassDetails
+
+   -------- -----------------------------------------
+   1        Mon 09:00-11:00, Room 6
+   2        Mon 11:00-12:00, Thu 09:00-11:00, Room 5
+   3        Mon 14:00-16:00, Room 3
+   4        Tue 10:00-12:00, Thu 14:00-15:00, Room 2
+   ...      ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="128"></a><a name="IDX-43"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="129"></a><a name="ch02lev3sec3"></a>Oracle</h4>
+<p class="first-para">Oracle uses the ANSI standard concatenation operator, <span class="fixed">||</span>. Because this operator is reserved for string concatenation, the operands don't need to be cast to a string type&#8212;they'll be converted automatically:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName || ' ' || LastName AS FullName FROM People;
+</pre>
+</div>
+<p class="para">This operator is also used for MySQL when it's running in ANSI mode.</p>
+<div class="example">
+<span class="example-title">JOINING STRINGS (ORACLE)</span><a name="130"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute this query against the InstantUniversity database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID,
+       Time || ', Room ' || RoomID AS ClassDetails
+FROM Class;
+</pre>
+</div>
+<p class="para">This query returns the <span class="fixed">ClassID</span> for each class, together with a calculated column containing the time and room number details for each class:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ClassID  ClassDetails
+
+   -------- -----------------------------------------
+   1        Mon 09:00-11:00, Room 6
+   2        Mon 11:00-12:00, Thu 09:00-11:00, Room 5
+   3        Mon 14:00-16:00, Room 3
+   4        Tue 10:00-12:00, Thu 14:00-15:00, Room 2
+   ...      ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="131"></a><a name="ch02lev4sec1"></a>DB2</h5>
+<p class="first-para">DB2 can use either the ANSI standard <span class="fixed">||</span> operator or the <span class="fixed">CONCAT</span> keyword to perform string concatenation:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName || ' ' || LastName AS FullName
+FROM People;
+<a name="132"></a><a name="IDX-44"></a>
+</pre>
+</div>
+<p class="para">or:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FirstName CONCAT ' ' CONCAT LastName AS FullName
+FROM People;
+</pre>
+</div>
+<p class="para">Whichever of these you use, you'll need to convert any numeric data types to strings before performing the concatenation. You can achieve this using the <span class="fixed">CHAR()</span> function:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT 'Room ' CONCAT CHAR(RoomID) AS RoomName FROM Room;
+</pre>
+</div>
+<p class="para">You can also use <span class="fixed">CONCAT()</span> as a standard function. It takes two parameters, which both must be string types:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CONCAT('Room ', CHAR(RoomID)) AS RoomName FROM Room;
+</pre>
+</div>
+<div class="example">
+<span class="example-title">JOINING STRINGS (DB2)</span><a name="133"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute this query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID,
+       Time CONCAT ', Room ' CONCAT CHAR(RoomID)
+          AS ClassDetails
+FROM Class;
+</pre>
+</div>
+<p class="para">Here you use the <span class="fixed">CONCAT</span> keyword like an operator to join three values into a single string. If you had used <span class="fixed">CONCAT()</span> as a function, you would have to nest one call to <span class="fixed">CONCAT()</span> within another because this function takes two arguments:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID,
+       CONCAT(
+          CONCAT(Time, ', Room '), CHAR(RoomID)
+       ) AS ClassDetails
+FROM Class;
+</pre>
+</div>
+<p class="para">The output from this query is as follows:</p>
+<a name="134"></a><a name="IDX-45"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   ClassID  ClassDetails
+
+   -------- -----------------------------------------
+   1        Mon 09:00-11:00, Room 6
+   2        Mon 11:00-12:00, Thu 09:00-11:00, Room 5
+   3        Mon 14:00-16:00, Room 3
+   4        Tue 10:00-12:00, Thu 14:00-15:00, Room 2
+   ...      ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="135"></a><a name="ch02lev3sec4"></a>Access</h4>
+<p class="first-para">Finally, Access uses the ampersand (<span class="fixed">&amp;</span>) to perform concatenation. As with <span class="fixed">||</span> in Oracle, this operator is used only to join strings, so you don't need to convert the operands to a string type before using it.</p>
+<div class="example">
+<span class="example-title">JOINING STRINGS (ACCESS)</span><a name="136"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute this query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT ClassID, Time &amp; ', Room ' &amp; RoomID AS ClassDetails
+FROM Class;
+</pre>
+</div>
+<p class="para">Again, you join the <span class="fixed">Time</span> and <span class="fixed">RoomID</span> columns, separated by the literal string <span class="fixed">', Room '</span>, into a single column named <i class="emphasis"><span class="fixed">ClassDetails</span></i><i class="emphasis">:</i>
+</p>
+<div class="informalexample">
+<pre class="literallayout">
+   ClassID  ClassDetails
+
+   -------- -----------------------------------------
+   1        Mon 09:00-11:00, Room 6
+   2        Mon 11:00-12:00, Thu 09:00-11:00, Room 5
+   3        Mon 14:00-16:00, Room 3
+   4        Tue 10:00-12:00, Thu 14:00-15:00, Room 2
+   ...      ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0015.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0017.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

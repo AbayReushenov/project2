@@ -1,0 +1,189 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Inserting Data into the Database</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0107.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0109.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="appendix">
+<a name="ap02"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1239"></a><a name="ap02lev1sec2"></a>Inserting Data into the Database</h2><p class="first-para">The process of inserting data into the database is also RDBMS specific in many cases, and as such, we'll flag vendor differences when they arise. We won't list the full set of <span class="fixed">INSERT</span> statements in this appendix because they're quite lengthy. For the full set, download the code from the Downloads section of the Apress Web site (<a target="_top" class="url" href="http://www.apress.com"><span class="fixed">http://www.apress.com</span></a>).</p>
+<a name="1240"></a><a name="IDX-524"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1241"></a><a name="ap02lev2sec9"></a>Professor</h3>
+<p class="first-para">Insert the following data into the <span class="fixed">Professor</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Professor (ProfessorID,Name)
+VALUES (1,'Prof. Dawson');
+
+INSERT INTO Professor (ProfessorID,Name)
+VALUES (2,'Prof. Williams');
+
+INSERT INTO Professor (ProfessorID,Name)
+VALUES (3,'Prof. Ashby');
+...
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1242"></a><a name="ap02lev2sec10"></a>Course</h3>
+<p class="first-para">Insert the following data into the <span class="fixed">Course</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Course (CourseID,Name,Credits)
+VALUES (1,'Mediaeval Romanian',5);
+
+INSERT INTO Course (CourseID,Name,Credits)
+VALUES (2,'Philosophy',5);
+
+INSERT INTO Course (CourseID,Name,Credits)
+VALUES (3,'History of Computing',5);
+...
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1243"></a><a name="ap02lev2sec11"></a>Room</h3>
+<p class="first-para">Insert the following data into the <span class="fixed">Room</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Room (RoomID,Comments,Capacity)
+VALUES (1,'Main hall',500);
+
+INSERT INTO Room (RoomID,Comments,Capacity)
+VALUES (2,'Science Department',200);
+
+INSERT INTO Room (RoomID,Comments,Capacity)
+VALUES (3,'Science Room 1',100);
+...
+<a name="1244"></a><a name="IDX-525"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1245"></a><a name="ap02lev2sec12"></a>Class</h3>
+<p class="first-para">Insert the following data into the <span class="fixed">Class</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Class (ClassID,CourseID,ProfessorID,RoomID,Time)
+VALUES (1,1,1,6,'Mon 09:00-11:00');
+
+INSERT INTO Class (ClassID,CourseID,ProfessorID,RoomID,Time)
+VALUES (2,2,1,5,'Mon 11:00-12:00, Thu 09:00-11:00');
+
+INSERT INTO Class (ClassID,CourseID,ProfessorID,RoomID,Time)
+VALUES (3,3,2,3,'Mon 14:00-16:00');
+...
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1246"></a><a name="ap02lev2sec13"></a>Student</h3>
+<p class="first-para">Insert the following data into the <span class="fixed">Student</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Student (StudentID,Name)
+VALUES (1,'John Jones');
+
+INSERT INTO Student (StudentID,Name)
+VALUES (2,'Gary Burton');
+
+INSERT INTO Student (StudentID,Name)
+VALUES (3,'Emily Scarlett');
+...
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1247"></a><a name="ap02lev2sec14"></a>Exam</h3>
+<p class="first-para">Note that the format you use to enter the date may vary between RDBMS. The following format is one of the most commonly used formats (<i class="emphasis"><span class="fixed">YYYY-MM-DD</span></i>). You may find that Oracle, for example, prefers dates in this format to be prefixed by the word <span class="fixed">DATE</span>, for example, <span class="fixed">DATE '2003-05-03'</span>. Alternatively, you could provide them in the format <span class="fixed">03-May-2003</span>.</p>
+<p class="para">Insert the following data into the <span class="fixed">Exam</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Exam
+   (ExamID,CourseID,ProfessorID,SustainedOn,Comments)
+VALUES (1,1,1,'2003-03-12','A difficult test that should last an hour');<a name="1248"></a><a name="IDX-526"></a>
+INSERT INTO Exam
+   (ExamID,CourseID,ProfessorID,SustainedOn,Comments)
+VALUES (2,2,1,'2003-03-13','A simple two hour test');
+
+INSERT INTO Exam
+   (ExamID,CourseID,ProfessorID,SustainedOn,Comments)
+VALUES (3,3,2,'2003-03-11','1 hour long');
+
+INSERT INTO Exam (ExamID,CourseID,ProfessorID,SustainedOn)
+VALUES (4,4,3,'2003-03-18');
+...
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1249"></a><a name="ap02lev2sec15"></a>Enrollment</h3>
+<p class="first-para">Again, take care when inserting date information:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Enrollment
+   (EnrollmentID,StudentID,ClassID,EnrolledOn,Grade)
+VALUES (1,1,1,'2002-09-23',62);
+
+INSERT INTO Enrollment
+   (EnrollmentID,StudentID,ClassID,EnrolledOn,Grade)
+VALUES (2,1,2,'2002-09-30',70);
+
+INSERT INTO Enrollment
+   (EnrollmentID,StudentID,ClassID,EnrolledOn,Grade)
+VALUES (3,2,3,'2003-09-23',51);
+...
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1250"></a><a name="ap02lev2sec16"></a>StudentExam</h3>
+<p class="first-para">Insert the following data into the <span class="fixed">Exam</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO StudentExam
+   (StudentID,ExamID,Mark,IfPassed,Comments)
+VALUES (1,1,55,1,'Satisfactory');
+
+INSERT INTO StudentExam
+   (StudentID,ExamID,Mark,IfPassed,Comments)
+VALUES (1,2,73,1,'Good result');<a name="1251"></a><a name="IDX-527"></a>
+INSERT INTO StudentExam
+   (StudentID,ExamID,Mark,IfPassed,Comments)
+VALUES (2,3,44,1,'Scraped through');
+
+INSERT INTO StudentExam
+   (StudentID,ExamID,Mark,IfPassed,Comments)
+VALUES (2,5,39,0,'Failed, and will need to retake this one later in the year');
+...
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0107.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0109.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

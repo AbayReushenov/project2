@@ -1,0 +1,191 @@
+.m-react-pagination {
+  margin: 1.5em 0;
+}
+
+.m-react-pagination ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.m-react-pagination__list-item {
+  font-size: 14px;
+  font-size: .7777rem;
+  line-height: 1.5;
+}
+
+@media screen and (min-width: 680px) and (max-width: 1694px) {
+  .m-react-pagination__list-item {
+    font-size: .7rem;
+    line-height: 1.5;
+  }
+}
+
+@media screen and (min-width: 1695px) {
+  .m-react-pagination__list-item {
+    font-size: .6363rem;
+    line-height: 1.5;
+  }
+}
+
+.m-react-pagination__list-item a {
+  transition: color linear 0.4s;
+  text-decoration: none;
+  background-color: transparent;
+  font-family: inherit;
+  color: #4a4d55;
+}
+
+.m-react-pagination__list-item a:active,
+.m-react-pagination__list-item a:hover {
+  outline: 0;
+}
+
+.m-react-pagination__list-item a:focus {
+  outline: 3px solid #2541fc;
+}
+
+.is-mouse-focussed .m-react-pagination__list-item a:focus {
+  outline: none;
+}
+
+.m-react-pagination__list-item a:hover {
+  color: #2541fc;
+}
+
+.a-section--premium .m-react-pagination__list-item a {
+  color: #fff;
+}
+
+.m-react-pagination__list-numbers {
+  display: none;
+}
+
+.m-react-pagination__list-numbers .m-react-pagination__list-item {
+  padding: 0 .3em;
+  text-align: center;
+}
+
+.m-react-pagination__list-numbers .m-react-pagination__list-item.selected {
+  border-bottom: 3px solid #2541fc;
+}
+
+.m-react-pagination__list-numbers .m-react-pagination__list-item.selected a {
+  color: #2541fc;
+}
+
+.m-react-pagination__list-arrows {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.m-react-pagination__list-arrows .previous,
+.m-react-pagination__list-arrows .next {
+  position: relative;
+  font-size: 40px;
+}
+
+.m-react-pagination__list-arrows .previous:before {
+  transform: scaleX(-0.6);
+}
+
+.m-react-pagination__list-arrows .next:before {
+  transform: scaleX(0.6);
+}
+
+.m-react-pagination__list-arrows .selected:before {
+  content: "Page ";
+}
+
+.m-react-pagination__list-arrows .selected a:after {
+  content: " of " attr(class);
+}
+
+.m-react-pagination__list-arrows .m-react-pagination__list-item a {
+  line-height: 4.5em;
+  text-align: center;
+}
+
+@media screen and (min-width: 648px) {
+  .m-react-pagination {
+    margin: 1.5em 11em;
+  }
+
+  .m-react-pagination__list-arrows {
+    display: none;
+  }
+
+  .m-react-pagination__list-numbers {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.tribute-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  max-height: 300px;
+  max-width: 500px;
+  overflow: auto;
+  display: block;
+  z-index: 999999;
+  background: #fff;
+}
+
+.tribute-container ul {
+  color: #3a343a;
+  border: 1px solid #ededee;
+  border-radius: 0;
+  box-shadow: 0 1px 5px 1px rgba(0,0,0,0.05);
+  margin: 0;
+  margin-top: 2px;
+  padding: 0;
+  list-style: none;
+}
+
+.tribute-container li {
+  padding: .5em;
+  font-size: 14px;
+  font-size: .7777rem;
+  line-height: 1.5;
+  border-bottom: 1px solid #ededee;
+}
+
+@media screen and (min-width: 680px) and (max-width: 1694px) {
+  .tribute-container li {
+    font-size: .7rem;
+    line-height: 1.5;
+  }
+}
+
+@media screen and (min-width: 1695px) {
+  .tribute-container li {
+    font-size: .6363rem;
+    line-height: 1.5;
+  }
+}
+
+.tribute-container li.highlight,
+.tribute-container li:hover {
+  color: #2541fc;
+}
+
+.tribute-container .tribute-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.tribute-item__avatar {
+  margin-right: 0.5rem;
+}
+
+.tribute-container li.no-match {
+  cursor: default;
+}
+
+.tribute-container .menu-highlighted {
+  font-weight: bold;
+}

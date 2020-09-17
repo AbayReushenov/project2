@@ -1,0 +1,574 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Grouping Data</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0027.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0029.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch04"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="235"></a><a name="ch04lev1sec2"></a>Grouping Data</h2><p class="first-para">So far, you've only applied your aggregate functions to either all the records in a table or a filtered set. This means that if you want to get, say, summed values for subsets of data in a database, it could mean several separate queries. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT SUM(UnitCost) FROM Products WHERE SupplierID = 1;
+SELECT SUM(UnitCost) FROM Products WHERE SupplierID = 2;
+SELECT SUM(UnitCost) FROM Products WHERE SupplierID = 3;
+</pre>
+</div>
+<p class="para">And so on. Obviously, this isn't ideal. As an alternative, SQL provides a way to divide tables into groups of rows and apply aggregate functions to groups rather than all the records returned by a query. This is when using aggregate functions becomes most powerful.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="236"></a><a name="ch04lev2sec5"></a>Filtering Group Data</h3>
+<p class="first-para">To group data in SQL, you use the <span class="fixed">GROUP BY</span> clause, with typical syntax as follows (typical because <span class="fixed">SELECT</span> queries themselves are so variable):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">AggFunc</i>(<i class="emphasis">AggFuncSpec</i>) FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">WhereSpec</i>
+GROUP BY <i class="emphasis">ColumnA</i>;
+</pre>
+</div>
+<p class="para">Here the values in <i class="emphasis"><span class="fixed">ColumnA</span></i> are enumerated, and groups are created for rows with matching values in <i class="emphasis"><span class="fixed">ColumnA</span></i>. For example, if there are 40 records with 15 different possible values in <i class="emphasis"><span class="fixed">ColumnA</span></i>, then 15 groups will be created. This means that 15 rows are returned, each consisting of an entry for the <i class="emphasis"><span class="fixed">ColumnA</span></i> values they share and the result of the aggregate function applied to the rows in a group.</p>
+<a name="237"></a><a name="IDX-91"></a>
+<p class="para">Note that there's actually no need to return <i class="emphasis"><span class="fixed">ColumnA</span></i> in the query, but it tends to make sense so that you can identify the group. As with other queries involving aggregate functions, you can't include other columns in the data returned because this wouldn't make logical sense. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i>, <i class="emphasis">AggFunc</i>(<i class="emphasis">AggFuncSpec</i>) FROM <i class="emphasis">Table</i> WHERE <i class="emphasis">WhereSpec</i>
+GROUP BY <i class="emphasis">ColumnA</i>;
+</pre>
+</div>
+<p class="para">Each group might have several rows with <i class="emphasis"><span class="fixed">ColumnB</span></i> values, and because the returned rows can only show one, this query is simply too vague to be interpreted, so an error will be raised.</p>
+
+<p class="para">The best way to look at this grouping behavior is to see an example.</p>
+<div class="example">
+<span class="example-title">GROUPING DATA</span><a name="238"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter and execute the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, COUNT(*) AS HighPasses
+FROM StudentExam
+WHERE Mark &gt; 70
+GROUP BY StudentID;
+</pre>
+</div>
+<p class="para">The way in which a database will generally execute this query is to group together rows with the same value in the <span class="fixed">StudentID</span> column and then execute the <span class="fixed">COUNT</span> function to find out the number of exams that each of the students in your database has passed with a mark of greater than 70. The result looks as follows (only the first four rows are shown in the output):</p>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID   HighPasses
+
+----------- -----------
+1           1
+3           2
+4           1
+6           1
+...         ...
+</pre>
+</div>
+<p class="last-para">You'll notice that, in this example, if a student hasn't achieved any high passes, then he or she isn't listed at all.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="239"></a><a name="IDX-92"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="240"></a><a name="ch04lev2sec6"></a>Including all Rows in a Group (SQL Server)</h3>
+<p class="first-para">In SQL Server, you can also add the <span class="fixed">ALL</span> keyword to the <span class="fixed">GROUP BY</span> clause:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA, AggFunc(AggFuncSpec) FROM Table</i>
+<i class="emphasis">WHERE WhereSpec</i>
+<i class="emphasis">GROUP BY ALL ColumnA;</i>
+</pre>
+</div>
+<p class="para">If you do this, then groups will be selected from values in all the rows in the table, not just those filtered by the <span class="fixed">WHERE</span> clause. However, the values calculated for these groups by aggregate functions do take the <span class="fixed">WHERE</span> clause into account, meaning that some groups will be shown with misleading (or <span class="fixed">NULL</span>) values calculated by these functions.</p>
+<p class="para">Compare the previous example with the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, COUNT(*) AS HighPasses
+FROM StudentExam
+WHERE Mark &gt; 70
+GROUP BY ALL StudentID;
+</pre>
+</div>
+<p class="para">You now add the <span class="fixed">ALL</span> keyword, meaning that all students will be considered, even if they have no exam marks this high. The result of this is that the <span class="fixed">COUNT </span>function has no records to count for some students, hence the zero entries in the <span class="fixed">HighPasses</span> column in the results and the increased number of results returned (again, only the first four rows are shown):</p>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID   HighPasses
+
+----------- -----------
+1           1
+2           0
+3           2
+4           1
+...         ...
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="241"></a><a name="ch04lev2sec7"></a>Using the HAVING Clause</h3>
+<p class="first-para">Suppose you want to filter your result set not by any actual value in the database but by the results of an aggregate function. For example, perhaps you want to <a name="242"></a><a name="IDX-93"></a>find out which students did particularly well or badly in their exams in general. You don't want to filter based on any particular mark but on the average mark for all exams they took. You might think this would be as simple as adding the condition to the <span class="fixed">WHERE</span> clause:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+WHERE AVG(Mark) &lt; 50 OR AVG(Mark) &gt; 70
+GROUP BY StudentID;
+</pre>
+</div>
+<p class="para">Unfortunately, this won't work. The <span class="fixed">WHERE</span> clause is used to filter data <i class="emphasis">before </i>the aggregate function is calculated, whereas you need to filter the data on the basis of the aggregate values. If you try to execute this query, you'll get an error.</p>
+<p class="para">The answer to the problem (as you've probably already guessed from the heading of this section) is the <span class="fixed">HAVING</span> clause. This clause is placed after the <span class="fixed">GROUP BY</span> clause and takes the following form:</p>
+<div class="informalexample">
+<pre class="literallayout">
+HAVING <i class="emphasis">FilterCondition</i>
+</pre>
+</div>
+<p class="para">So, to find out which students scored on average more than 70 percent or less than 50 percent in their exams, you'd use this query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID
+HAVING AVG(Mark) &lt; 50 OR AVG(Mark) &gt; 70;
+</pre>
+</div>
+<p class="para">This returns the results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID    AverageMark
+
+------------ ------------
+2            48
+3            80
+7            71
+10           73
+<a name="243"></a><a name="IDX-94"></a>
+</pre>
+</div>
+<p class="para">You can also use <span class="fixed">HAVING</span> in conjunction with <span class="fixed">WHERE</span> if you want to filter the data both before and after the aggregate column is calculated. For example, let's suppose you want to restrict yourself to the results of the mathematics exams. There are three math exams, with <span class="fixed">ExamID</span> values of <span class="fixed">5</span>, <span class="fixed">8</span>, and <span class="fixed">11</span>. So your new query will look like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+WHERE ExamID IN ( 5, 8, 11 )
+GROUP BY StudentID
+HAVING AVG(Mark) &lt; 50 OR AVG(Mark) &gt; 70;
+</pre>
+</div>
+<p class="para">The <span class="fixed">WHERE</span> filter is applied before the aggregate values are calculated, so any rows in the <span class="fixed">StudentExam</span> table where the <span class="fixed">ExamID</span> field doesn't contain one of the values <span class="fixed">5</span>, <span class="fixed">8</span>, or <span class="fixed">11</span> will be ignored completely. Once the aggregate values have been calculated, you use the <span class="fixed">HAVING</span> clause to restrict the rows returned to those students whose average over these three exams is either particularly good or particularly bad. The result of this query is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID    AverageMark
+
+------------ ------------
+2            39
+10           71
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="244"></a><a name="ch04lev2sec8"></a>Using Top-N Queries</h3>
+<p class="first-para">Sometimes, for whatever reason, you won't want to return all the rows in a database that match the filter criteria. If you only want, say, the top 10 rows, then it makes little sense to get hundreds of rows from a database and only work with 10 of them because this means that more data is being exchanged between servers, which impairs performance. All of the database systems covered in this book support ways of doing this. Unfortunately, these are all different, so you'll look at each system in turn.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="245"></a><a name="ch04lev3sec1"></a>SQL Server and Access</h4>
+<p class="first-para">SQL as implemented in Microsoft SQL Server and Access allows you to choose how many rows to return using the <span class="fixed">TOP</span> keyword:</p>
+<a name="246"></a><a name="IDX-95"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT TOP <i class="emphasis">RowCount ColumnA</i>, <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>;
+</pre>
+</div>
+<p class="para">The <span class="fixed">TOP <i class="emphasis">RowCount</i></span> section shown here can be added to any <span class="fixed">SELECT</span> query. <i class="emphasis"><span class="fixed">RowCount</span></i> can be an absolute number, which will be how many rows to return, or it can be a number followed by the <span class="fixed">PERCENT</span> keyword, meaning that a percentage of the total rows selected will be returned.</p>
+<p class="para">In its most basic usage, the <span class="fixed">TOP</span> keyword simply returns the first matches found in a table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT TOP 5 CustomerID, CustomerName FROM Customers;
+</pre>
+</div>
+<p class="para">This query would return data from the first five rows in the <span class="fixed">Customers</span> table.</p>
+<p class="para">However, one important point to note here is that the top rows are snipped off after any sorting is performed. This makes it possible to select, say, the rows with the highest or lowest values in a certain column:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT TOP 10 PERCENT StudentID, Mark
+FROM StudentExam
+ORDER BY Mark;
+</pre>
+</div>
+<p class="para">The previous query returns the bottom 10 percent of marks in the <span class="fixed">StudentExam</span> table&#8212;it's the bottom because <span class="fixed">ORDER BY Mark</span> specifies an ascending order (the row with the lowest <span class="fixed">Mark</span> value is the first one in the result set generated by the query).</p>
+<div class="example">
+<span class="example-title">RETRIEVING THE TOP FIVE STUDENTS (SQL SERVER/ACCESS)</span><a name="247"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute this query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT TOP 5 StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID
+ORDER BY AVG(Mark) DESC;
+</pre>
+</div>
+<p class="para">Here you've retrieved the average mark scored by each student in his or her exams and ordered the student IDs according to this average, with the top average first in the result set. You use the <span class="fixed">TOP</span> keyword to extract only the top five records, showing the five rows with the highest average mark:</p>
+<a name="248"></a><a name="IDX-96"></a>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID    AverageMark
+
+------------ ------------
+3            80
+10           73
+7            71
+6            68
+9            68
+</pre>
+</div>
+<p class="para">Notice that you repeat <span class="fixed">AVG(Mark)</span>, rather than using the <span class="fixed">AverageMark</span> alias, in the <span class="fixed">ORDER BY</span> clause because Access doesn't allow computed aliases to be used in <span class="fixed">GROUP BY</span> or <span class="fixed">ORDER BY</span> clauses. This isn't a problem for SQL Server.</p>
+<p class="last-para">Also, notice that because SQL Server rounds the averages down to the nearest integer, the order isn't guaranteed to be accurate&#8212;in this case, the student with an ID of <span class="fixed">9</span> (Andrew Forster, if you're asking) actually has a slightly higher average than Vic Andrews (with the ID of <span class="fixed">6</span>), but because they're both rounded down to 68, SQL Server treats them as equal.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">This last point raises another issue&#8212;what if the cut-off point occurs in the middle of a sequence of several rows with the same value in the <span class="fixed">ORDER BY</span> column? What if you asked for the top four values instead of the top five? SQL Server simply returns whatever rows it places at the top of the result set, so the record for Vic Andrews will be returned but not that for Andrew Foster.</p>
+<p class="para">To ensure that all rows with matching values are returned, you need to add <span class="fixed">WITH TIES</span> to your query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT TOP 4 <b class="bold">WITH TIES</b> StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID
+ORDER BY AverageMark DESC;
+</pre>
+</div>
+<p class="para">This returns the rows for both Vic Andrews and Andrew Foster, so five rows rather than four are returned. This is the default behavior for Access, so the <span class="fixed">WITH TIES</span> keywords aren't supported.</p>
+<a name="249"></a><a name="IDX-97"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">WITH TIES</span></i> can only be used if the query has an <i class="emphasis"><span class="fixed">ORDER BY</span></i> clause.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="250"></a><a name="ch04lev3sec2"></a>MySQL</h4>
+<p class="first-para">In MySQL, the <span class="fixed">LIMIT</span> keyword is used in a similar way (although in a different place) as the <span class="fixed">TOP</span> keyword:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">ColumnB</i>
+FROM <i class="emphasis">Table</i>
+LIMIT <i class="emphasis">StartRecord</i>, <i class="emphasis">TotalRecords;</i>
+</pre>
+</div>
+<p class="para">Here <i class="emphasis"><span class="fixed">TotalRecords</span></i> is the total number of rows to return, and <span class="fixed"><i class="emphasis">StartRecord</i> </span>shows how many rows to omit. This is slightly more flexible than <span class="fixed">TOP</span> (although no <span class="fixed">PERCENT</span> equivalent exists) because you can get chunks of data at a time.</p>
+<p class="para">For example, you could use the following SQL query in MySQL:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers LIMIT 0, 5;
+</pre>
+</div>
+<p class="para">This would get data from the first five records in the <span class="fixed">Customers</span> table. If only one number is supplied, this is taken as the number of rows to return, and a default of zero is assumed for the starting row. So, you could have written the previous query as this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers <b class="bold">LIMIT 5</b>;
+</pre>
+</div>
+<p class="para">As with <span class="fixed">TOP</span>, combining this keyword with <span class="fixed">ORDER BY</span> can be a useful technique.</p>
+<div class="example">
+<span class="example-title">RETRIEVING THE TOP FIVE STUDENTS (MYSQL)</span><a name="251"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Execute this query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID
+ORDER BY AverageMark DESC
+LIMIT 0, 5;
+<a name="252"></a><a name="IDX-98"></a>
+</pre>
+</div>
+<p class="para">Again, you retrieve the average mark scored by each student in his or her exams and order the records accordingly. You add the <span class="fixed">LIMIT 0, 5</span> clause to specify that you want to retrieve only five records, starting with the first record (record number zero):</p>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID    AverageMark
+
+------------ ------------
+3            80
+10           73.5
+7            71.3333
+9            68.6667
+6            68.3333
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="253"></a><a name="ch04lev3sec3"></a>DB2</h4>
+<p class="first-para">DB2 uses a <span class="fixed">FETCH FIRST</span> clause to limit the number of rows returned from a query. This has two basic forms; to retrieve just the top row, you can write the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers
+FETCH FIRST ROW ONLY;
+</pre>
+</div>
+<p class="para">If you don't specify the number of rows to retrieve, only one row will be returned. To fetch more than one row, you must specify a positive integer value in the <span class="fixed">FETCH FIRST</span> clause. For example, to fetch five rows, you can write this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers
+FETCH FIRST 5 ROWS ONLY;
+</pre>
+</div>
+<p class="para">Again, you can use this clause in conjunction with an <span class="fixed">ORDER BY</span> clause to retrieve the highest or lowest values in the result set. The <span class="fixed">FETCH FIRST</span> clause is placed at the end of the query, after the <span class="fixed">ORDER BY</span> clause.</p>
+<a name="254"></a><a name="IDX-99"></a>
+<div class="example">
+<span class="example-title">RETRIEVING THE TOP FIVE STUDENTS (DB2)</span><a name="255"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter and execute this query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID
+ORDER BY AverageMark DESC
+FETCH FIRST 5 ROWS ONLY;
+</pre>
+</div>
+<p class="para">Here again you retrieve the five students with the highest average marks from the <span class="fixed">StudentExam</span> table by averaging the <span class="fixed">Mark</span> value for each separate <span class="fixed">StudentID</span> using the <span class="fixed">AVG</span> function. You limit the result set to five rows by appending the clause <span class="fixed">FETCH FIRST 5 ROWS ONLY</span> to the query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID    AverageMark
+
+------------ ------------
+3            80
+10           73
+7            71
+6            68
+9            68
+</pre>
+</div>
+<p class="last-para">Note that, as with SQL Server, the order isn't guaranteed to be 100-percent accurate because the averages are rounded down to fit into the <span class="fixed">INT</span> data type.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">As with SQL Server, if the cut-off point comes in the middle of a group of records with the same value in the <span class="fixed">ORDER BY</span> column, the values that are (arbitrarily) placed later won't be returned from the query.</p>
+<p class="para">To get around this, you need to use the <span class="fixed">RANK</span> function, which assigns a rank to every row returned by a query. <span class="fixed">RANK</span> has the following syntax:</p>
+<a name="256"></a><a name="IDX-100"></a>
+<div class="informalexample">
+<pre class="literallayout">
+RANK() OVER (ORDER BY <i class="emphasis">ColumnName</i> ASC | DESC)
+</pre>
+</div>
+<p class="para">You use <span class="fixed">RANK</span> much like any other SQL function: to add a new column to the result set returned from the query. This column indicates what rank each row has when the results are ordered by the column named in the <span class="fixed">RANK() OVER </span>clause. For example, to add a column indicating the rank for each of the students based on the average mark they scored in the exams they took, you'd use the following query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT RANK() OVER (ORDER BY AVG(Mark) DESC) AS Ranking,
+        StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID;
+</pre>
+</div>
+<p class="para">So, to retrieve the top four students, taking any ties into account, you just need this query with a <span class="fixed">WHERE Ranking &lt;= 4</span> clause, right? Nearly. Unfortunately, though, you can't access the computed <span class="fixed">Ranking</span> column in the same query. Instead, you need to define this query as a subquery and then query that subquery, adding the <span class="fixed">WHERE</span> clause to the outer query. The syntax for creating a subquery in DB2 is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+WITH <i class="emphasis">SubQueryName</i> (<i class="emphasis">SubQueryColumnList</i>)
+AS (<i class="emphasis">SubQueryStatement</i>)
+... <i class="emphasis">Outer query</i> ...
+</pre>
+</div>
+<p class="para">So, when you put all that together for your top students query, you end up with this monster of a SQL statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+WITH RankedMarks (Ranking, StudentID, AverageMark)
+AS (
+   SELECT RANK() OVER (ORDER BY AVG(Mark) DESC) AS Ranking,
+           StudentID, AVG(Mark) AS AverageMark
+   FROM StudentExam
+   GROUP BY StudentID)
+SELECT Ranking, StudentID, AverageMark
+FROM RankedMarks
+WHERE Ranking &lt;= 4;
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="257"></a><a name="ch04lev3sec4"></a>Oracle</h4>
+<p class="first-para">Finally, Oracle allows a similar query to be performed using the <span class="fixed">ROWNUM</span> keyword, where every record in a table is assigned a row number according to its position, separate from the ID of the row or any other data. This keyword, however, must <a name="258"></a><a name="IDX-101"></a>be specified in a <span class="fixed">WHERE</span> clause with a comparison operator, and so it isn't as flexible (and won't work with <span class="fixed">ORDER BY</span> because reordered rows maintain their original row number).</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM Customers
+WHERE ROWNUM &lt;= 5;
+</pre>
+</div>
+<p class="para">To get around this, you can embed your <span class="fixed">SELECT</span> statement as a subquery into an outer query, querying that subquery for the top <i class="emphasis">n</i> rows. For example, to retrieve the first five rows sorted alphabetically by <span class="fixed">CustomerName</span>, use the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CustomerID, CustomerName FROM (
+   SELECT CustomerID, CustomerName
+   FROM Customers
+   ORDER BY CustomerName ASC)
+WHERE ROWNUM &lt;= 5;
+</pre>
+</div>
+<div class="example">
+<span class="example-title">RETRIEVING THE TOP FIVE STUDENTS (ORACLE)</span><a name="259"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter and execute this query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AverageMark FROM (
+   SELECT StudentID, AVG(Mark) AS AverageMark
+   FROM StudentExam
+   GROUP BY StudentID
+   ORDER BY AverageMark DESC
+)
+WHERE ROWNUM &lt;= 5;
+</pre>
+</div>
+<p class="para">Here you define a subquery that retrieves the average mark for each student over all exams taken, sorted in descending order (so the student with the highest average comes first):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID
+ORDER BY AverageMark DESC
+</pre>
+</div>
+<p class="para">To retrieve the top five students, you embed this subquery into a <span class="fixed">SELECT </span>statement and use the <span class="fixed">ROWNUM</span> keyword to select just the top five rows:</p>
+<a name="260"></a><a name="IDX-102"></a>
+<div class="informalexample">
+<pre class="literallayout">
+StudentID    AverageMark
+
+------------ ------------
+3            80
+10           73.5
+7            71.3333333
+9            68.6666667
+6            68.3333333
+</pre>
+</div>
+<p class="para">Although rounding down to integers doesn't occur in this example, you still have the problem that some rows may be arbitrarily discarded if the cut-off point occurs in the middle of a group of rows with the same average mark. The way around this is similar to the DB2 approach&#8212;you use the <span class="fixed">RANK()</span> function. This has the same syntax and is used in the same way as in DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+RANK() OVER (ORDER BY <i class="emphasis">ColumnName</i> ASC | DESC)
+</pre>
+</div>
+<p class="para">You use this to add a new column to your subquery, containing a value for each row that indicates the rank of that row in the result set. The subquery that uses this function has the same form as the DB2 subquery:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT RANK() OVER (ORDER BY AVG(Mark) DESC) AS Ranking,
+        StudentID, AVG(Mark) AS AverageMark
+FROM StudentExam
+GROUP BY StudentID
+</pre>
+</div>
+<p class="para">To retrieve the top four placed students (taking any ties into account), the outer query just needs to retrieve all the rows from this subquery that are ranked four or less:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Ranking, StudentID, AverageMark FROM (
+   SELECT RANK() OVER (ORDER BY AVG(Mark) DESC) AS Ranking,
+           StudentID, AVG(Mark) AS AverageMark
+   FROM StudentExam
+   GROUP BY StudentID)
+WHERE Ranking &lt;= 4;
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0027.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0029.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

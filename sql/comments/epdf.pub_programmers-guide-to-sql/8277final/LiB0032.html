@@ -1,0 +1,222 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Performing Calculations in SQL</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0031.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0033.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch05"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="270"></a><a name="ch05lev1sec1"></a>Performing Calculations in SQL</h2><p class="first-para">SQL provides a rich set of functionality for performing calculations with the data stored in a database. Some of this is already apparent from the <span class="fixed">WHERE</span> clauses you've been using in earlier chapters because you've seen how you can perform <a name="271"></a><a name="IDX-108"></a>basic comparisons to filter data. You've also looked at calculated columns as a means of reshaping database data. As yet, though, you haven't explored the full range of options available or all the places that you can use calculations.</p>
+<p class="para">Consider the following SQL query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT <i class="emphasis">ColumnA</i>, <i class="emphasis">Expression1</i> AS <i class="emphasis">ColumnB</i> FROM <i class="emphasis">Table</i>
+WHERE <i class="emphasis">Expression2</i>;
+</pre>
+</div>
+<p class="para">Although <i class="emphasis"><span class="fixed">Expression1</span></i> can simply be a column name and <i class="emphasis"><span class="fixed">Expression2</span></i> can be just a comparison involving a column, you have more options at your disposal. <i class="emphasis"><span class="fixed">Expression1</span></i> evaluates to a value to be stored in <i class="emphasis"><span class="fixed">ColumnB</span></i>, but that evaluation can be a complex as you like, involving as many columns and literal values as you like (as well as functions, as you'll see later in the chapter). <i class="emphasis"><span class="fixed">Expression2</span></i> has to evaluate to Boolean <span class="fixed">true</span> or <span class="fixed">false</span> values for each row. If it's <span class="fixed">true</span>, a row is filtered and included in the results, but this can involve much more than a simple comparison.</p>
+<p class="para">To build up the various expressions that can be placed into SQL statements (not just queries&#8212;the same applies to other SQL statements such as <span class="fixed">UPDATE</span>), you combine column names with operators and/or literal values. There's even nothing stopping you from doing something as simple as using just a literal value for a calculated column; however, because the result will be just a set of rows with a set value for a certain column, this isn't particularly useful. In general, you will be performing calculations based on the data stored in a row while avoiding simply returning column values.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="272"></a><a name="ch05lev2sec1"></a>Using Operators</h3>
+<p class="first-para">SQL includes many operators for use in expressions, some of which you've seen already, such as <span class="fixed">+</span> and <span class="fixed">*</span>. Several of the keywords you've seen earlier in the book are also technically operators&#8212;including <span class="fixed">AND</span>, <span class="fixed">LIKE</span>, and <span class="fixed">BETWEEN</span>&#8212;although in practice some of these work in a more complex way than the simpler arithmetic or comparison ones.</p>
+<p class="para">The full list of arithmetic operators is <span class="fixed">+</span>, -, <span class="fixed">*</span>, <span class="fixed">/</span>, and <span class="fixed">%</span>. Of these, the first four are for addition (doubling as string concatenation in SQL Server and MySQL), subtraction, multiplication, and division, and the fifth is the slightly more complex modulus operator. This operator returns the integer remainder of a division operation. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+19 % 7 = 5
+</pre>
+</div>
+<p class="para">This is because seven fits into 19 twice, leaving a remainder of five.</p>
+<p class="para">You saw all the comparison operators in <a href="LiB0013.html#98" target="_parent" class="chapterjump">Chapter 2</a>, "Retrieving Data with SQL," but to recap the full list is <span class="fixed">=</span>, <span class="fixed">!=</span>, <span class="fixed">&lt;&gt;</span>, <span class="fixed">&lt;</span>, <span class="fixed">&lt;=</span>, <span class="fixed">!&lt;</span>, <span class="fixed">&gt;</span> , <span class="fixed">&gt;=</span>, and <span class="fixed">!&gt;</span>.</p>
+<a name="273"></a><a name="IDX-109"></a>
+<p class="para">There are also several bitwise operators that perform bitwise operations on numeric values, where the binary equivalent of numbers are operated on. <a class="internaljump" href="#ch05table01">Table 5-1</a> shows these operators.</p>
+<a name="274"></a><a name="ch05table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 5-1: </span>Bitwise Operators</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="center">
+<p class="table-para">
+<b class="bold"><span class="fixed">Bitwise Operator</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Operation</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="center">
+<p class="table-para">
+<span class="fixed">&amp;</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Bitwise <span class="fixed">AND</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center">
+<p class="table-para">
+<span class="fixed">|</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Bitwise <span class="fixed">OR</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center">
+<p class="table-para">
+<span class="fixed">^</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Bitwise <span class="fixed">XOR</span> (exclusive <span class="fixed">OR</span>)</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="center">
+<p class="table-para">
+<span class="fixed">~</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Bitwise <span class="fixed">NOT</span>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">Finally, you can use parentheses to specify the order that operators are executed. This is necessary in situations such as the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+5 + 3 * 2
+</pre>
+</div>
+<p class="para">In this example, the <span class="fixed">*</span> operator takes precedence over the <span class="fixed">+</span> operator and executes first, so the result will be 11. However, using parentheses you could write the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+(5 + 3) * 2
+</pre>
+</div>
+<p class="para">Here the calculation in parentheses executes first, making the result 16.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">For a full list of operators, precedence, and so on, see the documentation that accompanies the Relational Database Management System (RDBMS) you're using.</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="275"></a><a name="ch05lev2sec2"></a>Using Expressions</h3>
+<p class="first-para">Now you've seen all the building blocks of expressions (apart from functions), so it's time to put them together and see the rules behind expression building.</p>
+<p class="para">In general, you'll be building either standard expressions that evaluate to a calculated value or Boolean expressions that evaluate to <span class="fixed">true</span> or <span class="fixed">false</span>.</p>
+<p class="para">For calculated values, you'll typically work with column values, literal values, and arithmetic operators to build values. For example:</p>
+<a name="276"></a><a name="IDX-110"></a>
+<div class="informalexample">
+<pre class="literallayout">
+<i class="emphasis">ColumnA</i> / <i class="emphasis">ColumnB</i>
+</pre>
+</div>
+<p class="para">Or, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+(<i class="emphasis">ColumnA</i> + 2) * <i class="emphasis">ColumnB</i>
+</pre>
+</div>
+<p class="para">For Boolean expressions, you build up Boolean calculations with comparison and logical operators:</p>
+<div class="informalexample">
+<pre class="literallayout">
+(<i class="emphasis">ColumnA</i> &lt; 2) OR NOT (<i class="emphasis">ColumnB</i> &gt;= 5)
+</pre>
+</div>
+<p class="para">In all cases, the column values used are for whatever row is currently being processed.</p>
+<p class="para">As you can see, although there isn't a huge amount to cover here because there aren't that many operators, the possibilities are limitless, allowing complex expressions to be built with ease.</p>
+<div class="example">
+<span class="example-title">USING EXPRESSIONS</span><a name="277"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Connect to the <span class="fixed">InstantUniversity</span> database and execute this query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, Mark,
+       (Mark * 100) / 80.0 AS ActualPercentage, IfPassed,
+       Comments
+FROM StudentExam
+WHERE ExamID = 3;
+</pre>
+</div>
+<p class="para">In this example you're assuming that the <span class="fixed">Mark</span> column in the <span class="fixed">StudentExam </span>table gives an absolute mark rather than a percentage result and that the total marks available in the exam with an <span class="fixed">ExamID</span> of <span class="fixed">3</span> is 80. You use an expression to convert the value in the <span class="fixed">Mark</span> column into a percentage based on this information as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+(Mark * 100) / 80.0
+</pre>
+</div>
+<p class="para">Note that the <span class="fixed">Mark</span> column is of type int. For this reason, the total number of marks, 80, is expressed as a floating-point value (by appending .0), which forces the integer result of <span class="fixed">Mark * 100</span> to be converted into a floating-point value. The reason for this is that integers can always be expressed as floating-point values, <a name="278"></a><a name="IDX-111"></a>but not vice versa. To guarantee a successful result, the RDBMS performs this conversion automatically for you. If you used the following, there would be a possibility that no conversion would be performed, and you would lose accuracy because the result would be expressed as an integer:</p>
+<div class="informalexample">
+<pre class="literallayout">
+(Mark * 100) / 80
+
+</pre>
+</div>
+<p class="para">
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">This is dependent on the RDBMS in use&#8212;SQL Server and DB2 treat the result as an integer, but Oracle, MySQL, and Access allow floating-point values.</p>
+</td>
+</tr>
+</table>
+</p>
+<p class="para">The output from this query is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID    Mark  ActualPercentage     IfPassed Comments
+
+   ------------ ----- -------------------- -------- --------------
+   2            44    55.000000            1        Scraped through
+   6            78    97.500000            1        Excellent work
+   8            46    57.500000            1        Poor result
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0031.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0033.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

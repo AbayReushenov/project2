@@ -1,0 +1,1199 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Appendix C: Data Types</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0109.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0111.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="appendix">
+<a name="ap03"></a>
+<h1 class="appendix-title"><span class="chapter-titlelabel">Appendix C: </span>Data Types</h1><a name="1259"></a><a name="IDX-531"></a>
+<div class="highlights">
+<p class="first-para">This appendix lists the available data types for each Relational Database Management System (RDBMS) and briefly describes the most commonly used types for each database platform.</p>
+</div>
+<div class="section">
+<h2 class="sect2-title">
+<a name="1260"></a><a name="ap03lev1sec1"></a>RDBMS Data Types</h2>
+<p class="first-para">
+<a class="internaljump" href="#ap03table01">Table C-1</a> summarizes the column data types available in the various RDBMSs used in this book.</p>
+<a name="1261"></a><a name="ap03table01"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table C-1: </span>Column Data Types</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Category</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Access</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">SQL Server</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Oracle</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">MySQL</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">DB2</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Binary Object</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">OLE Object</span>, <span class="fixed">Memo</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">binary</span>, <span class="fixed">varbinary</span>, <span class="fixed">Image</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bfile</span>, <span class="fixed">BLOB</span>, <span class="fixed">long raw</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">blob</span>, <span class="fixed">text</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">blob</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Bit</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Yes/No </span>(synonyms for <span class="fixed">tinyint(1)</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bit</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">byte</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bit</span>, <span class="fixed">bool</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">N/A</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Character</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Text, Memo</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char, nchar, varchar, nvarchar, text, ntext</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char, nchar, long, varchar, nvarchar, CLOB</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char, nchar, varchar, nvarchar, mediumtext, longtext</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char, varchar, longvarchar, CLOB</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Currency</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Currency</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">money</span>, <span class="fixed">smallmoney</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">N/A</p>
+</td><td class="td" align="left">
+<p class="table-para">N/A</p>
+</td><td class="td" align="left">
+<p class="table-para">N/A</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Numeric</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Number</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bigint, decimal, float, int, numeric, real, smallint, tinyint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">number (decimal, numeric, double precision, float, integer, smallint)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bigint, decimal, double, int, mediumint, numeric, real, smallint, tinyint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bigint, decimal/numeric, double/float, integer, smallint, real</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Temporal</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Date/Time</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">datetime</span>, <span class="fixed">smalldatetime</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">date</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">datetime</span>, <span class="fixed">time</span>, <span class="fixed">timestamp</span>, <span class="fixed">year</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">date</span>, <span class="fixed">time</span>, <span class="fixed">timestamp</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Unique</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">AutoNumber</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">unique identifier</p>
+</td><td class="td" align="left">
+<p class="table-para">N/A</p>
+</td><td class="td" align="left">
+<p class="table-para">N/A</p>
+</td><td class="td" align="left">
+<p class="table-para">N/A</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1262"></a><a name="IDX-532"></a>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1263"></a><a name="ap03lev2sec1"></a>SQL Server Data Types</h3>
+<p class="first-para">
+<a class="internaljump" href="#ap03table02">Table C-2</a> describes the SQL Server data types.</p>
+<a name="1264"></a><a name="ap03table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table C-2: </span>SQL Server Data Types</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Category</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Types</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" rowspan="2" align="left">
+<p class="table-para">Binary Object</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">binary</span>, <span class="fixed">varbinary</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">The <span class="fixed">binary</span> type stores fixed-length binary data with a maximum length of 8,000 bytes. <span class="fixed">varbinary</span> is a variable-length equivalent.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Image</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Variable-length binary data that can store up to 2^31 - 1 bytes.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Bit</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bit</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Integer data, storing either <span class="fixed">0</span> or <span class="fixed">1</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="3" align="left">
+<p class="table-para">Character</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char</span>, <span class="fixed">varchar</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char</span> stores fixed-length non-Unicode data up to 8,000 characters. <span class="fixed">varchar</span> is the variable-length equivalent.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">nchar</span>, <span class="fixed">nvarchar</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">nchar</span> is the Unicode equivalent of <span class="fixed">char</span>, with a maximum length of 4,000 characters. <span class="fixed">nvarchar</span> is the variable-length equivalent.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">text</span>, <span class="fixed">ntext</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Variable-length non-Unicode character data up to 2^31 - 1 characters. <span class="fixed">ntext</span> stores Unicode character data up to 2^30 - 1 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Currency</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">money</span>, <span class="fixed">small money</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Both store monetary values. Range of acceptable values are:</p>
+<p class="table-para">
+<span class="fixed">money</span>: -2^63 to 2^63 - 1</p>
+<p class="table-para">
+<span class="fixed">smallmoney</span>: -214,748.3648 to 214,748.3647</p>
+<p class="table-para">Both are accurate to one ten-thousandth of a unit.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="3" align="left">
+<p class="table-para">Numeric</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bigint</span>, <span class="fixed">int</span>, <span class="fixed">smallint</span>, <span class="fixed">tinyint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">All used for storing integers of varying sizes:</p>
+<p class="table-para">
+<span class="fixed">bigint</span>: -2^63 to 2^63 - 1</p>
+<p class="table-para">
+<span class="fixed">int</span>: -2^31 to 2^31 - 1</p>
+<p class="table-para">
+<span class="fixed">smallint</span>: -2^15 to 2^15 - 1</p>
+<p class="table-para">
+<span class="fixed">tinyint</span>: 0 to 255</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">decimal</span>, <span class="fixed">numeric</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Fixed-precision and scale-numeric data in the range:</p>
+<p class="table-para">-10^38 +1 to 10^38 -1</p>
+<p class="table-para">Both are functionally equivalent.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">float</span>, <span class="fixed">real</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Floating-point precision numbers with ranges:</p>
+<p class="table-para">
+<span class="fixed">float</span>: -1.79E + 308 to -2.23E - 308, 0 and 2.23E + 308 to 1.79E + 308.</p>
+<p class="table-para">
+<span class="fixed">real</span>: -3.40E + 38 to -1.18E - 38, 0 and 1.18E - 38 to 3.40E + 38.</p>
+<a name="1265"></a><a name="IDX-533"></a></td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Temporal</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">datetime</span>, <span class="fixed">smalldatetime</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Both store date and time data. Values range from:</p>
+<p class="table-para">
+<span class="fixed">datetime</span>: <span class="fixed">01/01/1752</span> to <span class="fixed">12/31/9999</span>
+</p>
+<p class="table-para">
+<span class="fixed">smalldatetime</span>: <span class="fixed">01/01/1900</span> to <span class="fixed">06/06/2079</span>
+</p>
+<p class="table-para">
+<span class="fixed">datetime</span> is accurate to 3.33 milliseconds, and <span class="fixed">smalldatetime</span> is accurate to one minute.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Unique</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">unique identifier</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A Globally Unique Identifier (GUID).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1266"></a><a name="ap03lev2sec2"></a>Oracle Data Types</h3>
+<p class="first-para">
+<a class="internaljump" href="#ap03table03">Table C-3</a> describes the Oracle data types.</p>
+<a name="1267"></a><a name="ap03table03"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table C-3: </span>Oracle Data Types</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Category</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Types</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" rowspan="4" align="left">
+<p class="table-para">Binary Object</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bfile</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Contains a locator to a large external binary file of up to 4 gigabytes (GB).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">BLOB</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A binary large object of up to 4GB.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">long raw</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Raw binary data of up to 2GB.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">raw</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Raw binary data of up to 2,000 bytes.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Bit</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">byte</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Stores one byte</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="6" align="left">
+<p class="table-para">Character</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Stores fixed-length non-Unicode character data up to 2,000 bytes.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">nchar</span>, <span class="fixed">nvarchar</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">nchar</span> is the Unicode equivalent of <span class="fixed">char</span>, with a maximum length of 2,000 characters. <span class="fixed">nvarchar</span> is the variable-length equivalent, but with a maximum length of 4,000 bytes.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">long</span>, <span class="fixed">CLOB</span>, <span class="fixed">NCLOB</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">long</span> stores variable-length character data up to 2GB.</p>
+<p class="table-para">
+<span class="fixed">CLOB</span> stores up to 4GB of single-byte characters.</p>
+<p class="table-para">Supports fixed- and variable-width character sets.</p>
+<p class="table-para">
+<span class="fixed">NCLOB</span> is the Unicode equivalent.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">rowid</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A hexadecimal string value that represents the address of a row in a table.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">urowid</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A hexadecimal string value that represents the logical address of a row in a table ordered by index.</p>
+
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">varchar</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Variable-length character data of up to 4,000 bytes.</p>
+<a name="1268"></a><a name="IDX-534"></a></td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="5" align="left">
+<p class="table-para">Numeric</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">number</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">The <span class="fixed">number</span> data type stores all kinds of numbers, both fixed and floating point, positive, negative, and zero. All numeric types are essentially <span class="fixed">number</span>s, but with varying scale and precision. When used directly, <span class="fixed">number</span> can store values in the range of 10^-130 and 10^126 - 1.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">integer</span>, <span class="fixed">smallint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Both are equivalent and store integer values in the range -10^38 to 10^38.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">decimal</span>, <span class="fixed">numeric</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Both are synonyms for <span class="fixed">number</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">float</span>, <span class="fixed">real</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Both are identical and store floating-point precision numbers with range of -10^38 to 10^38.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">double precision</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Floating-point precision number with a binary precision of 126.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="4" align="left">
+<p class="table-para">Temporal</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">date</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Stores a date and time between 01/01/4712 BC to 12/31/9999 AD.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">timestamp</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Used to represent the year, month, day, hour, minute, or second component of a <span class="fixed">date</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">interval year to month</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Stores the period of time between two dates in years and months.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">interval day to second</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Stores the period between two times in days, hours, minutes, and seconds.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1269"></a><a name="ap03lev2sec3"></a>DB2 Data Types</h3>
+<p class="first-para">
+<a class="internaljump" href="#ap03table04">Table C-4</a> describes the DB2 data types.</p>
+<a name="1270"></a><a name="ap03table04"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table C-4: </span>DB2 Data Types</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Category</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Types</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" rowspan="2" align="left">
+<p class="table-para">Binary Object</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">BLOB</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Contains a variable-length binary string of up to 2GB.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">vargraphic</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Variable-length graphic string of up to 16,336 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="4" align="left">
+<p class="table-para">Character</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Fixed-length character data of up to 254 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">clob</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Variable-length character data of up to 2GB.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">dbclob</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A variable-length character large object of up to 1,073,741,823 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">varchar</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Variable-length character data of up to 32,672 bytes.</p>
+<a name="1271"></a><a name="IDX-535"></a></td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">External Data</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">datalink</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Represents a link to an external data source.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="6" align="left">
+<p class="table-para">Numeric</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bigint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An 8-byte integer in the range -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">integer</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A 4-byte integer in the range -2,147,483,648 to 2,147,483,647.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">smallint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A 2-byte integer in the range -32,768 to 32,767.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">decimal</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An exact decimal value with fixed precision and scale in the range -10^31+1 to 10^31-1.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">real</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A single-precision floating-point number in the range -3.402E+38 to -1.175E-37, zero, or 1.175E-37 to 3.402E+38.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">double</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A double-precision floating-point number in the range -1.79769E+308 to -2.2250738585072014E-308, zero, or 2.225E-307 to 1.79769E+308.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="3" align="left">
+<p class="table-para">Temporal</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Date</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Represents a date between 01/01/0001 and 12/31/9999.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Time</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Represents a time in hours, minutes, and seconds.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">Timestamp</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Represents a date and time, including a fractional microsecond component.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1272"></a><a name="ap03lev2sec4"></a>MySQL Data Types</h3>
+<p class="first-para">
+<a class="internaljump" href="#ap03table05">Table C-5</a> describes the MySQL data types.</p>
+<a name="1273"></a><a name="ap03table05"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table C-5: </span>MySQL Data Types</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Category</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Types</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" rowspan="4" align="left">
+<p class="table-para">Binary Object</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">longtext</span>/<span class="fixed">longblob</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A variable-length text or BLOB field with a maximum of 4,294,967,295 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">mediumtext</span>/<span class="fixed">mediumblob</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A variable-length text or BLOB field with a maximum of 16,777,215 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">text</span>/<span class="fixed">blob</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A variable-length text or BLOB field with a maximum of 65,535 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">tinytext</span>/<span class="fixed">tinyblob</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A variable-length text or BLOB field with a maximum of 255 characters.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Bit</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">tinyint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An integer in the range -128 to 127 (signed) or 0 to 255 (unsigned).</p>
+<a name="1274"></a><a name="IDX-536"></a></td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="2" align="left">
+<p class="table-para">Character</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">char</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A fixed-length string in the national character set.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">varchar</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A variable-length string in the national character set.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="2" align="left">
+<p class="table-para">Composite Types</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">enum</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A string object that can have one out of a number of possible values.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">set</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A string object that can have none, one, or more values out of a number of possible values.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="7" align="left">
+<p class="table-para">Numeric</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">bigint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An integer in the range -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807 (signed) or 0 to 18,446,744,073,709,551,615 (unsigned).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">decimal</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An unpacked floating-point number (stored as a string).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">double</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A double-precision floating-point number in the range -1.7976931348623157E+308 to -1.175494351E-38, zero, or 2.2250738585072014E-308 to 1.7976931348623157E+308.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">float</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A floating-point value. This can represent either single- or double-precision numbers.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">int</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An integer in the range -2,147,483,648 to 2,147,483,647 (signed) or 0 to 4,294,967,295 (unsigned).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">mediumint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An integer in the range -8,388,608 to 8,388,607 (signed) or 0 to 16,777,215 (unsigned).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">smallint</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">An integer in the range -32,768 to 32,767 (signed) or 0 to 65,535 (unsigned).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="5" align="left">
+<p class="table-para">Temporal</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">date</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A date in the range <span class="fixed">01/01/1000</span> to <span class="fixed">12/31/9999</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">datetime</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A combined date and time value.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">time</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A time in the range '-838:59:59' to '838:59:59'.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">timestamp</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A timestamp value reflecting the number of seconds since midnight on January 1, 1970.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">year</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">A year in two- or four-digit format.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1275"></a><a name="IDX-537"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1276"></a><a name="ap03lev2sec5"></a>Access Data Types</h3>
+<p class="first-para">
+<a class="internaljump" href="#ap03table06">Table C-6</a> shows the Access field types listed with JET SQL equivalents.</p>
+<a name="1277"></a><a name="ap03table06"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table C-6: </span>Access Field Types</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Category</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Data Types</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Binary Object</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<b class="bold">OLE Object</b>
+</p>
+<p class="table-para">(<span class="fixed">longbinary</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">A variable-length text or BLOB field with a maximum of 4,294,967,295 characters.</p>
+<p class="table-para">
+<span class="fixed">Longbinary</span> is the Jet name for this data type.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Boolean</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<b class="bold">Yes/No</b>
+</p>
+<p class="table-para">(<span class="fixed">boolean</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">Stores values of <span class="fixed">-1</span> for yes/true, <span class="fixed">0</span> for no/false.</p>
+<p class="table-para">Any non-zero value input into this field is stored as <span class="fixed">-1</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" rowspan="2" align="left">
+<p class="table-para">Character</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<b class="bold">Text</b>
+</p>
+<p class="table-para">(<span class="fixed">char</span>, <span class="fixed">varchar</span>, <span class="fixed">string</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">Can store up to 255 characters. Jet equivalents of a Text field are <span class="fixed">alphanumeric</span>, <span class="fixed">char</span>, <span class="fixed">varchar</span>, and <span class="fixed">string</span>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<b class="bold">Memo</b>
+</p>
+<p class="table-para">(<span class="fixed">longtext</span>, <span class="fixed">longchar</span>, <span class="fixed">memo</span>, <span class="fixed">note</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">Can store up to 64,000 characters of alphanumeric data.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Numeric</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<b class="bold">Number</b>
+</p>
+<p class="table-para">(<span class="fixed">byte</span>, <span class="fixed">int</span> / <span class="fixed">integer</span>, <span class="fixed">single</span>, <span class="fixed">long</span>, <span class="fixed">double</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">The number field can be defined as one of the Jet types of <span class="fixed">byte</span>, <span class="fixed">int</span>, <span class="fixed">integer</span>, <span class="fixed">single</span>, <span class="fixed">double</span>, and <span class="fixed">long</span>. Sizes are:</p>
+<p class="table-para">
+<span class="fixed">byte</span>: 1 byte</p>
+<p class="table-para">
+<span class="fixed">int</span>, <span class="fixed">integer</span>: 2 bytes</p>
+<p class="table-para">
+<span class="fixed">single</span>, <span class="fixed">long</span>: 4 bytes</p>
+<p class="table-para">
+<span class="fixed">double</span>: 8 bytes</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Currency</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<b class="bold">Currency</b>
+</p>
+<p class="table-para">(<span class="fixed">currency</span>, <span class="fixed">money</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">Precision up to 4 decimal places. Eight bytes.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Unique</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<b class="bold">Autonumber</b>
+</p>
+<p class="table-para">(<span class="fixed">counter</span>, <span class="fixed">autoincrement</span>, <span class="fixed">GUID</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">counter</span> and <span class="fixed">autoincrement</span> use a <span class="fixed">long</span> field type with a unique constraint and autonumbering functionality. Size: 4 bytes.</p>
+<p class="table-para">This is the default size when generating an autonumbering field in Access table design view. <span class="fixed">GUID</span> stores up to 16 bytes.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">Other</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<b class="bold">Hyperlink</b>
+</p>
+<p class="table-para">(<span class="fixed">longtext</span>, <span class="fixed">longchar</span>, <span class="fixed">memo</span>, <span class="fixed">note</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">Stores up to 2,048 bytes of Uniform Resource Locator (URL) data.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="1278"></a><a name="IDX-538"></a>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0109.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0111.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

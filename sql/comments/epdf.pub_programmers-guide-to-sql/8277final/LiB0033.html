@@ -1,0 +1,1817 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Using Functions in SQL</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0032.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0034.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch05"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="279"></a><a name="ch05lev1sec2"></a>Using Functions in SQL</h2><p class="first-para">As you saw in the past chapter, functions can be extremely useful in processing data stored in a database and can save you a lot of work when you deal with results returned by SQL queries. So far, most of the functions you've seen have been aggregate functions, but there are a lot more than that available to you.</p>
+<p class="para">The general syntax for calling a function is simply as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+<i class="emphasis">FUNC</i>(<i class="emphasis">Parameters</i>);
+</pre>
+</div>
+<p class="para">Here <i class="emphasis"><span class="fixed">FUNC</span></i> is the name of the function, and <i class="emphasis"><span class="fixed">Parameters</span></i> are the parameters of the function, which may be column names, literals, expressions, or even other functions. Where more than one parameter is required, they're separated by commas:</p>
+<div class="informalexample">
+<pre class="literallayout">
+FUNC(Parameter1, Parameter2, ...);
+<a name="280"></a><a name="IDX-112"></a>
+</pre>
+</div>
+<p class="para">Functions can be used pretty much anywhere in a SQL statement because they can evaluate to numeric values, strings, Boolean values, and so on.</p>
+<p class="para">Unfortunately, functions tend to be very RDBMS specific, where each of the major RDBMSs has its own suite of functions&#8212;far too many to list here. However, there's some overlap, and you can examine some of the more commonly used functions without too much worry concerning compatibility issues.</p>
+<p class="para">One area where many functions are shared is with mathematical functions. Whatever RDBMS you're using, you're likely to have access to functions that do the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Return the absolute value of a value, typically called <span class="fixed">ABS</span> or similar</p>
+</li>
+<li class="listitem">
+<p class="first-para">Perform trigonometric calculations, such as <span class="fixed">SIN</span>, <span class="fixed">COS</span>, and so on</p>
+</li>
+<li class="listitem">
+<p class="first-para">Calculate logarithms, such as <span class="fixed">LOG10</span> or <span class="fixed">LOG</span>, to use base e</p>
+</li>
+<li class="listitem">
+<p class="first-para">Calculate square roots, <span class="fixed">SQRT</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">Raise values to a given power, <span class="fixed">POWER</span>
+</p>
+</li>
+<li class="listitem">
+<p class="first-para">Generate random numbers, <span class="fixed">RAND</span>
+</p>
+</li>
+</ul>
+<p class="para">RDBMSs usually include functions for dealing with date and time values, working with strings (obtaining substrings, replacing characters, reversing character order, and so on), and much more. Typically, access to all the functionality of a database is achieved via functions, including security functionality, general database statistics, configuration, and most other things you might imagine.</p>
+<p class="para">As an example, consider the situation where you want to obtain the square root of the numbers in a column, which means using a function such as <span class="fixed">SQRT</span>, as noted previously. In SQL Server, Oracle, DB2, and MySQL, you could use simply the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT SQRT(<i class="emphasis">ColumnName</i>) AS <i class="emphasis">RootOfColumnName</i> FROM <i class="emphasis">TableName</i>;
+</pre>
+</div>
+<p class="para">However, Access doesn't have a <span class="fixed">SQRT</span> function, so you have to use <span class="fixed">SQR</span> instead:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT SQR(<i class="emphasis">ColumnName</i>) AS <i class="emphasis">RootOfColumnName</i> FROM <i class="emphasis">TableName</i>;
+</pre>
+</div>
+<p class="para">The result is the same, but the name of the function is different. Sadly, this is typical and can mean checking the function list of the RDBMS you're using to find the exact syntax you need to use.</p>
+<p class="para">Because there are so many functions available, and because they're so database-specific, there's really no point in attempting to cover everything here. <a name="281"></a><a name="IDX-113"></a>Instead you'll look at some of the main areas where you need functions&#8212;manipulating numbers, strings, and dates and times and converting between different data types&#8212;and you'll deal with other individual functions as you come across them in the remainder of the book. Later, at the end of the chapter, you'll also look at the <span class="fixed">CREATE FUNCTION</span> statement that lets you define your own functions.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="282"></a><a name="ch05lev2sec3"></a>Working with Numbers</h3>
+<p class="first-para">Previously, you saw integer values being used simply by inserting the numeric value, without any ' characters or other delimiting character:</p>
+<div class="informalexample">
+<pre class="literallayout">
+2763
+</pre>
+</div>
+<p class="para">This holds for all numeric types, but there are also several other elements of notation you can use. First, you can include decimal points for floating-point numbers:</p>
+<div class="informalexample">
+<pre class="literallayout">
+3.142
+</pre>
+</div>
+<p class="para">You can also include scientific notation to include the exponent of a number, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+7.34E3
+</pre>
+</div>
+<p class="para">You can use the - symbol to specify either a negative number or a negative exponent (or both):</p>
+<div class="informalexample">
+<pre class="literallayout">
+-2.43E-15
+</pre>
+</div>
+<p class="para">You can also use the <span class="fixed">+</span> symbol in a similar way although this isn't really necessary because numbers will be interpreted as positive by default.</p>
+<p class="para">SQL Server and Access have a specific money data type, which allows for constants including a currency symbol, with all the other options described previously:</p>
+<div class="informalexample">
+<pre class="literallayout">
+-$300.50
+</pre>
+</div>
+<p class="para">Other RDBMSs include additional, more exotic string representations of numeric values, such as preceding a string literal with <span class="fixed">X</span> in DB2 and MySQL to indicate a hexadecimal value.</p>
+<a name="283"></a><a name="IDX-114"></a>
+<div class="section">
+<h4 class="sect4-title">
+<a name="284"></a><a name="ch05lev3sec1"></a>Working with Hexadecimal Numbers</h4>
+<p class="first-para">The following is a DB2/MySQL hexadecimal number:</p>
+<div class="informalexample">
+<pre class="literallayout">
+X'5A0F'
+</pre>
+</div>
+<p class="para">SQL Server, however, uses the prefix <span class="fixed">0x</span> for hexadecimal values, which aren't enclosed in quotes (this is also supported by the latest versions of MySQL):</p>
+<div class="informalexample">
+<pre class="literallayout">
+0x5A0F
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">By default, MySQL will treat hexadecimal values as ASCII character codes and return the corresponding character(s), but you can ensure that they're treated as numbers by adding zero to them. For example, <i class="emphasis"><span class="fixed">X'4A'</span></i> returns <i class="emphasis"><span class="fixed">'J'</span></i>, but <i class="emphasis"><span class="fixed">X'4A' + 0</span></i> returns <i class="emphasis"><span class="fixed">74</span></i>.</p>
+</td>
+</tr>
+</table>
+<p class="last-para">DB2, MySQL, and Access have a <span class="fixed">HEX()</span> function that allows you to convert a numeric value into a hexadecimal string. For example, <span class="fixed">HEX(74)</span> returns <span class="fixed">'4A'</span>. You can achieve the same thing with Oracle using the <span class="fixed">TO_CHAR()</span> function. You'll look at this function in a bit more detail later, but it's used to convert different data types to strings. As well as the data to convert, it can take a string that indicates how the string is to be formatted. An <span class="fixed">'X'</span> character in this string represents a hexadecimal digit, so you can convert the number 74 to hexadecimal using <span class="fixed">TO_CHAR(74, 'XX')</span>.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="285"></a><a name="ch05lev3sec2"></a>Rounding up and Down</h4>
+<p class="first-para">As an example of using mathematical functions in SQL, let's look at the functions used to round numbers up or down to the nearest integer or to a specific precision. There are three basic functions involved:</p>
+<ul class="simple-list">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">FLOOR(<i class="emphasis">number</i>)</span>: Rounds <i class="emphasis"><span class="fixed">number</span></i> down to the highest integer less than <i class="emphasis"><span class="fixed">number</span></i>. For example, <span class="fixed">FLOOR(57.4)</span> and <span class="fixed">FLOOR(57.8)</span> will both return <span class="fixed">57</span>.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">CEILING(<i class="emphasis">number</i>)</span> or <span class="fixed">CEIL(<i class="emphasis">number</i>)</span>: Rounds <i class="emphasis"><span class="fixed">number</span></i> up to the lowest integer greater than <i class="emphasis"><span class="fixed">number</span></i>. For example, <span class="fixed">FLOOR(57.4)</span> and <span class="fixed">FLOOR(57.8)</span> will both return <span class="fixed">58</span>.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">ROUND(<i class="emphasis">number</i>, <i class="emphasis">precision</i>)</span>: Rounds <i class="emphasis"><span class="fixed">number</span></i> to the nearest integer or floating-point number with the specified <i class="emphasis"><span class="fixed">precision</span></i>. For example, <span class="fixed">ROUND(57.4, 0)</span> returns <span class="fixed">57</span> and <span class="fixed">ROUND(57.8, 0)</span> returns <span class="fixed">58</span>. If the number is negative, the number will be rounded on the left side of the decimal point, so <span class="fixed">ROUND(57.4, -1)</span> returns <span class="fixed">60</span> and <span class="fixed">ROUND(57.4, -2)</span> returns <span class="fixed">100</span>.</p>
+</li>
+</ul>
+<a name="286"></a><a name="IDX-115"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Access doesn't support either <i class="emphasis"><span class="fixed">FLOOR()</span></i> or <i class="emphasis"><span class="fixed">CEILING()</span></i>, but you can achieve the same effect using <i class="emphasis"><span class="fixed">INT()</span></i>, which works in much the same way as <i class="emphasis"><span class="fixed">FLOOR()</span></i> for numeric values, and <span class="fixed"><i class="emphasis">ROUND</i>(number + <i class="emphasis">0.5</i>, <i class="emphasis">0</i>)</span> to replace <i class="emphasis"><span class="fixed">CEILING()</span></i>. Also, Access doesn't support negative precision with <i class="emphasis"><span class="fixed">ROUND()</span></i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">To see this in action, let's revisit the example from <a href="LiB0027.html#216" target="_parent" class="chapterjump">Chapter 4</a>, "Summarizing and Grouping Data," where you calculated the average mark that a student scored in his or her exams. You'll show the same data (but for all students), but this time you'll present the average as a floating point, rounded up and rounded down and rounded to the nearest integer.</p>
+<p class="para">There are slight differences in the way you implement this in the various RDBMSs, so you'll look at these examples separately.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="287"></a><a name="ch05lev4sec1"></a>SQL Server and DB2</h5>
+<p class="first-para">The same SQL query will run on both SQL Server and DB2, so you'll look at these together. The main issue here is that both SQL Server and DB2 will store the value of <span class="fixed">AVG(Mark)</span> as an integer, so you need to convert the <span class="fixed">Mark</span> to a float before calculating the average:</p>
+<div class="informalexample">
+<pre class="literallayout">
+AVG(CAST(Mark AS FLOAT))
+</pre>
+</div>
+<p class="para">You'll look at data type conversion functions in more detail shortly. Also, notice that SQL Server supports only the <span class="fixed">CEILING()</span> function, but DB2 has both <span class="fixed">CEIL()</span> and <span class="fixed">CEILING()</span>.</p>
+<div class="example">
+<span class="example-title">ROUNDING UP AND DOWN (SQL SERVER AND DB2)</span><a name="288"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter this query and execute it against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(CAST(Mark AS FLOAT)) AS AverageMark,
+        FLOOR(AVG(CAST(Mark AS FLOAT))) AS RoundDown,
+        CEILING(AVG(CAST(Mark AS FLOAT))) AS RoundUp,
+        ROUND(AVG(CAST(Mark AS FLOAT)), 0) AS ClosestInt
+FROM StudentExam
+GROUP BY StudentID;
+</pre>
+</div>
+<p class="para">This gives the following output:</p>
+<a name="289"></a><a name="IDX-116"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID  AverageMark       RoundDown RoundUp  ClosestInt
+
+   ---------  ----------------  --------- -------  ----------
+   1          64                64        64       64
+   2          48.6666666666667  48        49       49
+   3          80                80        80       80
+   4          63.3333333333333  63        64       63
+   5          52                52        52       52
+   6          68.3333333333333  68        69       68
+   7          71.3333333333333  71        72       71
+   8          51.6666666666667  51        52       52
+   9          68.6666666666667  68        69       69
+   10         73.5              73        74       74
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="290"></a><a name="ch05lev4sec2"></a>Oracle</h5>
+<p class="first-para">The query for Oracle is similar, but Oracle supports only <span class="fixed">CEIL()</span>, not <span class="fixed">CEILING()</span>. Also, you don't need to use the <span class="fixed">CAST()</span> function (although it's supported, using the same syntax).</p>
+<div class="example">
+<span class="example-title">ROUNDING UP AND DOWN (ORACLE)</span><a name="291"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter this query into SQL*Plus:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(CAST(Mark AS FLOAT)) AS AverageMark,
+        FLOOR(AVG(CAST(Mark AS FLOAT))) AS RoundDown,
+        CEIL(AVG(CAST(Mark AS FLOAT))) AS RoundUp,
+        ROUND(AVG(CAST(Mark AS FLOAT)), 0) AS ClosestInt
+FROM StudentExam
+GROUP BY StudentID;
+</pre>
+</div>
+<p class="para">This gives the same output as for the SQL Server/DB2 example:</p>
+<a name="292"></a><a name="IDX-117"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID  AverageMark  RoundDown  RoundUp    ClosestInt
+
+   ---------- -----------  ---------- ---------- ----------
+   1          64           64         64         64
+   2          48.6666667   48         49         49
+   3          80           80         80         80
+   4          63.3333333   63         64         63
+   ...        ...          ...        ...        ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="293"></a><a name="ch05lev4sec3"></a>MySQL</h5>
+<p class="first-para">MySQL doesn't support the <span class="fixed">CAST()</span> function and uses <span class="fixed">CEILING()</span> rather than <span class="fixed">CEIL()</span> . Otherwise, the query is the same as for Oracle.</p>
+<div class="example">
+<span class="example-title">ROUNDING UP AND DOWN (MYSQL)</span><a name="294"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter this query and execute it against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark,
+        FLOOR(AVG(Mark)) AS RoundDown,
+        CEILING(AVG(Mark)) AS RoundUp,
+        ROUND(AVG(Mark), 0) AS ClosestInt
+FROM StudentExam
+GROUP BY StudentID;
+</pre>
+</div>
+<p class="para">This gives the following output:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID  AverageMark RoundDown  RoundUp    ClosestInt
+
+   ---------- ----------- ---------- ---------- ----------
+   1           64.0000     64          64         64
+   2           48.6667     48          49         49
+   3           80.0000     80          80         80
+   4           63.3333     63          64         63
+   ...         ...         ...         ...        ...
+<a name="295"></a><a name="IDX-118"></a>
+
+</pre>
+</div>
+<p class="last-para">
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">This example won't work against a MySQL server running in ANSI mode. Strict ANSI SQL demands that all columns not included in aggregate functions must be included in the <i class="emphasis"><span class="fixed">GROUP BY</span></i> clause. This doesn't make any sense (and isn't permitted) for your rounded columns, so this query will only work against MySQL running in standard mode.</p>
+</td>
+</tr>
+</table>
+</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="296"></a><a name="ch05lev4sec4"></a>Access</h5>
+<p class="first-para">The Access version of this query is significantly different because as you saw previously, Access doesn't support the <span class="fixed">FLOOR()</span> or <span class="fixed">CEILING()</span> function.</p>
+<div class="example">
+<span class="example-title">ROUNDING UP AND DOWN (ACCESS)</span><a name="297"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The Access version of your query looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, AVG(Mark) AS AverageMark,
+        INT(AVG(Mark)) AS RoundDown,
+        ROUND(AVG(Mark) + .5, 0) AS RoundUp,
+        ROUND(AVG(Mark), 0) AS ClosestInt
+FROM StudentExam
+GROUP BY StudentID;
+</pre>
+</div>
+<p class="para">Here you use <span class="fixed">INT()</span> to round down the mark. <span class="fixed">INT()</span> converts a non-integer type to an integer. For floating-point values, this effectively means that <span class="fixed">INT() </span>works in the same way as <span class="fixed">FLOOR()</span>. The <span class="fixed">ROUND()</span> function has the same syntax as in the other RDBMSs. You also use this function to simulate <span class="fixed">CEILING()</span>: If you add 0.5 to a value and then round this to the nearest integer, this has the effect of rounding up to the next integer.</p>
+<p class="para">Here are the results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID  AverageMark      RoundDown   RoundUp   ClosestInt
+
+   ---------- ---------------- ---------   --------- ----------
+   1          64               64          64        64
+   2          48.6666666666667 48          49        49
+   3          80               80          80        80
+   4          63.3333333333333 63          64        63
+   ...        ...              ...         ...       ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="298"></a><a name="IDX-119"></a>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="299"></a><a name="ch05lev2sec4"></a>Manipulating Strings</h3>
+<p class="first-para">As you've seen in earlier chapters, string literal values are enclosed in ' characters as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'This is a string. Honest.'
+</pre>
+</div>
+<p class="para">One thing you haven't looked at yet is how you embed ' characters themselves in strings, which is a reasonably common occurrence. All you have to do is to replace any single quotes in the string with <span class="fixed">''</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'It''s cold outside.'
+</pre>
+</div>
+<p class="para">All other characters can be contained in the string literal value as normal.</p>
+<p class="para">It's also possible for a string literal to represent an empty string as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+''
+</pre>
+</div>
+<p class="para">This is simply two ' characters with nothing in between.</p>
+<p class="para">Although the ' character is the ANSI standard, some RDBMSs such as Access and MySQL (when not run in ANSI mode) allow the use of <span class="fixed">"</span> characters instead. If you use this syntax, then ' characters can be used in the string without doubling up. However, if you want to use <span class="fixed">"</span> characters, you must instead use <span class="fixed">""</span>.</p>
+<p class="para">In addition, some RDBMSs use escape characters for certain characters such as tabs and carriage returns. MySQL uses syntax similar to that seen in many C++ (and C++ related) implementations, for example, <span class="fixed">\n</span> for a new line character and <span class="fixed">\t</span> for a tab. However, these escape codes are the exception rather than the norm.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="300"></a><a name="ch05lev3sec3"></a>Using String Manipulation Functions</h4>
+<p class="first-para">Most RDBMSs provide a large number of functions that you can use to manipulate strings in various ways, for example, to extract substrings, determine the length of the string, find a character in the string, or convert the string to upper or lower case. Although the behavior of these functions is more or less standard, their names vary slightly from system to system, and in a few cases (such as <span class="fixed">SUBSTR</span>), the parameter list can vary a little.</p>
+<p class="para">In general, these functions take the forms described in <a class="internaljump" href="#ch05table02">Table 5-2</a>.</p>
+<a name="301"></a><a name="ch05table02"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 5-2: </span>String Manipulation Functions</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Function</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Description</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LEFT(<i class="emphasis">string</i>, <i class="emphasis">n</i>)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Returns the <i class="emphasis"><span class="fixed">n</span></i> leftmost characters of <i class="emphasis"><span class="fixed">string</span></i>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RIGHT(<i class="emphasis">string</i>, <i class="emphasis">n</i>)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Returns the <i class="emphasis"><span class="fixed">n</span></i> rightmost characters of <i class="emphasis"><span class="fixed">string</span></i>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">SUBSTRING(<i class="emphasis">string</i>, <i class="emphasis">x</i>, <i class="emphasis">y</i>)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Returns the substring of <i class="emphasis"><span class="fixed">string</span></i> of length <i class="emphasis"><span class="fixed">y</span></i> that starts at position <i class="emphasis"><span class="fixed">x</span></i>. Oracle, DB2, and MySQL permit you to omit the last argument, in which case the substring from <i class="emphasis"><span class="fixed">x</span></i> to the end of the string will be returned.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INSTR(<i class="emphasis">string</i>, <i class="emphasis">substr</i>)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Returns the position of the first instance of the character or substring <i class="emphasis"><span class="fixed">substr</span></i> within <i class="emphasis"><span class="fixed">string</span></i>.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LENGTH(<i class="emphasis">string</i>)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Returns the length of <i class="emphasis"><span class="fixed">string</span></i> (that is, the number of characters in <i class="emphasis"><span class="fixed">string</span></i>).</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UPPER(<i class="emphasis">string</i>)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Returns <i class="emphasis"><span class="fixed">string</span></i> converted to upper case.</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LOWER(<i class="emphasis">string</i>)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">Returns <i class="emphasis"><span class="fixed">string</span></i> converted to lower case.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<a name="302"></a><a name="IDX-120"></a>
+<p class="para">The names of these functions in the individual RDBMSs are as described in <a class="internaljump" href="#ch05table03">Table 5-3</a>.</p>
+<a name="303"></a><a name="ch05table03"></a>
+<table class="table" border="1">
+<caption class="table-title">
+<span class="table-title"><span class="table-titlelabel">Table 5-3: </span>Names of the Functions</span>
+</caption>
+<thead>
+<tr valign="top">
+<th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">SQL Server</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">DB2</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Oracle</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">MySQL</span></b>
+</p>
+</th><th class="th" scope="col" align="left">
+<p class="table-para">
+<b class="bold"><span class="fixed">Access</span></b>
+</p>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LEFT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LEFT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">(Use <span class="fixed">SUBSTR</span>)</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LEFT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LEFT</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RIGHT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RIGHT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">(</span>Use <span class="fixed">SUBSTR)</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RIGHT</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">RIGHT</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">SUBSTRING</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">SUBSTR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">SUBSTR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">SUBSTRING</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">MID</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">CHARINDEX</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">POSSTR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INSTR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INSTR</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">INSTR</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LEN</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LENGTH</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LENGTH</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LENGTH</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LEN</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UPPER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UCASE/UPPER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UPPER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UCASE/UPPER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">UCASE</span>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LOWER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LCASE/LOWER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LOWER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LCASE/LOWER</span>
+</p>
+</td><td class="td" align="left">
+<p class="table-para">
+<span class="fixed">LCASE</span>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="para">Note that SQL Server's <span class="fixed">CHARINDEX()</span> function takes its parameters in the opposite order of the <span class="fixed">INSTR()</span> functions. So, <span class="fixed">CHARINDEX(' ', 'Apress LP')</span> will return <span class="fixed">7</span>, the position of the space in <span class="fixed">'Apress LP'</span>.</p>
+<a name="304"></a><a name="IDX-121"></a>
+<p class="para">To see more clearly how these functions are used, let's look at an example. In this example, you'll reverse the first and last names of the students in the <span class="fixed">InstantUniversity</span> database (for example, you'll format <span class="fixed">'John Jones'</span> as <span class="fixed">'Jones, John'</span>).</p>
+<p class="para">To do this, you'll find the first occurrence of the space in their name and retrieve the substring from the next character to the end of the name (this is the student's last name). Next, you'll concatenate a comma and a space to this using the concatenation techniques you learned in <a href="LiB0013.html#98" target="_parent" class="chapterjump">Chapter 2</a>, "Retrieving Data with SQL." Finally, you'll add the first name, which you retrieve by extracting the substring from the start of the string to the character before the space.</p>
+<p class="para">Again, you'll examine the examples for each RDBMS separately.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="305"></a><a name="ch05lev4sec5"></a>SQL Server</h5>
+<p class="first-para">Apart from the idiosyncratic <span class="fixed">CHARINDEX()</span> function noted previously, the SQL Server version of the example is fairly straightforward.</p>
+<div class="example">
+<span class="example-title">MANIPULATING STRINGS (SQL SERVER)</span><a name="306"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">This is the SQL Server version of your query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT
+   RIGHT(Name, LEN(Name) - CHARINDEX(' ', Name) + 1) + ', ' +
+   LEFT(Name, CHARINDEX(' ', Name) - 1) AS StudentName
+FROM Student
+ORDER BY StudentName;
+</pre>
+</div>
+<p class="para">Here you use the <span class="fixed">RIGHT()</span> function to retrieve the last name for each student and <span class="fixed">LEFT()</span> to get the first name (although you could have used <span class="fixed">SUBSTRING()</span>). You also use the <span class="fixed">LEN()</span> function to calculate the length of the name, and you use this value to calculate the length of the last name. The first four rows output from this query are as follows:</p>
+<a name="307"></a><a name="IDX-122"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName
+
+   ---------------
+   Akbar, Mohammed
+   Alaska, Steve
+   Andrews, Vic
+   Burton, Gary
+   ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="308"></a><a name="ch05lev4sec6"></a>Oracle</h5>
+<p class="first-para">Oracle doesn't support <span class="fixed">LEFT()</span> or <span class="fixed">RIGHT()</span>, so you'll use <span class="fixed">SUBSTR()</span> to extract the first and last names from the student's full name as stored in the database.</p>
+<div class="example">
+<span class="example-title">MANIPULATING STRINGS (ORACLE)</span><a name="309"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The query looks like this in Oracle:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT
+   SUBSTR(Name, INSTR(Name, ' ') + 1) || ', ' ||
+   SUBSTR(Name, 1, INSTR(Name, ' ') - 1) AS StudentName
+FROM Student
+ORDER BY StudentName;
+</pre>
+</div>
+<p class="para">Oracle allows you to use the version of <span class="fixed">SUBSTR()</span> with only two parameters, retrieving the whole of the remainder of the string from the specified position onward, so you'll use this to extract the last name (the whole string after the space). You retrieve the first name by retrieving the substring from position one (the first character) to the character before the space. Here are the results:</p>
+<a name="310"></a><a name="IDX-123"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName
+
+   ---------------
+   Akbar, Mohammed
+   Alaska, Steve
+   Andrews, Vic
+   Burton, Gary
+   ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="311"></a><a name="ch05lev4sec7"></a>DB2</h5>
+<p class="first-para">DB2 does support <span class="fixed">LEFT()</span> and <span class="fixed">RIGHT()</span>, but because its version of <span class="fixed">SUBSTR()</span> can take only two arguments, the query is actually no longer if you don't use them.</p>
+<div class="example">
+<span class="example-title">MANIPULATING STRINGS (DB2)</span><a name="312"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">This is how the query looks in DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT
+   SUBSTR(Name, POSSTR(Name, ' ') + 1) || ', ' ||
+   SUBSTR(Name, 1, POSSTR(Name, ' ') - 1) AS StudentName
+FROM Student
+ORDER BY StudentName;
+</pre>
+</div>
+<p class="para">Apart from the fact that DB2 uses <span class="fixed">POSSTR()</span> for the more usual <span class="fixed">INSTR()</span>, this is the same as the Oracle version. The output from this query is the same as on SQL Server and Oracle:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName
+
+   ---------------
+   Akbar, Mohammed
+   Alaska, Steve
+   Andrews, Vic
+   Burton, Gary
+   ...
+<a name="313"></a><a name="IDX-124"></a>
+</pre>
+</div>
+<p class="para">One interesting side note is what happens if you try to perform the query using the <span class="fixed">LEFT()</span> and <span class="fixed">RIGHT()</span> functions:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT
+   RIGHT(Name, LENGTH(Name) - POSSTR(Name, ' ') + 1) ||
+   ', ' || LEFT(Name, POSSTR(Name, ' ') - 1) AS StudentName
+FROM Student
+ORDER BY StudentName;
+</pre>
+</div>
+<p class="para">What you get is this error:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   An expression resulting in a string data type with a maximum
+   length greater than 255 bytes is not permitted in:
+
+   A SELECT DISTINCT statement
+   A GROUP BY clause
+   An ORDER BY clause
+   A column function with DISTINCT
+   A SELECT or VALUES statement of a set operator other than
+       UNION ALL.
+</pre>
+</div>
+<p class="last-para">This is because the <span class="fixed">LEFT()</span> and <span class="fixed">RIGHT()</span> functions return results as <span class="fixed">varchar(4000)</span>, so although your formatted <span class="fixed">StudentName</span> will never approach a length of 255 bytes, it's treated by DB2 as potentially greater than that. To correct that, you can set the length of the column using the <span class="fixed">VARCHAR()</span> function, which you'll look at shortly when you learn about data type conversions.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="314"></a><a name="ch05lev4sec8"></a>MySQL</h5>
+<p class="first-para">Like DB2, MySQL supports both <span class="fixed">LEFT()</span> and <span class="fixed">RIGHT()</span> and the version of <span class="fixed">SUBSTRING()</span> with just two parameters.</p>
+<a name="315"></a><a name="IDX-125"></a>
+<div class="example">
+<span class="example-title">MANIPULATING STRINGS (MYSQL)</span><a name="316"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The query looks like this in MySQL:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT
+   CONCAT(RIGHT(Name, LENGTH(Name) - INSTR(Name, ' ') + 1),
+           ', ', LEFT(Name, INSTR(Name, ' ') - 1))
+   AS StudentName
+FROM Student
+ORDER BY StudentName;
+</pre>
+</div>
+<p class="para">This query, using the <span class="fixed">CONCAT()</span> operator, will work in both standard and ANSI modes. In ANSI mode, you can also use the <span class="fixed">||</span> operator to perform concatenation, but that won't work in standard mode. Here are the results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName
+
+   ---------------
+   Akbar, Mohammed
+   Alaska, Steve
+   Andrews, Vic
+   Burton, Gary
+   ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="317"></a><a name="ch05lev4sec9"></a>Access</h5>
+<p class="first-para">Access supports <span class="fixed">LEFT()</span> and <span class="fixed">RIGHT()</span> but uses <span class="fixed">MID()</span> instead of <span class="fixed">SUBSTRING()</span>.</p>
+<div class="example">
+<span class="example-title">MANIPULATING STRINGS (ACCESS)</span><a name="318"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">This is how the query looks in Access:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT
+   RIGHT(Name, LEN(Name) - INSTR(Name, ' ') + 1) &amp; ', ' &amp;
+   LEFT(Name, INSTR(Name, ' ') - 1) AS StudentName
+FROM Student
+ORDER BY
+   RIGHT(Name, LEN(Name) - INSTR(Name, ' ') + 1);
+<a name="319"></a><a name="IDX-126"></a>
+</pre>
+</div>
+<p class="para">Remember that you can't use the alias column names of calculated columns in Access <span class="fixed">ORDER BY</span> clauses. This means you have to repeat the formula used to calculate the column. To save space, here you've just sorted by the last name part; because no two of the sample students have the same last name, this won't affect the ordering:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName
+
+   ---------------
+   Akbar, Mohammed
+   Alaska, Steve
+   Andrews, Vic
+   Burton, Gary
+   ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="320"></a><a name="ch05lev2sec5"></a>Working with Dates and Times</h3>
+<p class="first-para">In general, datetime literal values are a special case of string values where the specific string is formatted in a certain way. Most RDBMSs will accept a wide variety of datetime specifications, but you do have to be careful to write datetime literal values in a form that will work internationally. For example, the following literal value might be considered unacceptable:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'05/02/2003'
+</pre>
+</div>
+<p class="para">This is because the locale settings on a server might mean that this is interpreted either as <span class="fixed">'mm/dd/yyyy'</span> or <span class="fixed">'dd/mm/yyyy'</span>.</p>
+<p class="para">However, reversing the values to <span class="fixed">'yyyy/mm/dd'</span> works in every locale. Note that the separator here, <span class="fixed">/</span>, can be replaced with - or in some formats can be omitted entirely or replaced with a dot (.), with the date expressed as an eight-digit number. The standard form is to use dashes; the following literal, then, is unambiguous:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'2003-05-02'
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Note that Access requires datetime literals to be enclosed in pound characters, so you'd write this as <i class="emphasis"><span class="fixed">#2003-05-02#</span></i> if you're using Access.</p>
+</td>
+</tr>
+</table>
+<a name="321"></a><a name="IDX-127"></a>
+<p class="para">In addition, you can be even clearer by using a more human readable format such as:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'May 2, 2003'
+</pre>
+</div>
+<p class="para">However, formatting a date in this way may take more fiddling around with strings in your code than you'd like.</p>
+<p class="para">Time constants are formatted as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'hh:mm:ss.fff'
+</pre>
+</div>
+<p class="para">Here <span class="fixed">hh</span> is hours, <span class="fixed">mm</span> is minutes, <span class="fixed">ss</span> is seconds, and <span class="fixed">fff</span> is used to get even more precise with fractions of seconds, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'14:59:02.129'
+</pre>
+</div>
+<p class="para">However, you needn't specify as much information as this. You can omit second data, for example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'14:59'
+</pre>
+</div>
+<p class="para">You can also use a 12-hour clock:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'2:59 PM'
+</pre>
+</div>
+<p class="para">Finally, date and time values can be combined into a single string:</p>
+<div class="informalexample">
+<pre class="literallayout">
+'2003-05-02 14:59:02.129'
+</pre>
+</div>
+<p class="para">Here a space separates the date and time values, and you can use any of the formats described previously for the date and time.</p>
+<p class="para">Note that there are certain restrictions placed on SQL date and time formats enforced by the various RDBMSs. For example, when using Oracle it may be necessary to include a <span class="fixed">DATE</span>, <span class="fixed">TIME</span>,or <span class="fixed">TIMESTAMP</span> keyword before the string used to represent the date and time in order to specify how the string should be interpreted.</p>
+<p class="para">For example, you could represent a date using the following Oracle literal value:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DATE '2003-05-02'
+<a name="322"></a><a name="IDX-128"></a>
+</pre>
+</div>
+<p class="para">Oracle also allows time intervals to be represented, using a similar syntax as the previous example with the addition of a requirement to specify what the first number in the interval string is (such as <span class="fixed">YEAR</span> or <span class="fixed">DAY</span>, with an optional single-digit precision specification saying how many digits are used for the value, for example, <span class="fixed">YEAR(4)</span> for a four-digit amount of years) and, optionally, what the last number is (using similar nomenclature) using a suffix. There are two types of Oracle interval, known as <span class="fixed">YEAR TO MONTH</span> and <span class="fixed">DAY TO SECOND</span>, where the former has a precision of months or less and the latter seconds or less.</p>
+<p class="para">The following shows a <span class="fixed">DAY TO SECOND</span> interval of five days and four hours:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INTERVAL '5:4' DAY TO HOUR
+</pre>
+</div>
+<p class="para">The following is a <span class="fixed">YEAR TO MONTH</span> interval of 5,000 years:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INTERVAL '5000' YEAR(4)
+</pre>
+</div>
+<p class="para">For more details on this, consult your Oracle documentation.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="323"></a><a name="ch05lev3sec4"></a>Using Datetime Functions</h4>
+<p class="first-para">The syntax and functionality of the date functions vary significantly from system to system, so we won't list them here. Instead, we'll present an example for each RDBMS where you calculate how long each student has been enrolled by working out the maximum difference between the current date and the date when they first enrolled.</p>
+<p class="para">You group the rows in the <span class="fixed">Enrollment</span> table by <span class="fixed">StudentID</span> and use the <span class="fixed">MAX</span> aggregate function to get the amount of days since the first enrollment (because students may have enrolled in multiple classes, the <span class="fixed">MAX</span> function finds the earliest). Finally, you order the resultant data by this calculated average to rank students.</p>
+<p class="para">In most cases, you can use some form of subtraction to work out the number of days since each student's first enrollment, but the exact syntax varies considerably.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="324"></a><a name="ch05lev4sec10"></a>SQL Server</h5>
+<p class="first-para">To calculate the difference between two dates in SQL Server, you use the <span class="fixed">DATEDIFF()</span> function. Subtracting one date from another is permitted in SQL Server, but the return value is itself a date and not very meaningful.</p>
+<a name="325"></a><a name="IDX-129"></a>
+<div class="example">
+<span class="example-title">DIFFERENCES BETWEEN DATES (SQL SERVER)</span><a name="326"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Enter and execute this query against the <span class="fixed">InstantUniversity</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, MAX(DATEDIFF(dd, EnrolledOn, GETDATE()))
+                                               AS DaysEnrolled
+FROM Enrollment
+GROUP BY StudentID
+ORDER BY DaysEnrolled DESC;
+</pre>
+</div>
+<p class="para">
+<span class="fixed">DATEDIFF()</span> calculates the time difference between two dates; the first parameter of this function selects the units to work with, in this case, days. You look at how many days have elapsed between the enrollment date stored in the <span class="fixed">EnrolledOn</span> column and the current date, obtained using the <span class="fixed">GETDATE()</span> function. The output is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID    DaysEnrolled
+
+   -----------  -----------
+   4            152
+   7            152
+   10           152
+   9            149
+   8            149
+   5            149
+   6            149
+   1            149
+   3            142
+   2            -216
+</pre>
+</div>
+<p class="last-para">Note that the last value is negative because some of the enrollment dates are in the future (at the time of writing). This wouldn't happen if you were using real data, of course, but it does demonstrate that <span class="fixed">DATEDIFF()</span> returns a signed rather than an absolute value.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="327"></a><a name="IDX-130"></a>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="328"></a><a name="ch05lev4sec11"></a>Oracle</h5>
+<p class="first-para">With Oracle, you can perform a straightforward subtraction of two dates.</p>
+<div class="example">
+<span class="example-title">DIFFERENCES BETWEEN DATES (ORACLE)</span><a name="329"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The Oracle version of the query looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID,
+        FLOOR(MAX(CURRENT_DATE - EnrolledOn)) AS DaysEnrolled
+FROM Enrollment
+GROUP BY StudentID
+ORDER BY DaysEnrolled DESC;
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<p class="para">You retrieve the current date and time using <span class="fixed">CURRENT_DATE</span> and subtract the value of the <span class="fixed">EnrolledOn</span> column to find out how long each student has been enrolled for each class. This operation returns an <span class="fixed">INTERVAL</span> value; because this can contain a time portion (expressed using decimals), you round this down to the nearest day using <span class="fixed">FLOOR()</span> (you use <span class="fixed">FLOOR()</span> rather than <span class="fixed">CEILING()</span> to include only complete days). The output is the same as for the SQL Server version:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID    DaysEnrolled
+
+   -----------  ------------
+   4            152
+   7            152
+   10           152
+   ...          ...
+<a name="330"></a><a name="IDX-131"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="331"></a><a name="ch05lev4sec12"></a>DB2</h5>
+<p class="first-para">You again use subtraction to calculate the number of days each student has been enrolled with DB2, but you need first to convert the dates into a simple count of days by calling the <span class="fixed">DAYS()</span> function.</p>
+<div class="example">
+<span class="example-title">DIFFERENCES BETWEEN DATES (DB2)</span><a name="332"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">In DB2, the query looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID,
+        MAX(DAYS(CURRENT_DATE) - DAYS(EnrolledOn))
+                                     AS DaysEnrolled
+FROM Enrollment
+GROUP BY StudentID
+ORDER BY DaysEnrolled DESC;
+</pre>
+</div>
+<p class="para">Again, you retrieve the present date using <span class="fixed">CURRENT_DATE</span>. The <span class="fixed">DAYS()</span> function allows you to represent a date as a simple integer by returning the number of days since December 31, 1 BC, so you just need to calculate the difference between the <span class="fixed">DAYS()</span> values for the current date and for the <span class="fixed">EnrolledOn</span> date:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID    DaysEnrolled
+
+   -----------  ------------
+   4            152
+   7            152
+   10           152
+   ...          ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="333"></a><a name="ch05lev4sec13"></a>MySQL</h5>
+<p class="first-para">The MySQL version of the query is similar to the DB2 version except that you use the <span class="fixed">TO_DAYS()</span> function.</p>
+<a name="334"></a><a name="IDX-132"></a>
+<div class="example">
+<span class="example-title">DIFFERENCES BETWEEN DATES (MYSQL)</span><a name="335"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">This is the MySQL version of the query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID,
+       MAX(TO_DAYS(CURRENT_DATE) - TO_DAYS(EnrolledOn))
+                                           AS DaysEnrolled
+FROM Enrollment
+GROUP BY StudentID
+ORDER BY DaysEnrolled DESC;
+</pre>
+</div>
+<p class="para">As in Oracle and DB2, you use <span class="fixed">CURRENT_DATE</span> to retrieve the present date. <span class="fixed">TO_DAYS()</span> works in a similar way to DB2's <span class="fixed">DAYS()</span> function, but it returns the number of days since the start of a mythical "Year Zero" (this figure is 365 days greater than the figure returned by <span class="fixed">DAYS()</span>):</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID    DaysEnrolled
+
+   -----------  ------------
+   4            152
+   7            152
+   10           152
+   ...          ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="336"></a><a name="ch05lev4sec14"></a>Access</h5>
+<p class="first-para">The Access version of the query is the simplest; all you need to do is perform a straightforward subtraction.</p>
+<a name="337"></a><a name="IDX-133"></a>
+<div class="example">
+<span class="example-title">DIFFERENCES BETWEEN DATES (ACCESS)</span><a name="338"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The query looks like this in Access:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT StudentID, MAX(DATE() - EnrolledOn) AS DaysEnrolled
+FROM Enrollment
+GROUP BY StudentID
+ORDER BY MAX(DATE() - EnrolledOn) DESC;
+</pre>
+</div>
+<p class="para">Here you use the <span class="fixed">DATE()</span> function to get the current date. Simply subtracting one date from another returns the difference in days between the two dates. As in other Access examples, you can't use the alias of the calculated column in the <span class="fixed">ORDER BY</span> clause, so you need to repeat the formula. Here are the results:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentID    DaysEnrolled
+
+   -----------  ------------
+   4            152
+   7            152
+   10           152
+   ...          ...
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="339"></a><a name="ch05lev2sec6"></a>Performing Data Type Conversions</h3>
+<p class="first-para">You've already seen a few examples where you need to convert a value into a different data type. It may be necessary, for example, when you want to perform string concatenation including a numeric value or when you want to round a floating-point value to an integer for display. Most RDBMSs provide both generic functions that you can use to cast to any type and functions for casting to specific types such as strings or integers.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="340"></a><a name="ch05lev3sec5"></a>Casting to Strings</h4>
+<p class="first-para">Let's look first at the functions that exist specifically for converting non-string types to strings. In most cases, you can also use these functions to alter the length of a string field.</p>
+<a name="341"></a><a name="IDX-134"></a>
+<div class="section">
+<h5 class="sect5-title">
+<a name="342"></a><a name="ch05lev4sec15"></a>SQL Server</h5>
+<p class="first-para">In general, casts on SQL Server are performed using the <span class="fixed">CAST()</span> or <span class="fixed">CONVERT()</span> functions, which you'll look at shortly. However, you can use the <span class="fixed">STR()</span> function to convert floating-point values into strings. This takes the following form:</p>
+<div class="informalexample">
+<pre class="literallayout">
+STR(<i class="emphasis">float</i>, [<i class="emphasis">length</i>], [<i class="emphasis">precision</i>])
+</pre>
+</div>
+<p class="para">where <i class="emphasis"><span class="fixed">float</span></i> is the number you want to convert to a string, <i class="emphasis"><span class="fixed">length</span></i> is the length of the string, and <i class="emphasis"><span class="fixed">precision</span></i> is the number of decimal places to retain. Both the <i class="emphasis"><span class="fixed">length</span></i> and <i class="emphasis"><span class="fixed">precision</span></i> parameters are optional. If they aren't specified, <i class="emphasis"><span class="fixed">length</span></i> has a default value of 10, and <i class="emphasis"><span class="fixed">precision</span></i> a default of zero.</p>
+<p class="last-para">As an example, <span class="fixed">STR(43.2461, 5, 2)</span> returns <span class="fixed">'43.25'</span>. If the data is corrupted because the <i class="emphasis"><span class="fixed">length</span></i> isn't long enough to hold all the digits before the decimal point, the returned string will be filled with asterisks. For example, <span class="fixed">STR(4326.12, 3)</span> returns <span class="fixed">'***'</span>. If the <i class="emphasis"><span class="fixed">length</span></i> isn't sufficient to hold all the decimal places, these will be discarded and the value rounded according the space available, so <span class="fixed">STR(43.184, 4, 2)</span> returns <span class="fixed">'43.2'</span>.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="343"></a><a name="ch05lev4sec16"></a>Oracle</h5>
+<p class="first-para">Oracle allows you to convert character, numeric, and date types to strings using the <span class="fixed">TO_CHAR()</span> and <span class="fixed">TO_NCHAR()</span> functions. With dates and numeric types, you can also specify a format string. For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+TO_CHAR(333, '0000.0')                        -- '0333.0'
+TO_CHAR(333.15, '0000.0')                     -- '0333.2'
+TO_CHAR(DATE '2003-05-23', 'DD MONTH YYYY') -- '23 MAY 2003'
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="344"></a><a name="ch05lev4sec17"></a>DB2</h5>
+<p class="first-para">DB2 is relatively strongly typed and has specific conversion functions for all its supported data types. These include the <span class="fixed">CHAR()</span> and <span class="fixed">VARCHAR()</span> functions, which you use for converting data to the <span class="fixed">CHAR</span> and <span class="fixed">VARCHAR</span> types, respectively. <span class="fixed">CHAR()</span> can be used with most data types, but <span class="fixed">VARCHAR()</span> is limited to character, date, and graphic types. If used with a character type, <span class="fixed">VARCHAR()</span> can take a second parameter indicating the length of the string returned; otherwise, it takes only one parameter&#8212;the value to convert.</p>
+<p class="para">Depending on the type of data involved, <span class="fixed">CHAR()</span> can also have a second parameter. If you're converting a date, you can specify one of the values <span class="fixed">ISO</span>, <span class="fixed">USA</span>, <span class="fixed">EUR</span>, <span class="fixed">JIS</span>, or <span class="fixed">LOCAL</span> to indicate how to format the string. For example, <span class="fixed">CHAR(DATE('2003-02-24'), USA)</span> returns <span class="fixed">'02/24/2003'</span>, but <span class="fixed">CHAR(DATE('2003-02-24'), EUR)</span> returns <span class="fixed">'24.02.2003'</span>.</p>
+<a name="345"></a><a name="IDX-135"></a>
+<p class="last-para">You can also specify the length for character types or the decimal point character to use for floating-point types. For example, <span class="fixed">CHAR(32.47, ',')</span> returns <span class="fixed">'32,47'</span>.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="346"></a><a name="ch05lev4sec18"></a>MySQL</h5>
+<p class="first-para">MySQL is weakly typed and will generally try to convert values as necessary. If you need to convert a value explicitly to a string, you can simply concatenate the value with an empty string:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONCAT(23.52, '') -- Returns '23.52'
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="347"></a><a name="ch05lev4sec19"></a>Access</h5>
+<p class="first-para">Access supports the <span class="fixed">STR()</span> function for converting dates and numeric types to strings:</p>
+<div class="informalexample">
+<pre class="literallayout">
+STR(#2003-01-01#) ' Returns '01/01/2003', depending on locale
+STR(23.52)         ' Returns '23.52'
+</pre>
+</div>
+<p class="last-para">Unlike the SQL Server version of this function, <span class="fixed">STR()</span> in Access doesn't allow you to specify the length of the returned string.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="348"></a><a name="ch05lev3sec6"></a>Casting to Numbers</h4>
+<p class="first-para">Some RDBMSs also provide specific functions for casting non-numeric types to numeric types, but in many cases more flexibility is available with the generic conversion functions.</p>
+<div class="section">
+<h5 class="sect5-title">
+<a name="349"></a><a name="ch05lev4sec20"></a>SQL Server</h5>
+<p class="first-para">SQL Server doesn't have specific functions for converting to numeric types&#8212;use <span class="fixed">CAST()</span>/<span class="fixed">CONVERT()</span> instead.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="350"></a><a name="ch05lev4sec21"></a>Oracle</h5>
+<p class="first-para">Oracle supports the <span class="fixed">TO_NUMBER()</span> function, which allows you to convert character types into numbers. As well as the string to convert, you can specify a format string that the function can use to work out how to interpret the string. This allows the string to contain characters such as hexadecimal and currency symbols that might not otherwise be permitted in a numeric value:</p>
+<div class="informalexample">
+<pre class="literallayout">
+TO_NUMBER('FFFF', 'XXXX')            -- Returns 655535
+TO_NUMBER('$5,102.25', '$9,999.99') -- Returns 5102.25
+<a name="351"></a><a name="IDX-136"></a>
+</pre>
+</div>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="352"></a><a name="ch05lev4sec22"></a>DB2</h5>
+<p class="first-para">DB2 supports a range of functions for converting numeric and character values to different numeric types. Some of the more common are the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">INTEGER()</span>/<span class="fixed">INT()</span>: Converts numeric or character data to an integer.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">DOUBLE()</span>/<span class="fixed">FLOAT()</span>: Converts numeric or character data to a floating-point value.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">DECIMAL()</span>/<span class="fixed">DEC()</span>: Converts numeric or character data to a decimal. As well as the data to convert, this function lets you specify the total number of digits and the number of digits after the decimal place; for example, <span class="fixed">DECIMAL(37.54, 3, 1)</span> returns <span class="fixed">37.5</span>.</p>
+</li>
+</ul>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="353"></a><a name="ch05lev4sec23"></a>MySQL</h5>
+<p class="first-para">Because of its weak typing, MySQL allows you to convert strings or dates to numbers just by adding zero to them. For example, <span class="fixed">'23.5' + 0</span> returns <span class="fixed">23.5</span> as a numeric type. If the string begins with a number but contains non-numeric characters, only that section that can be interpreted as a number will be returned; if the string begins with characters that can't be converted to a numeric value, zero will be returned. For example, <span class="fixed">'4.5 strings'</span> returns <span class="fixed">4.5</span>, but <span class="fixed">'strings 4 u'</span> returns <span class="fixed">0</span>.</p>
+</div>
+<div class="section">
+<h5 class="sect5-title">
+<a name="354"></a><a name="ch05lev4sec24"></a>Access</h5>
+<p class="first-para">Access supports the <span class="fixed">INT()</span> function, which allows you to convert non-numeric data types into integers (with rounding down). For example, <span class="fixed">INT('4.8')</span> returns <span class="fixed">4</span>, and <span class="fixed">INT('5.23e3')</span> returns <span class="fixed">5230</span>.</p>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="355"></a><a name="ch05lev3sec7"></a>Using Generic Casting</h4>
+<p class="first-para">Two generic casting functions have fairly widespread support: <span class="fixed">CAST()</span>, which is the ANSI standard and is supported by SQL Server, Oracle, DB2, and MySQL, and <span class="fixed">CONVERT()</span>, which is the Open Database Connectivity (ODBC) form and is supported by SQL Server and MySQL.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Support for <i class="emphasis"><span class="fixed">CAST()</span></i> and <i class="emphasis"><span class="fixed">CONVERT()</span></i> was added in MySQL 4.0.2; in previous versions, you'll need to use the implicit casting methods mentioned previously.</p>
+</td>
+</tr>
+</table>
+<a name="356"></a><a name="IDX-137"></a>
+<p class="para">The syntax for <span class="fixed">CAST()</span> is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CAST(<i class="emphasis">expression</i> AS <i class="emphasis">data_type</i>)
+</pre>
+</div>
+<p class="para">In SQL Server, Oracle, and DB2, the <i class="emphasis"><span class="fixed">data_type</span></i> can optionally include details of the size of the target data type and (for decimal values) the number of places after the decimal point:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CAST('3.521' AS DECIMAL(3,2)) -- Returns 3.52
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Note that MySQL doesn't allow this syntax and only permits you to specify the data type itself&#8212;not size or precision details. Also, MySQL will only allow casting to one of the following types: <i class="emphasis"><span class="fixed">BINARY</span></i>, <i class="emphasis"><span class="fixed">DATE</span></i>, <i class="emphasis"><span class="fixed">DATETIME</span></i>, <i class="emphasis"><span class="fixed">TIME</span></i>, <i class="emphasis"><span class="fixed">SIGNED [INTEGER]</span></i>,or <i class="emphasis"><span class="fixed">UNSIGNED [INTEGER]</span></i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">The syntax for <span class="fixed">CONVERT()</span> in MySQL is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONVERT(<i class="emphasis">expression</i>, <i class="emphasis">data_type</i>)
+</pre>
+</div>
+<p class="para">Again, <i class="emphasis"><span class="fixed">data_type</span></i> must be one of the types listed previously, and you aren't permitted to indicate the length of the type.</p>
+<p class="para">The SQL Server syntax for <span class="fixed">CONVERT()</span> is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CONVERT(<i class="emphasis">data_type</i> [(<i class="emphasis">length</i>)], <i class="emphasis">expression</i> [, <i class="emphasis">style</i>])
+</pre>
+</div>
+<p class="para">The <i class="emphasis"><span class="fixed">style</span></i> parameter is a number that indicates how to format a datetime value if you're casting to a datetime or how a datetime is formatted if you're converting one to another type:</p>
+
+<div class="informalexample">
+<pre class="literallayout">
+CONVERT(varchar, GETDATE(), 106) -- Returns current date in
+                                    -- the format '27 Feb 2003'
+</pre>
+</div>
+<p class="last-para">See the Microsoft MSDN Web site at <a target="_top" class="url" href="http://msdn.microsoft.com/library/en-us/tsqlref/ts_ca-co_2f3o.asp?frame=true"><span class="fixed">http://msdn.microsoft.com/library/en-us/tsqlref/ts_ca-co_2f3o.asp?frame=true</span></a> for full details of the possible values of this number.</p>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="357"></a><a name="ch05lev2sec7"></a>Creating Functions</h3>
+<p class="first-para">Now that you've seen how to use some of the most common built-in functions available in most RDBMSs, let's look at how you can define your own. ANSI SQL-99 defines a <span class="fixed">CREATE FUNCTION</span> statement, which is implemented (with the inevitable <a name="358"></a><a name="IDX-138"></a>differences) by most vendors and which allows you to create your own User-Defined Functions (UDFs). The basic syntax, common to most implementations, boils down to no more than this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE FUNCTION <i class="emphasis">function_name</i> [(<i class="emphasis">parameter_list</i>)]
+RETURNS <i class="emphasis">data_type</i>
+&lt;SQL statement(s)&gt;
+</pre>
+</div>
+<p class="para">To learn the actual syntax in the different RDBMSs, you'll look at an example. Notice that Access doesn't support UDFs, so there isn't an example for that system. For the sake of both clarity and conciseness, we won't present every option for each RDBMS, but we'll explain the main options. This example is based on the string manipulation example earlier in this chapter, where you reversed the order of the first and last names of each student.</p>
+<p class="para">Calling user-defined functions is the same as calling the built-in functions. Once you've created it, you can call your <span class="fixed">FormatName()</span> function in the query:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FormatName(Name) AS StudentName
+FROM Student
+ORDER BY StudentName;
+</pre>
+</div>
+<p class="para">However, you may need to specify the schema where the function is stored in SQL Server (for example, <span class="fixed">dbo.FormatName(Name)</span>).</p>
+<p class="para">This will return a list of the students, sorted according to their last names:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   StudentName
+
+   -----------------
+   Akbar, Mohammed
+   Alaska, Steve
+   Andrews, Vic
+   Burton, Gary
+   Fernandez, Maria
+   Foster, Andrew
+   Jones, John
+   Jonsson, Isabelle
+   Lee, Bruce
+   Picard, Julia
+   Scarlett, Emily
+   Wolff, Anna
+<a name="359"></a><a name="IDX-139"></a>
+</pre>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="360"></a><a name="ch05lev3sec8"></a>SQL Server</h4>
+<p class="first-para">The basic syntax for creating a function in SQL Server is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE FUNCTION <i class="emphasis">function_name</i> [(<i class="emphasis">parameter_list</i>)]
+RETURNS <i class="emphasis">data_type</i>
+AS
+BEGIN
+   [&lt;SQL statements&gt;]
+   RETURN <i class="emphasis">expression</i>
+END
+</pre>
+</div>
+<p class="para">The function can contain multiple SQL statements but mustn't perform any permanent changes to the data in the database.</p>
+<div class="example">
+<span class="example-title">CREATING A FUNCTION (SQL SERVER)</span><a name="361"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Here's the SQL Server version of the <span class="fixed">FormatName()</span> UDF:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE FUNCTION FormatName (@FullName varchar(50))
+RETURNS varchar(50)
+AS
+BEGIN
+   RETURN RIGHT(@FullName, LEN(@FullName) -
+                CHARINDEX(' ', @FullName) + 1) + ', ' +
+           LEFT(@FullName, CHARINDEX(' ', @FullName) - 1)
+END
+</pre>
+</div>
+<p class="para">The parameter list defined after the function name takes the following form:</p>
+<div class="informalexample">
+<pre class="literallayout">
+(@FullName varchar(50))
+</pre>
+</div>
+<p class="para">As with the parameters and variables of stored procedures (which you'll look at in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures"), the parameters and variables in UDFs in SQL Server are prefixed with an <span class="fixed">@</span> character, both when they're defined in the parameter list and when they're referenced in the body of the function.</p>
+<p class="last-para">Although you could have multiple SQL statements in the function, in this case you just return the formatted name; this expression returned from the function is exactly the same expression as you used in the early example.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<a name="362"></a><a name="IDX-140"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="363"></a><a name="ch05lev3sec9"></a>Oracle</h4>
+<p class="first-para">In general, the basic syntax for defining Oracle functions is similar to that for stored procedures, which you'll look at in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures":</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE [OR REPLACE] FUNCTION <i class="emphasis">function_name</i>
+(parameter_list)
+RETURN data_type
+IS
+variable_list
+BEGIN
+   [&lt;SQL statements&gt;]
+   RETURN <i class="emphasis">expression</i>;
+END;
+/
+</pre>
+</div>
+<p class="para">There are a couple of differences to the standard syntax. First, as with many Oracle objects, you can indicate that you want to replace any existing object of the same name using the <span class="fixed">OR REPLACE</span> option. Note that the return type is declared using the <span class="fixed">RETURN</span> keyword rather than the standard <span class="fixed">RETURNS</span>. Parameters can be marked as input (<span class="fixed">IN</span>) or output (<span class="fixed">OUT</span>) parameters, just as they can for stored procedures.</p>
+<p class="para">Second, you need to declare any variables used in the function before the <span class="fixed">BEGIN...END</span> block. The final <span class="fixed">/</span> is simply a device to let SQL*Plus know that you've reached the end of a block that includes a number of SQL statements (as the semicolon that usually marks the end of a statement is used within <span class="fixed">CREATE FUNCTION</span>).</p>
+<div class="example">
+<span class="example-title">CREATING A FUNCTION (ORACLE)</span><a name="364"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">The Oracle version of the <span class="fixed">FormatName()</span> function is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE FUNCTION FormatName(FullName IN varchar)
+RETURN varchar
+IS
+FormattedName varchar(50);
+BEGIN
+   FormattedName :=
+      SUBSTR(FullName, INSTR(FullName, ' ') + 1) || ', ' ||
+      SUBSTR(FullName, 1, INSTR(FullName, ' ') - 1);
+   RETURN(FormattedName);
+END;
+/
+<a name="365"></a><a name="IDX-141"></a>
+</pre>
+</div>
+<p class="para">Here you define just one input parameter&#8212;the name that you want to format&#8212;and no output parameters. You also declare a variable, <span class="fixed">FormattedName</span>, just to show the syntax although you could actually manage without it for this function.</p>
+<p class="last-para">Within the body of the function, you set your <span class="fixed">FormattedName</span> variable to the expression you want to return (using the special PL/SQL <span class="fixed">:=</span> operator) and then return this variable from the function using the <span class="fixed">RETURN</span> keyword. You'll look at using variables in SQL in more detail in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures."</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="366"></a><a name="ch05lev3sec10"></a>DB2</h4>
+<p class="first-para">The basic syntax for creating a function in DB2 follows the ANSI standard quite closely and looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE FUNCTION <i class="emphasis">function_name</i>(<i class="emphasis">parameter_list</i>)
+   RETURNS <i class="emphasis">data_type</i>
+   [LANGUAGE SQL]
+   [DETERMINISTIC | NON DETERMINISTIC]
+   [CONTAINS SQL | READS SQL DATA]
+[BEGIN ATOMIC]
+   [&lt;SQL statements&gt;]
+   RETURN <i class="emphasis">expression</i>;
+[END]
+</pre>
+</div>
+<p class="para">There are a number of options you can specify for the function. First, you can tell DB2 that your function is in SQL (rather than a programming language such as C++ or Java) using the <span class="fixed">LANGUAGE SQL</span> option. Second, you can use the <span class="fixed">DETERMINISTIC</span> keyword to indicate that the function will always return the same result for a given parameter (or you can specify <span class="fixed">NOT DETERMINISTIC</span> if this isn't the case); knowing this allows DB2 to optimize the function. Finally, you can specify <span class="fixed">READS SQL DATA</span> to indicate that your function reads data from a database or <span class="fixed">CONTAINS SQL</span> to indicate that your function uses SQL keywords and functions to manipulate the data passed in, without retrieving further data from the database.</p>
+<p class="para">The function body can consist merely of a <span class="fixed">RETURN</span> statement followed by an expression, or it can contain a block of SQL statements surrounded by the <span class="fixed">BEGIN ATOMIC...END</span> keywords.</p>
+<a name="367"></a><a name="IDX-142"></a>
+<div class="example">
+<span class="example-title">CREATING A FUNCTION (DB2)</span><a name="368"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">In DB2, the <span class="fixed">FormatName()</span> UDF looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE FUNCTION FormatName(FullName varchar(50))
+   RETURNS varchar(50)
+   LANGUAGE SQL
+   DETERMINISTIC
+   CONTAINS SQL
+BEGIN ATOMIC
+   DECLARE FormattedName VARCHAR(50);
+   SET FormattedName =
+       SUBSTR(FullName, POSSTR(FullName, ' ') + 1) || ', ' ||
+       SUBSTR(FullName, 1, POSSTR(FullName, ' ') - 1);
+   RETURN FormattedName;
+END
+</pre>
+</div>
+<p class="para">This function will always return the same value for a given parameter, so you declare it as <span class="fixed">DETERMINISTIC</span>. You don't read any data from the database&#8212;you just work with the string passed into the function&#8212;so you also include the <span class="fixed">CONTAINS SQL</span> clause (rather than <span class="fixed">READS SQL DATA</span>).</p>
+<p class="para">For this example, you could write the body of the function as a single <span class="fixed">RETURN</span> statement, but you want to show the syntax using a block of SQL statements, so you haven't. Instead, as in the Oracle example, you've defined a variable to store the formatted name and then returned that. Before you use the variable, you must explicitly declare it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DECLARE FormattedName VARCHAR(50);
+</pre>
+</div>
+<p class="last-para">You'll look at using DB2 variables in more detail in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures."</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="369"></a><a name="ch05lev3sec11"></a>MySQL</h4>
+<p class="first-para">This last example is by far the most complicated because MySQL doesn't support UDFs written in SQL. Instead, you need to write the function in C or C++ and then register it with MySQL using the <span class="fixed">CREATE FUNCTION</span> statement. The <span class="fixed">CREATE FUNCTION</span> syntax for MySQL is as follows:</p>
+<a name="370"></a><a name="IDX-143"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE [AGGREGATE] FUNCTION <i class="emphasis">function_name</i>
+RETURNS {STRING | REAL | INTEGER}
+SONAME shared_library_name;
+</pre>
+</div>
+<p class="para">The <span class="fixed">AGGREGATE</span> keyword must be specified if your function aggregates rows like SQL aggregate functions such as <span class="fixed">COUNT</span>. This has an impact on the way the function is coded. The <span class="fixed">SONAME</span> clause indicates the shared library (SO or DLL) where the function is defined.</p>
+<p class="para">Because this isn't a SQL example and because the example will differ depending on what platform you're using, we'll go through it quickly. For full details, check the MySQL documentation and the <span class="fixed">udf_example</span> example functions, which are available as part of the source distribution of MySQL.</p>
+<div class="example">
+<span class="example-title">CREATING A FUNCTION (MYSQL)</span><a name="371"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">First, then, you need to write the C/C++ code for the function. This code must be compiled into a shared object (Linux) or dynamic-link library (Windows). The following is the code for the <span class="fixed">FormatName()</span> example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+#include &lt;string&gt;
+
+#include &lt;my_global.h&gt;
+#include &lt;my_sys.h&gt;
+#include &lt;mysql.h&gt;
+
+using namespace std;
+
+char* FormatName(UDF_INIT *initid, UDF_ARGS *args,
+                   char *result, unsigned long *length,
+                   char *is_null, char *error)
+{
+   // Retrieve the Name parameter from the args parameter
+   char* fullName = new char[args-&gt;lengths[0]];
+   fullName = args-&gt;args[0];
+
+   // Convert from char* to string
+   string strName = fullName;
+
+   // Trim whitespace from end of string
+   int i = strName.length();
+   while (strName[i] == ' ' || strName[i] == '\0') i--;
+   string trimName = strName.substr(0, i + 1);<a name="372"></a><a name="IDX-144"></a>
+   // Arrange in 'LastName, FirstName' format
+   int spaceIndex = trimName.find_first_of(" ");
+   string firstName = trimName.substr(0, spaceIndex);
+   string lastName = trimName.substr(spaceIndex + 1);
+   string formattedName = lastName + ", " + firstName;
+
+   // Convert back to char* and set the length argument
+   char* fmtName = new char[];
+   formattedName.copy(result, string::npos);
+   *length = static_cast&lt;unsigned long&gt;(i + 2);
+
+   return result;
+}
+</pre>
+</div>
+<p class="para">Note that MySQL prescribes the signature for the function. There are three versions, depending on whether the function returns a string (as previously), a floating-point value, or an integer.</p>
+<p class="para">Before compiling the DLL/SO, you need to indicate to the linker that your function is to be exported so that MySQL can see it within the library. To do this, you can use a linker definition file (in this case called MySQLFunction.def):</p>
+<div class="informalexample">
+<pre class="literallayout">
+LIBRARY "MySQLFunction"
+EXPORTS
+   FormatName
+</pre>
+</div>
+<p class="para">Once you've compiled the library, you need to register the function with MySQL. To do this, you just need to execute this <span class="fixed">CREATE FUNCTION</span> statement:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE FUNCTION FormatName
+RETURNS STRING
+SONAME 'C:\\MySQL\\lib\\MySQLFunction.dll';
+</pre>
+</div>
+<p class="last-para">In this case, you've specified the exact path to the DLL on a Windows machine. On a Linux machine, you would instead copy the SO to a location where the Id program can find it or configure Id to look in the directory where the SO is stored. How to do this varies depending on the exact platform.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0032.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0034.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

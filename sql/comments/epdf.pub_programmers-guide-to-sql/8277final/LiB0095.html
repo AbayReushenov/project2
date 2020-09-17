@@ -1,0 +1,366 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Searching the Catalog</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0094.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0096.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch14"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1029"></a><a name="ch14lev1sec6"></a>Searching the Catalog</h2><p class="first-para">You'll now see a way to search the product catalog for products containing a number of words in their name or description. You can do either an all-words search or an any-words search in the catalog.</p>
+<p class="para">In an all-words search, you're looking for products containing all the words in the search string. In any-words search, you're looking for products containing any of the words in the search string.</p>
+<a name="1030"></a><a name="IDX-443"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">Each database product has special features and options for doing advanced full-text searches, with ranking, word similarities, and other complex options. Full-text searches are usually done using the <i class="emphasis"><span class="fixed">CONTAINS</span></i> keyword, but it works only if the table is full-text indexed. Full-text searching and indexing is a database-specific feature that isn't part of SQL-99 and isn't covered in this book.</p>
+</td>
+</tr>
+</table>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1031"></a><a name="ch14lev2sec12"></a>The Basics</h3>
+<p class="first-para">The following query searches for <i class="emphasis">devil mask</i> with an all-words search. This means you're searching for products having both words (<i class="emphasis">devil</i> and <i class="emphasis">mask</i>) in their name.:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE (Description LIKE '%devil%' OR Name LIKE '%devil%')
+  <b class="bold">AND</b> (Description LIKE '%mask%' OR Name LIKE '%mask%');
+</pre>
+</div>
+<p class="para">Using the sample data presented earlier in the chapter, this query generates the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                             Description
+
+   ------------------------    -------------------------------
+   Horned Devil Mask           Full devil mask with horns. The
+                                   perfect Halloween disguise!
+</pre>
+</div>
+<p class="para">Note the percent wildcard character, which replaces any string of zero or more characters. The expression <span class="fixed">Description LIKE '%devil%'</span> returns true for any description that contains the word <i class="emphasis">devil</i>.</p>
+<p class="para">You can shorten the previous SQL query a bit by using a neat trick: You can concatenate <span class="fixed">Description</span> and <span class="fixed">Name</span> and search for the words in the resulted string. String concatenation is performed differently by databases. Here's how to do it with SQL Server:</p>
+<a name="1032"></a><a name="IDX-444"></a>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE (Description + Name LIKE '%devil%')
+  AND (Description + Name LIKE '%mask%');
+</pre>
+</div>
+<p class="para">With Oracle and DB2, you use <span class="fixed">||</span> instead of <span class="fixed">+</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE (Description || Name LIKE '%devil%')
+  AND (Description || Name LIKE '%mask%');
+</pre>
+</div>
+<p class="para">MySQL uses the <span class="fixed">CONCAT</span> function:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE (CONCAT(Description, Name) LIKE '%devil%')
+  AND (CONCAT(Description, Name) LIKE '%mask%');
+</pre>
+</div>
+<p class="para">There are alternative ways of achieving the same result. For example, with MySQL you can use the <span class="fixed">INSTR</span> function, which returns the position of the first occurrence of a substring in a string. Here's how to use it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE INSTR(CONCAT(Description, Name), 'devil') &gt; 0
+  AND INSTR(CONCAT(Description, Name), 'mask')  &gt; 0;
+</pre>
+</div>
+<p class="para">So far we've presented examples with all-words searches. For any-words searches, you just need to use <span class="fixed">OR</span> instead of <span class="fixed">AND</span> in the <span class="fixed">WHERE</span> clause:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE (Description LIKE '%devil%' OR Name LIKE '%devil%')
+   <b class="bold">OR</b> (Description LIKE '%mask%' OR Name LIKE '%mask%');
+</pre>
+</div>
+<p class="para">Using this sample data, this returns the following:</p>
+<a name="1033"></a><a name="IDX-445"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                              Description
+
+   ---------------------           -------------------------------------
+   Beast Mask                     Red-eyed and open-mouthed scary mask
+                                         guaranteed to scare!
+   Horned Devil Mask              Full devil mask with horns. The perfect
+                                         Halloween disguise!
+   Sequinned Devil Horns          Shiny red horns for the little devil
+                                         inside you!
+   Devil Horn Boppers             These red glitter boppers are
+                                         guaranteed to attract attention.
+                                         They will soon be under your spell!
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="1034"></a><a name="ch14lev2sec13"></a>The SearchCatalog Stored Procedure</h3>
+<p class="first-para">The previous statements work fine, but they need to be dynamically generated by the application and sent to the database as such. If you want to store them as stored procedures, things become a bit more complicated.</p>
+<p class="para">First, you need to get the words to search for as stored procedure parameters. You can optionally receive a single string and split it into separate words, but this would typically result in a messy, slow, and database-specific stored procedure.</p>
+<p class="para">In the following stored procedures, you receive a parameter named <span class="fixed">AllWords</span> that specifies whether you do an all-words or an any-words search. You also take five string parameters, having a default value of <span class="fixed">NULL</span> (so you don't have to specify values for all of them when calling the procedure), which will contain the words for which you're looking. It's simple to add more parameters and allow the stored procedure to handle more input parameters.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Some people think it's dangerous to pose this kind of limitation to the end user (such as not processing more than a fixed number of words from the search string).Well, this may be true, but this limitation doesn't stop people from using Google (which has a limitation of 10 words).</p>
+</td>
+</tr>
+</table>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1035"></a><a name="ch14lev3sec21"></a>SQL Server</h4>
+<p class="first-para">The following is the SQL Server version of the <span class="fixed">SearchCatalog</span> stored procedure. The <span class="fixed">@AllWords</span> parameter is a <span class="fixed">BIT</span> data type, so it can receive values of <span class="fixed">0</span> or <span class="fixed">1</span>:</p>
+<a name="1036"></a><a name="IDX-446"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE SearchCatalog
+(@AllWords bit,
+@Word1 varchar(15) = NULL,
+@Word2 varchar(15) = NULL,
+@Word3 varchar(15) = NULL,
+@Word4 varchar(15) = NULL,
+@Word5 varchar(15) = NULL)
+AS
+
+IF @AllWords = 0
+   SELECT Name, Description
+   FROM Product
+   WHERE (Name + Description LIKE '%'+@Word1+'%')
+      OR (Name + Description LIKE '%'+@Word2+'%' AND @Word2 IS NOT NULL)
+      OR (Name + Description LIKE '%'+@Word3+'%' AND @Word3 IS NOT NULL)
+      OR (Name + Description LIKE '%'+@Word4+'%' AND @Word4 IS NOT NULL)
+      OR (Name + Description LIKE '%'+@Word5+'%' AND @Word5 IS NOT NULL)
+
+IF @AllWords = 1
+   SELECT Name, Description
+   FROM Product
+   WHERE (Name + Description LIKE '%'+@Word1+'%')
+     AND (Name + Description LIKE '%'+@Word2+'%' OR @Word2 IS NULL)
+     AND (Name + Description LIKE '%'+@Word3+'%' OR @Word3 IS NULL)
+     AND (Name + Description LIKE '%'+@Word4+'%' OR @Word4 IS NULL)
+     AND (Name + Description LIKE '%'+@Word5+'%' OR @Word5 IS NULL);
+</pre>
+</div>
+<p class="para">Although it's quite lengthy, the stored procedure isn't complicated. The important thing to understand is the logic of the <span class="fixed">SELECT</span> statements. In an anywords search, because the conditions are tied with <span class="fixed">OR</span>, you need to make sure they return False for the <span class="fixed">NULL</span> words. Also, note that you require at least one word to be provided:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE (Name + Description LIKE '%'+@Word1+'%')
+   OR (Name + Description LIKE '%'+@Word2+'%' AND @Word2 IS NOT NULL)
+   OR (Name + Description LIKE '%'+@Word3+'%' AND @Word3 IS NOT NULL)
+   OR (Name + Description LIKE '%'+@Word4+'%' AND @Word4 IS NOT NULL)
+   OR (Name + Description LIKE '%'+@Word5+'%' AND @Word5 IS NOT NULL)
+<a name="1037"></a><a name="IDX-447"></a>
+</pre>
+</div>
+<p class="para">In an all-words search, this is exactly the opposite. You do require at least a matching word, and the rest of the conditions need to return true for the <span class="fixed">NULL</span> words (the words that haven't been specified by the calling program):</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name, Description
+FROM Product
+WHERE (Name + Description LIKE '%'+@Word1+'%')
+  AND (Name + Description LIKE '%'+@Word2+'%' OR @Word2 IS NULL)
+  AND (Name + Description LIKE '%'+@Word3+'%' OR @Word3 IS NULL)
+  AND (Name + Description LIKE '%'+@Word4+'%' OR @Word4 IS NULL)
+  AND (Name + Description LIKE '%'+@Word5+'%' OR @Word5 IS NULL);
+</pre>
+</div>
+<p class="para">It's interesting to see how you dealt with the all-words search, where all words except the first one are also checked if they're <span class="fixed">NULL</span>. This is required; otherwise, the logical condition will return false if you have <span class="fixed">NULL</span> words (which is their default value), and the stored procedure wouldn't return any results.</p>
+<p class="para">Now let's search for the words <i class="emphasis">devil</i> and <i class="emphasis">mask</i> using an all-words search:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXECUTE SearchCatalog 1, 'devil', 'mask';
+</pre>
+</div>
+<p class="para">Using the sample data provided earlier, the results should look like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                                   Description
+
+   ---------------------         ----------------------------------------
+   Horned Devil Mask             Full devil mask with horns. The perfect
+                                           Halloween disguise!
+</pre>
+</div>
+<p class="para">Now let's do an any-words search using the same words:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXECUTE SearchCatalog 0, 'devil', 'mask';
+</pre>
+</div>
+<p class="para">The results look like this:</p>
+<a name="1038"></a><a name="IDX-448"></a>
+<div class="informalexample">
+<pre class="literallayout">
+   Name                                  Description
+
+   ---------------------          --------------------------------------
+   Beast Mask                     Red-eyed and open-mouthed scary mask
+                                       guaranteed to scare!
+   Horned Devil Mask              Full devil mask with horns. The perfect
+                                       Halloween disguise!
+   Sequinned Devil Horns          Shiny red horns for the little devil
+                                       inside you!
+   Devil Horn Boppers             These red glitter boppers are
+                                       guaranteed to attract attention. They
+                                       will soon be under your spell!
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1039"></a><a name="ch14lev3sec22"></a>Oracle</h4>
+<p class="first-para">As you learned in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures," you'll create a package that'll help you return records from the stored procedure. Create the <span class="fixed">Types</span> package like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PACKAGE Types
+AS
+    TYPE CursorType IS REF CURSOR;
+END;
+/
+</pre>
+</div>
+<p class="para">Next, create the <span class="fixed">SearchCatalog</span> stored procedure like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PROCEDURE SearchCatalog
+(retCursor IN OUT Types.CursorType,
+ AllWords IN NUMBER := 0,
+ Word1 IN VARCHAR := NULL,
+ Word2 IN VARCHAR := NULL,
+ Word3 IN VARCHAR := NULL,
+ Word4 IN VARCHAR := NULL,
+ Word5 IN VARCHAR := NULL)
+AS<a name="1040"></a><a name="IDX-449"></a>
+BEGIN
+  IF AllWords &lt;&gt; 1 THEN
+    OPEN retCursor FOR
+    SELECT Name, Description
+    FROM Product
+    WHERE (Name||Description LIKE '%'||Word1||'%')
+       OR (Name||Description LIKE '%'||Word2||'%' AND Word2 IS NOT NULL)
+       OR (Name||Description LIKE '%'||Word3||'%' AND Word3 IS NOT NULL)
+       OR (Name||Description LIKE '%'||Word4||'%' AND Word4 IS NOT NULL)
+       OR (Name||Description LIKE '%'||Word5||'%' AND Word5 IS NOT NULL);
+  ELSE
+    OPEN retCursor FOR
+    SELECT Name, Description
+    FROM Product
+    WHERE (Name||Description LIKE '%'||Word1||'%')
+      AND (Name||Description LIKE '%'||Word2||'%' OR Word2 IS NULL)
+      AND (Name||Description LIKE '%'||Word3||'%' OR Word3 IS NULL)
+      AND (Name||Description LIKE '%'||Word4||'%' OR Word4 IS NULL)
+      AND (Name||Description LIKE '%'||Word5||'%' OR Word5 IS NULL);
+  END IF;
+END;
+/
+</pre>
+</div>
+<p class="para">To execute an all-words search, execute the procedure and list the results using the following commands in SQL*Plus:</p>
+<div class="informalexample">
+<pre class="literallayout">
+VARIABLE C RefCursor
+EXEC SearchCatalog (:C, 1, 'Devil', 'Mask')
+PRINT C;
+</pre>
+</div>
+<p class="para">To do an any-words search, execute the stored procedure like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+VARIABLE C RefCursor
+EXEC SearchCatalog (:C, 0, 'Devil', 'Mask')
+PRINT C;
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1041"></a><a name="ch14lev3sec23"></a>DB2</h4>
+<p class="first-para">The following is the DB2 version of the <span class="fixed">SearchCatalog</span> stored procedure. The <span class="fixed">@AllWords</span> parameter in this case is a <span class="fixed">SMALLINT</span> data type because DB2 doesn't have a <span class="fixed">BIT</span> type:</p>
+<a name="1042"></a><a name="IDX-450"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DB2ADMIN.SearchCatalog
+(i_AllWords SMALLINT,
+ i_Word1 VARCHAR(15),
+ i_Word2 VARCHAR(15),
+ i_Word3 VARCHAR(15),
+ i_Word4 VARCHAR(15),
+ i_Word5 VARCHAR(15))
+
+RESULT SETS 1
+P1: BEGIN
+
+DECLARE curs1 CURSOR WITH RETURN FOR
+   SELECT Name, Description FROM Product
+   WHERE (Name || Description LIKE '%' ||i_Word1|| '%')
+      OR (Name || Description LIKE '%' ||i_Word2|| '%'
+                                AND i_Word2 IS NOT NULL)
+      OR (Name || Description LIKE '%' ||i_Word3|| '%'
+                                AND i_Word3 IS NOT NULL)
+      OR (Name || Description LIKE '%' ||i_Word4|| '%'
+                                AND i_Word4 IS NOT NULL)
+      OR (Name || Description LIKE '%' ||i_Word5|| '%'
+                                AND i_Word5 IS NOT NULL);
+
+DECLARE curs2 CURSOR WITH RETURN FOR
+   SELECT Name, Description FROM Product
+   WHERE (Name || Description LIKE '%' ||i_Word1|| '%')
+     AND (Name || Description LIKE '%' ||i_Word2|| '%'
+                                OR i_Word2 IS NULL)
+     AND (Name || Description LIKE '%' ||i_Word3|| '%'
+                                OR i_Word3 IS NULL)
+     AND (Name || Description LIKE '%' ||i_Word4|| '%'
+                                OR i_Word4 IS NULL)
+     AND (Name || Description LIKE '%' ||i_Word5|| '%'
+                                OR i_Word5 IS NULL);
+
+IF i_AllWords = 0 THEN
+   OPEN curs1;
+ELSE
+   OPEN curs2;
+END IF;
+
+END P1
+<a name="1043"></a><a name="IDX-451"></a>
+</pre>
+</div>
+<p class="para">Because you can't explicitly set the search terms to <span class="fixed">NULL</span> in your stored procedure, you need to enter <span class="fixed">NULL</span> for any clause that isn't used when the procedure is called. To call this procedure, you can open Command Console and enter the following code:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CALL SearchCatalog(0, 'Devil', 'Mask', NULL, NULL, NULL)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0094.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0096.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

@@ -1,0 +1,154 @@
+#magic img {
+        height: auto;
+        width: 30%;
+        box-shadow:15px 15px 20px #555;
+        margin:30px;
+        opacity: 0;
+      }                    /*The img style controls how the image is displayed: */
+#magic img:hover {
+        opacity: .1;       /* img:hover means when the mouse is over the image */
+      }
+#magic img:active {
+        opacity: .3;       /* img:active means when the image is clicked */
+      }
+
+img{
+        height:100px;
+        width: 110px;
+        box-shadow:5px 5px 2px #555;
+        margin:10px;
+  }
+marquee {position:relative;
+     overflow:hidden;
+     width:100%;
+     height:20px;
+      box-shadow:5px 5px 10px #555;
+     }
+
+
+#bookshelf img {
+    width: 50%;
+    height: 50%;
+    background-size: 80%;
+/*    position: absolute;*/
+    top: 20px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    margin: 5px 5px 5px 5px;
+}
+
+
+#dopoln_img {
+    width: 20%;
+    height: 20%;
+    background-size: 100%;
+/*    position: absolute;*/
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto; 
+}
+#two {
+    width: 15%;
+    height: 15%;
+    background-size: 40%;
+/*    position: absolute;*/
+    top: 10;
+    bottom: 50;
+    left: 60;
+    right: 30;
+    margin: 5 10 15 20;   
+}
+#three {
+    width: 10%;
+    height: 10%;
+    background-size: 100%;
+/*    position: absolute;*/
+    top: 60;
+    bottom: 20;
+    left: 45;
+    right: 12;
+    margin: 15 19 11 25;   
+}
+#four {
+    width: 15%;
+    height: 15%;
+    background-size: 80%;
+/*    position: absolute;*/
+    top: 30;
+    bottom: 50;
+    left: 15;
+    right: 50;
+    margin: 10 20 30 40;   
+}
+#five {
+    width: 5%;
+    height: 5%;
+    background-size: 50%;
+ /*   position: absolute;*/
+    top: 50;
+    bottom: 50;
+    left: 50;
+    right: 50;
+    margin: 50 50 50 50;   
+}
+
+#bookshelf img.image01{
+    width: 10%;
+    height: 10%;
+    background-size: 100%;
+/*    position: absolute;*/
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;   
+}
+#bookshelf img.image02{
+      width: 20%;
+    height: 20%;
+    background-size: 50%;
+ /*   position: absolute;*/
+    top: 50;
+    bottom: 50;
+    left: 50;
+    right: 50;
+    margin: 50 50 50 50;   
+}
+
+#bookshelf img.image03{
+    width: 30%;
+    height: 30%;
+    background-size: 80%;
+/*    position: absolute;*/
+    top: 30;
+    bottom: 50;
+    left: 15;
+    right: 50;
+    margin: 10 20 30 40;     
+}
+#bookshelf img.image04
+{    width: 40%;
+    height: 40%;
+    background-size: 100%;
+/*    position: absolute;*/
+    top: 60;
+    bottom: 20;
+    left: 45;
+    right: 12;
+    margin: 15 19 11 25;  
+}
+
+#bookshelf img.image05{
+      width: 10%;
+    height: 10%;
+    background-size: 40%;
+ /*   position: absolute; */
+    top: 10;
+    bottom: 50;
+    left: 60;
+    right: 30;
+    margin: 5 10 15 20;   
+}

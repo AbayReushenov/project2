@@ -23,6 +23,13 @@ Math.floor(.6)
 Math.abs(-5)
 Math.max(x,y,z)
 Math.min(x,y,z)
+
+//-**-*-*--*-*
+let numbers = [5, 2, 10, -1, 9, 100, 1];
+Math.min(...numbers) // => -1
+
+//---/-*-*-*--*-
+
 Math.random()
 Math.PI
 // => 9007199254740992: 2 to the power 53

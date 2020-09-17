@@ -1,0 +1,808 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    /*font-family: 'Roboto', sans-serif;*/
+    font-family: 'Raleway', sans-serif;
+    font-size: 11pt;
+    color: White;
+    min-height: 100%;
+    position: relative;
+    background: linear-gradient(#4dffe9, #106cb7);
+    background-attachment: fixed;
+}
+
+.title a, #features a {
+    text-decoration: none;
+}
+
+a {
+    text-decoration: underline;
+    color: White;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#wrapper {
+    /*margin: 0 auto;*/
+    padding: 0;
+}
+
+/* Header */
+#header {
+    background: White;
+    background-image: url("../images/header.0dd8b8d5cec2.svg");
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 200px;
+}
+
+/* Logo */
+#logo {
+    /*font-family: 'Source Code Pro', monospace, Courier;*/
+    font-family: 'Fredoka One', cursive;
+    padding: 0;
+    /*margin-right:100px;*/
+    max-width: 50%;
+    float: left;
+}
+
+#logo h1 {
+    font-size: 40pt;
+    text-rendering: optimizeLegibility;
+    text-transform: none;
+    color: #fff;
+    letter-spacing: .08em;
+    text-shadow: 0px 0px 20px #ff690f,
+    -1px -1px 0 #fbe095,
+    -2px -2px 0 #fbdc75,
+    -3px -3px 0 #fbd951,
+    -4px -4px 0 #ebc931,
+    -5px -5px 0 #da9324,
+    -6px -6px 0 #d0881b,
+    -7px -7px 20px #d2740d
+}
+
+#logo h2 {
+    margin: 0px;
+    color: red;
+    opacity: .35;
+}
+
+#logo a {
+    border: none;
+    background: none;
+    text-decoration: none;
+}
+
+#logo h1 a:hover {
+    color: #fff;
+    text-shadow: 0px 0px 3px #e57e0e;
+    outline: 1px #e57e0e;
+    margin-left: -7px;
+    margin-top: -7px;
+}
+
+#header_button_box {
+    float: right;
+}
+
+.choice {
+    background-color: #1a69b8;
+    color: white;
+    padding: 5px;
+    border-radius: 10em;
+    margin: 20px;
+    margin-right: 0px;
+    float: right;
+    box-shadow: 0 0px 15px rgba(50, 44, 58, 0.5);
+}
+
+#header .choice {
+    background-color: #ff8224;
+    box-shadow: none;
+}
+
+#language_box {
+    float: right;
+}
+
+#language_box input[type=submit] {
+    width: 70px;
+    height: 50px;
+    float: right;
+    border: none;
+}
+
+#theme_box {
+    float: right;
+}
+
+.lang {
+    width: 49px;
+    height: 35px;
+}
+
+.lang.en {
+    background: url("../images/en.6e9e46c70505.svg") no-repeat;
+}
+
+.lang.de {
+    background: url("../images/de.b01fef8e4543.svg") no-repeat;
+}
+
+/* Content */
+
+/* Home page*/
+#banner {
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 400px;
+    /*padding-top: 40px;*/
+}
+
+#splash h1 {
+    position: relative;
+    text-align: center;
+    font-size: 30px;
+    font-family: 'Fredoka One', cursive;
+    letter-spacing: .1em;
+    margin: 0 0;
+}
+
+/* Features */
+
+#features {
+    padding-top: 2em;
+    background: linear-gradient(#4dffe9, #106cb7);
+
+}
+
+.feature {
+    float: left;
+    font-size: 14pt;
+    min-height: 300px;
+    color: white;
+}
+
+.feature h2, #splash h1 {
+    color: White;
+    text-shadow: 0px 0px 20px rgb(0, 5, 52);
+    font-family: 'Fredoka One', cursive;
+    letter-spacing: .1em;
+    padding-bottom: .8em;
+}
+
+a:hover h2 {
+    color: #fff;
+    text-shadow: 0px 0px 3px #104070;
+    outline: 1px #104070;
+}
+
+.feature h3 {
+    font-weight: bold;
+
+}
+
+.feature .button {
+    margin-right: 10%;
+
+}
+
+p.description, #tips {
+    padding-top: 1em;
+    padding-bottom: 2em;
+    text-shadow: 0px 0px 20px #010018;
+}
+
+/* Lesson List */
+
+.lesson-list li {
+    display: block;
+}
+
+.lesson-list {
+    /*margin: 0 auto;*/
+}
+
+.feature .lesson-list {
+    /*margin-left: 10%;*/
+    /*margin-right: 10%;*/
+    max-width: 70%;
+}
+
+.lesson-list ol, .lesson-list ul {
+    counter-reset: li;
+    list-style: none;
+    *list-style: decimal;
+    padding: 0;
+}
+
+.lesson-list li a {
+    position: relative;
+    display: block;
+    font-weight: bold;
+    padding: .3em;
+    padding-left: 1em;
+    background: rgba(26, 105, 184, 1);
+    color: #ffffff;
+    text-decoration: none;
+    -moz-border-radius: 10em;
+    -webkit-border-radius: 10em;
+    border-radius: 10em;
+    transition: all .1s ease-in-out;
+}
+
+.lesson-list li {
+    margin-top: 1em;
+    display: block;
+}
+
+.lesson-list ul a {
+    /*background: #a0fcff linear-gradient(#b7fdff, #6dffff);*/
+    /*background: rgba(255, 255, 255, 1);*/
+
+    background: rgba(26, 105, 184, .4);
+    color: #ffffff;
+    border: 1px solid White;
+    border-radius: 10em;
+}
+
+.lesson-list li li a {
+    background: none;
+    border: none;
+    color: White;
+    /*background: rgba(26, 105, 184, .4);*/
+    /*color: #ffffff;*/
+}
+
+.lesson-list li li {
+    background: none;
+    margin-top: .2em;
+}
+
+.lesson-list a:hover {
+    background: #ffffff;
+    color: #1a69b8;
+    text-decoration: none;
+    transform: scale(1.1);
+}
+
+.lesson-list ol a:before {
+    position: absolute;
+    content: counter(li);
+    counter-increment: li;
+    top: 0em;
+    left: .5em;
+    font-size: 1.4em;
+}
+
+.lesson-list ol li a {
+    padding-left: 2em;
+}
+
+#sidebar .lesson-list li a {
+    display: table;
+    min-width: 100%;
+}
+
+#page {
+    clear: both;
+}
+
+#banner {
+    clear: both;
+}
+
+/* Lesson Pages */
+
+.lesson h1, .lesson h2, .lesson h3 {
+    font-family: 'Special Elite', serif;
+    font-weight: bold;
+    color: #28a5ca;
+
+    letter-spacing: .05em;
+}
+
+.lesson h1, .lesson h2 {
+}
+
+.lesson h1 {
+    color: #28a5ca;
+    font-family: 'Special Elite', cursive;
+    text-shadow: -1px -1px 0px #ffffff, -3px -3px 0px rgba(67, 172, 231, 0.29);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fredoka One', "Arial Black", sans-serif;
+    /*margin-top: 1.5em;*/
+    clear: both;
+
+}
+
+.lesson a {
+    color: #1a69b8;
+    font-weight: bold;
+}
+
+.links {
+    padding: 10px 5px;
+    text-align: left;
+}
+
+.links ul {
+    list-style: none;
+}
+
+#lesson-container {
+    /*float: left;*/
+}
+
+/* Sidebar */
+
+#sidebar {
+    margin: 0px;
+    /*padding: 0px;*/
+}
+
+#sidebar .section .ad {
+    padding-top: 1em;
+}
+
+button.navbar-toggle {
+    background: rgba(26, 105, 184, .4);
+    color: White;
+    border: 1px White solid;
+    border-radius: 10em;
+}
+
+#octopus_side_img {
+    margin-top: 1em;
+}
+
+/* Footer */
+
+#footer {
+    margin: 0 auto;
+    clear: both;
+    min-height: 50px;
+}
+
+#footer p {
+    margin: 0;
+    padding: 3px;
+    padding-right: 5em;
+    line-height: normal;
+    font-size: 10px;
+    text-transform: lowercase;
+    text-align: right;
+}
+
+#footer a:hover {
+    color: White;
+    text-decoration: underline;
+}
+
+#copyright {
+    /*background-color: rgba(34, 72, 113, 0.55);*/
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+}
+
+#copyright a {
+    text-decoration: none;
+}
+
+.card h1, .card h2, .card h3 {
+    font-family: 'Fredoka One', cursive;
+}
+
+.card {
+    background: linear-gradient(#e8fbff, #FFFFFF);
+}
+
+.card li {
+    padding-top: 1em;
+    list-style: none;
+}
+
+.card-header {
+    cursor: pointer;
+}
+
+.card-body {
+    padding: 1em;
+}
+
+.collapsed .open-practice-tips {
+    display: inline;
+}
+
+.collapsed .close-practice-tips {
+    display: none;
+}
+
+.open-practice-tips {
+    display: none;
+}
+
+/* Ads */
+#sidebar .ad {
+}
+
+.ad {
+    margin: 0 auto;
+    margin-top: 1em;
+
+}
+
+.ad.test {
+    background-color: #363636;
+}
+
+.top_ads {
+    clear: both;
+
+}
+
+.r_sidebar_ad {
+    display: none;
+}
+
+.r_banner_ad {
+    display: none;
+}
+
+@media (min-width: 900px) {
+    .r_sidebar_ad {
+        display: inline-block;
+        width: 160px;
+        height: 600px;
+    }
+
+    .r_banner_ad {
+        display: inline-block;
+        width: 728px;
+        height: 90px;
+    }
+}
+
+/* Buttons */
+
+.button h3 {
+    margin: .2em;
+}
+
+.button {
+    position: relative;
+    display: inline-block;
+    padding: .3em 1em;
+    text-decoration: none;
+    -moz-border-radius: 10em;
+    -webkit-border-radius: 10em;
+    border-radius: 10em;
+    transition: all .2s ease-in-out;
+    font-weight: bold;
+    text-align: center;
+    background: #ff8224;
+    color: #ffffff;
+    box-shadow: 0 0px 15px rgba(50, 44, 58, 0.8);
+}
+
+a.button {
+    color: #ffffff;
+}
+
+a:hover .button {
+    background: #ffff76;
+    color: #1a69b8;
+    text-decoration: none;
+    transform: scale(1.1);
+    box-shadow: 0 0px 15px rgba(255, 255, 118, 0.8);
+}
+
+a.button:hover div {
+    background-position: 3px -86px;
+    color: #da24eb;
+}
+
+a.button:hover {
+    text-decoration: none;
+}
+
+/* Misc */
+
+.lesson .illustration {
+    width: 70%;
+    margin-left: 15%;
+}
+
+.illustration img {
+    width: 100%;
+}
+
+.caption {
+    color: #94d4ec;
+    text-align: center;
+}
+
+#tips {
+    margin-top: 10px;
+    /*background-color: #27b3ea;*/
+    padding: 50px;
+    border-radius: 5px;
+}
+
+ul.inline {
+    list-style: none;
+    line-height: 100%;
+}
+
+ul.inline li {
+    list-style: none;
+    display: inline;
+    margin-right: 30px;
+    font-size: 10pt;
+}
+
+ul.inline a {
+    color: Yellow;
+}
+
+/* Screen size breakpoints */
+
+/* Extra small devices (phones, less than 768px) */
+@media (min-width: 0px) {
+    h2 {
+        font-size: 16pt;
+    }
+
+    h3 {
+        font-size: 12pt;
+    }
+
+    #logo {
+        max-width: 70%;
+    }
+
+    #logo h1 {
+        font-size: 20pt;
+        margin-top: .1em;
+        margin-bottom: .1em;
+    }
+
+    #logo h2 {
+        font-size: 10pt;
+        /*color: #ff690f;*/
+        /*color: #ac6c69;*/
+        /*color: red;*/
+    }
+
+    #banner {
+        height: 240px;
+        /*padding-top: 20px;*/
+    }
+
+    #splash h1 {
+        font-size: 14pt;
+    }
+
+    #header {
+        height: 80px;
+    }
+
+    .feature {
+        font-size: 12pt;
+        min-height: 200px;
+    }
+
+    .feature .lesson-list {
+        /*margin: auto 20%;*/
+    }
+}
+
+@media (max-width: 600px) {
+    #logo h1 {
+        letter-spacing: .1em;
+        text-shadow: 0px 0px 20px #ff690f,
+        -1px -1px 0 #fbe095,
+        -2px -2px 0 #fbd951,
+        -3px -3px 0 #da9324;
+    }
+
+    #logo {
+        padding-left: 1em;
+    }
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 600px) {
+    h2 {
+        font-size: 18pt;
+    }
+
+    h3 {
+        font-size: 14pt;
+    }
+
+    #logo {
+        /*max-width: 50%;*/
+    }
+
+    #logo h1 {
+        font-size: 20pt;
+    }
+
+    #logo h2 {
+        font-size: 10pt;
+        /*opacity: .5;*/
+    }
+
+    #banner {
+        height: 250px;
+    }
+
+    #header {
+        height: 79px;
+    }
+
+}
+
+@media (max-width: 992px) and (min-width: 768px) {
+    #sidebar {
+        font-size: 10pt;
+    }
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 900px) {
+    h2 {
+        font-size: 14pt;
+    }
+
+    h3 {
+        font-size: 16pt;
+    }
+
+    #logo h1 {
+        font-size: 22pt;
+    }
+
+    #logo h2 {
+        font-size: 12pt;
+    }
+
+    #banner {
+        height: 260px;
+    }
+
+    #splash h1 {
+        font-size: 18pt;
+    }
+
+    #header {
+        height: 92px;
+    }
+
+    .feature {
+        min-height: 250px;
+        font-size: 10pt;
+    }
+
+    .feature .lesson-list {
+        /*margin: auto 10%;*/
+    }
+}
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    h2 {
+        font-size: 18pt;
+    }
+
+    h3 {
+        font-size: 16pt;
+    }
+
+    #logo h1 {
+        font-size: 28pt;
+    }
+
+    #logo h2 {
+        font-size: 14pt;
+    /*background: -webkit-linear-gradient(0deg, #dc3545, #fdcc51);*/
+    /*-webkit-background-clip: text;*/
+    /*-webkit-text-fill-color: transparent;*/
+    }
+
+    #banner {
+        height: 270px;
+    }
+
+    #header {
+        height: 100px;
+    }
+
+    .feature {
+        min-height: 300px;
+        font-size: 14pt;
+
+    }
+
+}
+
+/* Medium screens*/
+@media (min-width: 1500px) {
+
+    #logo h1 {
+        font-size: 28pt;
+    }
+
+    #logo h2 {
+        /*opacity: .5;*/
+        font-size: 14pt;
+    }
+
+    #banner {
+        height: 300px;
+    }
+
+    #header {
+        /*height: 100px;*/
+    }
+}
+
+/* Large screens */
+@media (min-width: 1800px) {
+    body {
+        font-size: 12pt;
+    }
+
+    #logo h1 {
+        font-size: 32pt;
+        margin-top: 0px;
+    }
+
+    #logo h2 {
+        font-size: 16pt;
+    }
+
+    #banner {
+        height: 360px;
+    }
+
+    #splash h1 {
+        font-size: 30px;
+    }
+
+    #header {
+        height: 110px;
+    }
+}
+
+/* Very Large screens */
+@media (min-width: 2100px) {
+    #logo h1 {
+        font-size: 36pt;
+    }
+
+    #logo h2 {
+        font-size: 18pt;
+    }
+
+    #header {
+        height: 120px;
+    }
+}

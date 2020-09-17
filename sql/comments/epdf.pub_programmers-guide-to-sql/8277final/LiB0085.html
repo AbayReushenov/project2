@@ -1,0 +1,341 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Working with SQL Server Triggers</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0084.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0086.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch13"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="871"></a><a name="ch13lev1sec2"></a>Working with SQL Server Triggers</h2><p class="first-para">SQL Server supports only statement-level triggers. It doesn't support row-level triggers. This means that if you issue a <span class="fixed">DELETE</span> command that deletes 10 rows, the trigger will fire once for the entire statement&#8212;not 10 times, once for each deleted row.</p>
+<p class="para">SQL Server doesn't support <span class="fixed">BEFORE</span> triggers, but it supports <span class="fixed">AFTER</span> (also named <span class="fixed">FOR</span>) triggers and, starting with SQL Server 2000, <span class="fixed">INSTEAD OF</span> triggers.</p>
+<p class="para">The important difference between <span class="fixed">AFTER</span> (<span class="fixed">FOR</span>) triggers and <span class="fixed">INSTEAD OF</span> triggers is that <span class="fixed">AFTER</span> triggers are called after any existing constraints have been checked. <span class="fixed">INSTEAD OF</span> triggers are called immediately, even if the rows being inserted or updated wouldn't pass existing constraints.</p>
+<a name="872"></a><a name="IDX-368"></a>
+<p class="para">Working with SQL Server triggers implies working with two special data tables: <span class="fixed">Inserted</span> and <span class="fixed">Deleted</span>. These tables exist only inside the trigger, and they're the means by which SQL Server tells you what happened and why the trigger was called.</p>
+<p class="para">When the trigger fires because of an <span class="fixed">INSERT</span> statement, the row or rows that were inserted (or were going to be inserted, in case of an <span class="fixed">INSTEAD OF</span> trigger) are saved in the <span class="fixed">Inserted</span> table. Similarly, when deleted, they're available through the <span class="fixed">Deleted</span> table. <span class="fixed">UPDATE</span> operations are regarded as a pair of <span class="fixed">DELETE</span> and <span class="fixed">INSERT</span> operations&#8212;the old values are saved to <span class="fixed">Deleted</span>, and the new ones to <span class="fixed">Inserted</span>.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">
+<i class="emphasis"><span class="fixed">Inserted</span></i> and <i class="emphasis"><span class="fixed">Deleted</span></i> have the same structure as the table on which the trigger is created.</p>
+</td>
+</tr>
+</table>
+<p class="para">Let's now start playing with some triggers using the scenario introduced earlier.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="873"></a><a name="ch13lev2sec4"></a>Logging Table Activity using AFTER Triggers</h3>
+<p class="first-para">Let's first create the <span class="fixed">FriendAudit</span> table that will record the log data:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE FriendAudit
+(FriendAuditID INT IDENTITY PRIMARY KEY NOT NULL,
+ Operation VARCHAR(10),
+ RecordedOn DateTime DEFAULT GETDATE(),
+ OldName VARCHAR(50),
+ NewName VARCHAR(50),
+ OldPhone VARCHAR(15),
+ NewPhone VARCHAR(15));
+</pre>
+</div>
+<p class="para">In this code, you supplied a default value of <span class="fixed">GETDATE()</span> for the <span class="fixed">RecordedOn</span> field; so whenever you add new values to <span class="fixed">FriendAudit</span> without specifying a value for <span class="fixed">RecordedOn</span>, the current date and time will be automatically supplied.</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="874"></a><a name="ch13lev3sec1"></a>Logging INSERT Operations</h4>
+<p class="first-para">Let's start by logging only the <span class="fixed">INSERT</span> operations that happen to your table. Create <span class="fixed">LogFriendTrigger</span> like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER LogFriendTrigger
+ON Friend
+FOR INSERT<a name="875"></a><a name="IDX-369"></a>
+AS
+DECLARE @NewName VARCHAR(50)
+DECLARE @NewPhone VARCHAR(15)
+
+SELECT @NewName=Name FROM Inserted
+SELECT @NewPhone=PhoneNo FROM Inserted
+
+INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+VALUES ('Insert',@NewName,@NewPhone);
+</pre>
+</div>
+<p class="para">Let's test the new trigger by inserting some values to <span class="fixed">Friend</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry')
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+</pre>
+</div>
+<p class="para">Now let's see what happened to <span class="fixed">FriendAudit</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM FriendAudit;
+</pre>
+</div>
+<p class="para">
+<a class="internaljump" href="#ch13fig02">Figure 13-2</a> shows the results.</p>
+<div class="figure">
+<a name="876"></a><a name="ch13fig02"></a><span class="figuremediaobject"><a href="images/fig385%5F01%5F0%2Ejpg" NAME="IMG_33" target="_parent"><img src="images/fig385_01.jpg" height="44" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 13-2: </span>The <i class="emphasis"><span class="fixed">FriendAudit</span></i> table</span>
+</div>
+<p class="para">The trigger can be improved (you'll see in a minute why and how), but it works well on most occasions. When creating the trigger, you needed to specify its name, the table it protects, and the action on which it fires:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER LogFriendTrigger
+ON Friend
+FOR INSERT
+</pre>
+</div>
+<p class="para">Then the game begins. The body of <span class="fixed">LogFriendTrigger</span> reads <span class="fixed">Name</span> and <span class="fixed">PhoneNo</span> from <span class="fixed">Inserted</span> (remember that <span class="fixed">Inserted</span> has the same structure as <span class="fixed">Friend</span>) and saves them to <span class="fixed">FriendAudit</span> by using two variables named <span class="fixed">@NewName</span> and <span class="fixed">@NewPhone</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+AS
+DECLARE @NewName VARCHAR(50)
+DECLARE @NewPhone VARCHAR(15)<a name="877"></a><a name="IDX-370"></a>
+SELECT @NewName=Name FROM Inserted
+SELECT @NewPhone=PhoneNo FROM Inserted
+
+INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+VALUES ('Insert',@NewName,@NewPhone)
+</pre>
+</div>
+<p class="last-para">The problem with this implementation is that if more rows are inserted using a single SQL statement (say, with <span class="fixed">INSERT INTO...SELECT</span>), the trigger fires only once, and only one record is added to <span class="fixed">FriendAudit</span>. In the following exercise, you'll see how to deal with this scenario.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="878"></a><a name="ch13lev3sec2"></a>Logging DELETE Operations</h4>
+<p class="first-para">Here, not only will you improve your trigger to log <span class="fixed">DELETE</span> operations, but you'll also improve the way it handles <span class="fixed">INSERT</span> operations.</p>
+<p class="para">For situations when you want to change an existing trigger, instead of dropping and re-creating it, SQL Server provides you with the <span class="fixed">ALTER TRIGGER</span> command. Execute the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TRIGGER LogFriendTrigger
+ON Friend
+FOR INSERT, DELETE
+AS
+
+IF EXISTS (SELECT 1 FROM Inserted)
+  BEGIN
+    INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+      SELECT 'Insert', Inserted.Name, Inserted.PhoneNo
+      FROM Inserted
+  END
+
+ELSE IF EXISTS (SELECT 1 FROM Deleted)
+  BEGIN
+    INSERT INTO FriendAudit (Operation, OldName, OldPhone)
+      SELECT 'Delete', Deleted.Name, Deleted.PhoneNo
+      FROM Deleted
+  END;
+</pre>
+</div>
+<p class="para">To test the new trigger, just delete the rows you inserted previously:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Friend;
+<a name="879"></a><a name="IDX-371"></a>
+</pre>
+</div>
+<p class="para">Note that this <span class="fixed">DELETE</span> statement affects more rows&#8212;so using a logging similar to the one used in the first trigger (for <span class="fixed">INSERT</span> operations) would have only logged a single item, not all the deleted rows. Now if you read the <span class="fixed">FriendAudit</span> table, you see something like <a class="internaljump" href="#ch13fig03">Figure 13-3</a>.</p>
+<div class="figure">
+<a name="880"></a><a name="ch13fig03"></a><span class="figuremediaobject"><a href="images/fig387%5F01%5F0%2Ejpg" NAME="IMG_34" target="_parent"><img src="images/fig387_01.jpg" height="74" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 13-3: </span>The <i class="emphasis"><span class="fixed">FriendAudit</span></i> table</span>
+</div>
+<p class="para">In the new trigger, first you see the new <span class="fixed">FOR DELETE</span> clause in its definition:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TRIGGER LogFriendTrigger
+ON Friend
+FOR INSERT, DELETE
+AS
+</pre>
+</div>
+<p class="para">Second, using <span class="fixed">IF</span> clauses, you check if the trigger has been called because a row was inserted or deleted. This detail is important because you need to know from which table to gather the information to save in <span class="fixed">FriendAudit</span>&#8212;from <span class="fixed">Inserted</span> or from <span class="fixed">Deleted</span>?</p>
+<p class="para">You do this by first verifying if there are any rows in the <span class="fixed">Inserted</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+IF EXISTS (SELECT 1 FROM Inserted)
+</pre>
+</div>
+<p class="para">If there are any rows in <span class="fixed">Inserted</span>, you copy them into <span class="fixed">FriendAudit</span> with <span class="fixed">INSERT INTO</span> combined with a <span class="fixed">SELECT</span> clause. (Remember that you learned about this construct in <a href="LiB0021.html#181" target="_parent" class="chapterjump">Chapter 3</a>, "Modifying Data.") For example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+IF EXISTS (SELECT 1 FROM Inserted)
+  BEGIN
+    INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+      SELECT 'Insert', Inserted.Name, Inserted.PhoneNo
+      FROM Inserted
+  END
+</pre>
+</div>
+<p class="para">This method has the advantage that it works even when multiple rows have been added to <span class="fixed">Friend</span> in a single SQL statement.</p>
+<a name="881"></a><a name="IDX-372"></a>
+<p class="para">You then do the same test for <span class="fixed">Deleted</span> although this time it's not really necessary. Because this is a <span class="fixed">FOR INSERT, DELETE</span> trigger, if no rows have been inserted, you can be sure it was a <span class="fixed">DELETE</span> operation that executed the trigger. You use the same technique to extract rows from the <span class="fixed">Deleted</span> table and append them to <span class="fixed">FriendAudit</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ELSE IF EXISTS (SELECT 1 FROM Deleted)
+  BEGIN
+    INSERT INTO FriendAudit (Operation, OldName, OldPhone)
+      SELECT 'Delete', Deleted.Name, Deleted.PhoneNo
+      FROM Deleted
+  END
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="882"></a><a name="ch13lev3sec3"></a>Logging UPDATE Operations</h4>
+<p class="first-para">When a trigger is fired after an <span class="fixed">UPDATE</span> operation, both <span class="fixed">Inserted</span> and <span class="fixed">Deleted</span> tables are populated. The following example shows the new trigger, which logs <span class="fixed">INSERT</span>, <span class="fixed">DELETE</span>, and <span class="fixed">UPDATE</span> operations to <span class="fixed">FriendAudit</span>. It also displays a message specifying what kind of operation was logged.</p>
+<p class="para">Enter the following code to amend the trigger:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TRIGGER LogFriendTrigger
+ON Friend
+FOR INSERT, DELETE, UPDATE
+AS
+
+IF EXISTS (SELECT 1 FROM Inserted) AND EXISTS (SELECT 1 FROM DELETED)
+  BEGIN
+   INSERT INTO FriendAudit (Operation, OldName, OldPhone, NewName, NewPhone)
+      SELECT 'Update', d.Name, d.PhoneNo, i.Name, i.PhoneNo
+      FROM Deleted d JOIN Inserted i
+      ON d.Name = i.Name
+   PRINT 'Update Logged'
+  END
+ELSE IF EXISTS (SELECT 1 FROM Inserted)
+  BEGIN
+    INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+      SELECT 'Insert', Inserted.Name, Inserted.PhoneNo
+      FROM Inserted
+    PRINT 'Insert Logged'
+  END
+ELSE IF EXISTS (SELECT 1 FROM Deleted)
+  BEGIN
+    INSERT INTO FriendAudit (Operation, OldName, OldPhone)<a name="883"></a><a name="IDX-373"></a>
+      SELECT 'Delete', Deleted.Name, Deleted.PhoneNo
+      FROM Deleted
+    PRINT 'Delete Logged'
+  END;
+</pre>
+</div>
+<p class="para">To test the new trigger, proceed with the following steps. First, clear the <span class="fixed">Friend</span> and <span class="fixed">FriendAudit</span> tables (note that the order is important):</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Friend;
+DELETE FROM FriendAudit;
+</pre>
+</div>
+<p class="para">Then perform the following operations on <span class="fixed">Friend</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+UPDATE Friend SET PhoneNo = 'Unknown';
+DELETE FROM Friend;
+</pre>
+</div>
+<p class="para">Now, if you read the <span class="fixed">FriendAudit</span> table, you should see something like <a class="internaljump" href="#ch13fig04">Figure 13-4</a>.</p>
+<div class="figure">
+<a name="884"></a><a name="ch13fig04"></a><span class="figuremediaobject"><a href="images/fig389%5F01%5F0%2Ejpg" NAME="IMG_35" target="_parent"><img src="images/fig389_01.jpg" height="103" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 13-4: </span>The <i class="emphasis"><span class="fixed">FriendAudit</span></i> table</span>
+</div>
+<p class="para">The latest version of the trigger is interesting; take a closer look at the piece of code that logs <span class="fixed">UPDATE</span> operations:</p>
+<div class="informalexample">
+<pre class="literallayout">
+IF EXISTS (SELECT 1 FROM Inserted) AND EXISTS (SELECT 1 FROM DELETED)
+  BEGIN
+   INSERT INTO FriendAudit (Operation, OldName, OldPhone, NewName, NewPhone)
+      SELECT 'Update', d.Name, d.PhoneNo, i.Name, i.PhoneNo
+      FROM Deleted d JOIN Inserted i
+      ON d.Name = i.Name
+   PRINT ''Update Logged'
+  END
+<a name="885"></a><a name="IDX-374"></a>
+</pre>
+</div>
+<p class="last-para">An inner join is used to get the necessary data to populate <span class="fixed">FriendAudit</span>.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="886"></a><a name="ch13lev3sec4"></a>Another Technique with the Same Results</h4>
+<p class="first-para">In <span class="fixed">LogFriendTrigger</span>, you can populate the <span class="fixed">FriendAudit</span> table with a single query by making a <span class="fixed">FULL JOIN</span> between <span class="fixed">Inserted</span> and <span class="fixed">Deleted</span>&#8212;that's good news for lazy fingers. However, by only using the full join, you can't populate the <span class="fixed">Operation</span> field differently based on the operation being done:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TRIGGER LogFriendTrigger
+ON Friend
+FOR INSERT, DELETE, UPDATE
+AS
+
+INSERT INTO FriendAudit (Operation, OldName, OldPhone, NewName, NewPhone)
+  SELECT 'Log', d.Name, d.PhoneNo, i.Name, i.PhoneNo
+    FROM Deleted d FULL JOIN Inserted i
+    ON d.Name = i.Name;
+</pre>
+</div>
+<p class="para">If you want to make sure <span class="fixed">Operation</span> is correctly filled, the following is a possible approach that also uses <span class="fixed">IF</span> and <span class="fixed">CASE</span> statements:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TRIGGER LogFriendTrigger
+ON Friend
+FOR INSERT, DELETE, UPDATE
+AS
+
+DECLARE @Operation TINYINT
+SELECT @Operation=0
+IF EXISTS (SELECT 1 FROM Inserted) SELECT @Operation = @Operation + 1
+IF EXISTS (SELECT 2 FROM Deleted) SELECT @Operation = @Operation + 2
+
+INSERT INTO FriendAudit (Operation, OldName, OldPhone, NewName, NewPhone)
+  SELECT CASE @Operation
+            WHEN 1 THEN 'Insert'
+            WHEN 2 THEN 'Delete'
+            WHEN 3 THEN 'Update'
+         END,
+         d.Name, d.PhoneNo, i.Name, i.PhoneNo
+    FROM Deleted d FULL JOIN Inserted i
+    ON d.Name = i.Name;
+<a name="887"></a><a name="IDX-375"></a>
+</pre>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="888"></a><a name="ch13lev2sec5"></a>Enabling and Disabling Triggers</h3>
+<p class="first-para">There are times when, for performance reasons, you want to temporarily disable existing triggers. A common scenario of this is during large data loads into the database, when disabling the triggers can considerably improve performance.</p>
+<p class="para">When created, triggers are enabled by default. You can turn off a trigger using the <span class="fixed">ALTER TABLE</span> command. Here's how you can disable <span class="fixed">LogFriendTrigger</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend DISABLE TRIGGER LogFriendTrigger;
+</pre>
+</div>
+<p class="para">And here's how you enable it again:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend ENABLE TRIGGER LogFriendTrigger;
+</pre>
+</div>
+<p class="last-para">To enable or disable all existing triggers associated with a table, use <span class="fixed">ALL</span> instead of a specific trigger name.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0084.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0086.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

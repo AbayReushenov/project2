@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>id задания 40</title>
+    <!--id задания: 40 
+    Задание: Даны картинки. Привяжите к каждой картинке событие, чтобы по клику на картинку алертом выводился ее src. -->
+</head>
+<body>
+    <img src="img/test11.jpg" alt="Picure 1">
+    <img src="img/test12.jpg" alt="Picure 2">
+    <img src="img/test13.jpg" alt="Picure 3">
+    <img src="img/test14.jpg" alt="Picure 4">
+    <img src="img/test15.jpg" alt="Picure 5">
+    <img src="img/test16.jpg" alt="Picure 6">
+
+    <script>
+        let events = document.querySelectorAll('img');
+        events.forEach(element => element.onclick = func); 
+        function func() {
+            alert(this.getAttribute('src'));            
+        }
+    </script>
+    
+</body>
+</html>

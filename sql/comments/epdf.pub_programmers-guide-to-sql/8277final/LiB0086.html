@@ -1,0 +1,308 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Working with Oracle Triggers</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0085.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0087.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch13"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="889"></a><a name="ch13lev1sec3"></a>Working with Oracle Triggers</h2><p class="first-para">Oracle triggers are very powerful. Oracle supports <span class="fixed">BEFORE</span>, <span class="fixed">AFTER</span>, and <span class="fixed">INSTEAD OF</span> triggers.</p>
+<p class="para">
+<span class="fixed">AFTER</span> triggers execute after the intended SQL command executes; they fire only if the SQL command doesn't break any constraints existing on that data table. <span class="fixed">BEFORE</span> and <span class="fixed">INSTEAD OF</span> triggers fire before the command executes (so before any constraints are checked), allowing you to perform changes on the actions originally intended by the user.</p>
+<p class="para">With Oracle you can have statement-level triggers or row-level triggers. With statement-level triggers, a SQL command that affects multiple rows will execute the trigger only once (just like with SQL Server). In Oracle, statement-level triggers are most often used to enforce various security measures on the actions that can be performed on the data, rather than actually controlling and modifying the data that gets changed, inserted, or deleted.</p>
+<p class="para">Row-level triggers are invoked for each row that's affected by the SQL command. If a single query updated 100 rows, the row-level trigger is called 100 times for each inserted row. Inside a row-level trigger, you can refer to the <i class="emphasis">old</i> and <i class="emphasis">new</i> values of the row for which the trigger was invoked using special accessors. These are called by default <span class="fixed">:OLD</span> and <span class="fixed">:NEW</span>, but the <span class="fixed">CREATE TRIGGER</span> syntax permits changing these default names.</p>
+<a name="890"></a><a name="IDX-376"></a>
+<p class="para">You can access the row being inserted using <span class="fixed">:NEW</span> and the row being deleted with <span class="fixed">:OLD</span>. An <span class="fixed">UPDATE</span> trigger populates both <span class="fixed">:NEW</span> and <span class="fixed">:OLD</span>.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">After writing a trigger you may be told that it wasn't correctly compiled. If this is the case, you can use the <i class="emphasis"><span class="fixed">SHOW ERRORS</span></i> command to see a detailed list with the errors.</p>
+</td>
+</tr>
+</table>
+<p class="para">Oracle also supports database-level triggers and schema-level triggers, which are useful for automating database maintenance and audition actions or for providing additional database security monitoring. Schema-level triggers can watch for <span class="fixed">CREATE TABLE</span>, <span class="fixed">ALTER TABLE,</span> and <span class="fixed">DROP TABLE</span> events and react to them. You can set database-level triggers to fire on database events such as errors, logons, log offs, shutdown operations, and startup operations.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="891"></a><a name="ch13lev2sec6"></a>Logging Table Activity using AFTER Triggers</h3>
+<p class="first-para">You start by creating the <span class="fixed">FriendAudit</span> table that will hold the audit information:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE FriendAudit
+(FriendAuditID INT PRIMARY KEY NOT NULL,
+ Operation VARCHAR(10),
+ RecordedOn DATE DEFAULT SysDate,
+ OldName VARCHAR(50),
+ NewName VARCHAR(50),
+ OldPhone VARCHAR(15),
+ NewPhone VARCHAR(15));
+</pre>
+</div>
+<p class="para">In this code, we supplied the <span class="fixed">SysDate</span> function as the default value for the <span class="fixed">RecordedOn</span> field (this has a similar result to using <span class="fixed">CURRENT_DATE</span>, which you saw in the <a href="LiB0071.html#780" target="_parent" class="chapterjump">previous chapter</a>), so whenever you add new values to <span class="fixed">FriendAudit</span> without specifying a value for <span class="fixed">RecordedOn</span>, the current date and time will be automatically supplied.</p>
+<p class="para">Let's also create a sequence named <span class="fixed">FriendAuditIDSeq</span>, which you'll use to generate unique ID values for <span class="fixed">FriendAudit</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SEQUENCE FriendAuditIDSeq;
+</pre>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="892"></a><a name="ch13lev3sec5"></a>Logging INSERT Operations</h4>
+<p class="first-para">So, let's start by creating a simple trigger that logs <span class="fixed">INSERT</span> operations that happen to <span class="fixed">Friend</span>.</p>
+<a name="893"></a><a name="IDX-377"></a>
+<p class="para">Create the trigger using the following <span class="fixed">CREATE TRIGGER</span> command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER FriendAuditTrigger
+AFTER INSERT ON Friend
+FOR EACH ROW
+BEGIN
+  INSERT INTO FriendAudit (FriendAuditID, Operation, NewName, NewPhone)
+  VALUES (FriendAuditIDSeq.NEXTVAL, 'Insert ', :NEW.Name, :NEW.PhoneNo);
+END;
+/
+</pre>
+</div>
+<p class="para">Remember that you can use <span class="fixed">SHOW ERRORS</span> to see what happened if anything went wrong.</p>
+<p class="para">Let's test the trigger now. Add three records to <span class="fixed">Friend</span> using the following queries:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+</pre>
+</div>
+<p class="para">Now you can query <span class="fixed">FriendAudit</span> and see that your trigger worked as expected. You created <span class="fixed">FriendAuditTrigger</span> as an <span class="fixed">AFTER INSERT</span>, row-level trigger:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TRIGGER FriendAuditTrigger
+AFTER INSERT ON Friend
+FOR EACH ROW
+</pre>
+</div>
+<p class="para">Because it's an <span class="fixed">AFTER</span> trigger, it's invoked only after all other constraints have been checked and the new row has been introduced. This is what you need because in this case you want to log only the operations that have succeeded&#8212; you're not interested in recording failed attempts.</p>
+<p class="para">If you wanted to also record failed attempts, you could have used a <span class="fixed">BEFORE</span> trigger or both <span class="fixed">BEFORE</span> and <span class="fixed">AFTER</span> triggers&#8212;remember that you're allowed to place multiple triggers on a single table.</p>
+<p class="para">The body of the trigger gets data from <span class="fixed">:NEW</span> and saves it into <span class="fixed">FriendAudit</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN
+  INSERT INTO FriendAudit (FriendAuditID, Operation, NewName, NewPhone)
+  VALUES (FriendAuditIDSeq.NEXTVAL, 'Insert ', :NEW.Name, :NEW.PhoneNo);
+END;
+</pre>
+</div>
+<p class="para">Note that you use the <span class="fixed">FriendAuditIDSeq</span> sequence to generate a value for the primary key.</p>
+<a name="894"></a><a name="IDX-378"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="895"></a><a name="ch13lev3sec6"></a>Applying Conditions for the Trigger</h4>
+<p class="first-para">Oracle permits adding conditions that control whether the trigger should execute. You do this with the <span class="fixed">WHEN</span> parameter in <span class="fixed">CREATE TRIGGER</span>.</p>
+<p class="para">With Oracle, instead of <span class="fixed">CREATE TRIGGER,</span> you use <span class="fixed">CREATE OR REPLACE TRIGGER</span>. With this command, if the trigger already exists, it's simply replaced by the new definition, without requiring you to drop the trigger first. If the trigger already exists, <span class="fixed">CREATE OR REPLACE TRIGGER</span> has the same effect as SQL Server's <span class="fixed">ALTER TRIGGER</span>.</p>
+<p class="para">The following trigger only logs <span class="fixed">INSERT</span> operations when the name to be inserted is Peter:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE TRIGGER FriendAuditTrigger
+AFTER INSERT ON Friend
+FOR EACH ROW
+WHEN (NEW.Name='Peter')
+BEGIN
+  INSERT INTO FriendAudit (FriendAuditID, Operation, NewName, NewPhone)
+  VALUES (FriendAuditIDSeq.NEXTVAL, 'Insert ', :NEW.Name, :NEW.PhoneNo);
+END;
+/
+</pre>
+</div>
+<p class="para">In order to test the trigger, let's first clear the <span class="fixed">Friend</span> and <span class="fixed">FriendAudit</span> tables:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Friend;
+DELETE FROM FriendAudit;
+</pre>
+</div>
+<p class="para">Now execute the <span class="fixed">INSERT</span> statements again:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+</pre>
+</div>
+<p class="para">You'll see that only the last insert was logged into <span class="fixed">FriendAudit</span>. This happens because you added the <span class="fixed">WHEN</span> parameter when creating the trigger:</p>
+<div class="informalexample">
+<pre class="literallayout">
+WHEN (NEW.Name='Peter')
+</pre>
+</div>
+<p class="para">This makes the trigger execute only when the <span class="fixed">Name</span> column of the inserted row has the value of <span class="fixed">'Peter'</span>. Note that here you don't place <span class="fixed">:</span> before <span class="fixed">NEW</span>.</p>
+<a name="896"></a><a name="IDX-379"></a>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="897"></a><a name="ch13lev3sec7"></a>Logging DELETEs and UPDATEs</h4>
+<p class="first-para">Okay, you've learned how to log <span class="fixed">INSERTS</span>. Let's now complicate the trigger to log all operations: inserts, updates, and deletes. Let's first write the new trigger, and then we'll comment upon it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE TRIGGER FriendAuditTrigger
+AFTER INSERT OR DELETE OR UPDATE ON Friend
+FOR EACH ROW
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO FriendAudit (FriendAuditID, Operation, NewName, NewPhone)
+    VALUES (FriendAuditIDSeq.NEXTVAL, 'Insert ', :NEW.Name, :NEW.PhoneNo);
+  ELSIF DELETING THEN
+    INSERT INTO FriendAudit (FriendAuditID, Operation, OldName, OldPhone)
+    VALUES (FriendAuditIDSeq.NEXTVAL, 'Delete ', :OLD.Name, :OLD.PhoneNo);
+  ELSIF UPDATING THEN
+    INSERT INTO FriendAudit (FriendAuditID, Operation,
+                               OldName, OldPhone, NewName, NewPhone)
+    VALUES (FriendAuditIDSeq.NEXTVAL, 'Update ',
+             :OLD.Name, :OLD.PhoneNo, :NEW.Name, :NEW.PhoneNo);
+  END IF;
+END;
+/
+</pre>
+</div>
+<p class="para">Let's test the new trigger. First, clear the existing the tables, in this order:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Friend;
+DELETE FROM FriendAudit;
+</pre>
+</div>
+<p class="para">Second, execute the following operations:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Friend(Name, PhoneNo) VALUES('Jerry', '001-Jerry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Harrison', '999-Harry');
+INSERT INTO Friend(Name, PhoneNo) VALUES('Peter', '223223223');
+UPDATE Friend SET PhoneNo = 'Unknown';
+DELETE FROM Friend;
+</pre>
+</div>
+<p class="para">Now if you read the <span class="fixed">FriendAudit</span> table, you'll see there are three <span class="fixed">INSERT</span> operations, three <span class="fixed">UPDATE</span> operations, and finally three <span class="fixed">DELETE</span> operations logged.</p>
+<p class="para">To implement the new functionality, you first instructed the trigger to fire after any <span class="fixed">INSERT</span>, <span class="fixed">DELETE</span>, or <span class="fixed">UPDATE</span> actions:</p>
+<a name="898"></a><a name="IDX-380"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE TRIGGER FriendAuditTrigger
+AFTER INSERT OR DELETE OR UPDATE ON Friend
+FOR EACH ROW
+</pre>
+</div>
+<p class="para">Inside the trigger you can test the kind of SQL command that caused the trigger to fire using <span class="fixed">IF</span> conditional statements. If the trigger is fired because of an <span class="fixed">INSERT</span> operation, you execute the SQL you already know from the previous exercises:</p>
+<div class="informalexample">
+<pre class="literallayout">
+IF INSERTING THEN
+  INSERT INTO FriendAudit (FriendAuditID, Operation, NewName, NewPhone)
+  VALUES (FriendAuditIDSeq.NEXTVAL, 'Insert ', NEW.Name, :NEW.PhoneNo);
+</pre>
+</div>
+<p class="last-para">The trigger has similar behavior for rows that are being deleted or updated. Note that in case of updated rows, you get information from both <span class="fixed">:OLD</span> and <span class="fixed">:NEW</span>, and you store the old and new values into the <span class="fixed">FriendAudit</span> table.</p>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="899"></a><a name="ch13lev2sec7"></a>Implementing Autonumbering Functionality using Triggers</h3>
+<p class="first-para">As you can see, when inserting new records into <span class="fixed">FriendAudit</span>, you always specify a value for <span class="fixed">FriendAuditID</span> using the <span class="fixed">FriendAuditIDSeq</span> sequence.</p>
+<p class="para">Using a sequence and a trigger, you can simulate in Oracle the autonumbering functionality that's available with SQL Server, DB2, MySQL, and Access.</p>
+<p class="para">For the purpose of this example, let's assume that you don't want to manually supply a new value for <span class="fixed">FriendAuditID</span> when inserting a new row into <span class="fixed">FriendAudit</span>&#8212; you want the database do this for you.</p>
+<p class="para">The following code shows how to create the <span class="fixed">FriendAuditIDSeq</span> sequence and how to use it in a trigger named <span class="fixed">FriendAuditIDAutonumberTrigger.</span> This is a <span class="fixed">BEFORE INSERT</span> trigger; it specifies a value for the <span class="fixed">FriendAuditID</span> before the actual <span class="fixed">INSERT</span> happens:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE SEQUENCE FriendAuditIDSeq;
+
+CREATE OR REPLACE TRIGGER FriendAuditIDAutonumberTrigger
+BEFORE INSERT ON FriendAudit
+FOR EACH ROW
+BEGIN
+   SELECT FriendAuditIDSeq.NEXTVAL
+   INTO :NEW.FriendAuditID FROM DUAL;
+END;
+/
+<a name="900"></a><a name="IDX-381"></a>
+</pre>
+</div>
+<p class="para">So, this time you have a <span class="fixed">BEFORE INSERT</span> trigger. This is a must because you need to supply a value for the ID column before this is added to the database.</p>
+<p class="para">The trigger's body sets the <span class="fixed">FriendAuditID</span> column to the next value of the sequence; it's exactly what you were doing manually in the past, except this time it's all handled by the trigger:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FriendAuditIDSeq.NEXTVAL
+INTO :NEW.FriendAuditID FROM DUAL;
+</pre>
+</div>
+<p class="para">Note this trigger supplies a new value, without checking if you supplied our own; in other words, if you specify your own ID values, they'll be ignored (or better said, overwritten).</p>
+<p class="para">Once the trigger is in place, the technique of finding out the last number generated is still the same: <span class="fixed">FriendAuditIDSeq.CurrVal</span> returns the current value of the sequence. The following simple query types the current value of the sequence:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT FriendAuditIDSeq.CurrVal FROM Dual;
+</pre>
+</div>
+<p class="para">After having the autonumbering functionality in place, you don't need to manually specify values when inserting new ID values to <span class="fixed">FriendAudit</span>. If you do specify any values, they're overridden by <span class="fixed">FriendAuditIDAutonumberTrigger</span> anyway. In this case, <span class="fixed">FriendAuditTrigger</span> should look like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE TRIGGER FriendAuditTrigger
+AFTER INSERT OR DELETE OR UPDATE ON Friend
+FOR EACH ROW
+BEGIN
+  IF INSERTING THEN
+    INSERT INTO FriendAudit (Operation, NewName, NewPhone)
+    VALUES ('Insert ', :NEW.Name, :NEW.PhoneNo);
+  ELSIF DELETING THEN
+    INSERT INTO FriendAudit (Operation, OldName, OldPhone)
+    VALUES ('Delete ', :OLD.Name, :OLD.PhoneNo);
+  ELSIF UPDATING THEN
+    INSERT INTO FriendAudit (Operation, OldName, OldPhone, NewName, NewPhone)
+    VALUES ('Update ', :OLD.Name, :OLD.PhoneNo, :NEW.Name, :NEW.PhoneNo);
+  END IF;
+END;
+/
+</pre>
+</div>
+<p class="para">In this newer version of <span class="fixed">FriendAuditTrigger</span> you don't specify your own values for the <span class="fixed">FriendAuditID</span> column anymore. Repeat the tests from the previous test, and you'll see that everything works as expected.</p>
+<a name="901"></a><a name="IDX-382"></a>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="902"></a><a name="ch13lev2sec8"></a>Enabling and Disabling Triggers</h3>
+<p class="first-para">There are times when you want to temporarily disable existing triggers. A common scenario for this is during large data loads into the database, when disabling the triggers can considerably improve the performance.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">When created, triggers are enabled by default.</p>
+</td>
+</tr>
+</table>
+<p class="para">To manually enable and disable triggers, you use the <span class="fixed">ALTER TRIGGER</span> command. Here are the commands that enable and disable <span class="fixed">FriendAuditTrigger</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TRIGGER FriendAuditTrigger ENABLE;
+ALTER TRIGGER FriendAuditTrigger DISABLE;
+</pre>
+</div>
+<p class="para">You can also enable and disable triggers on a per-table basis. The following two statements disable, and respectively enable, all the triggers associated with the <span class="fixed">Friend</span> table. Remember that a table can have more triggers associated with it:</p>
+<div class="informalexample">
+<pre class="literallayout">
+ALTER TABLE Friend DISABLE ALL TRIGGERS;
+ALTER TABLE Friend ENABLE ALL TRIGGERS;
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0085.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0087.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

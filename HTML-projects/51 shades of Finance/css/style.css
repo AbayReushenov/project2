@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&family=Suez+One&display=swap');
+body {
+  width: 100%;
+  height: 100%;
+  background: url("../jpg/back2.jpg");
+  font-family: "Times", serif;
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+/* 
+обнулить отступы и поля у всех элементов на странице, используйте стилевые свойства margin и padding с нулевыми значениями, добавляя их к универсальному селектору *
+*/
+header {
+    background: url("../jpg/back.jpg");
+    float: left;
+    background-color: #343434;
+    width: 99.4%;
+    padding: 0.3%;
+    color: gray;
+    border-bottom: 5px solid #59595a;
+    font-size: 2.5em;
+    text-align: center;
+}
+a {
+    color: white;
+    text-decoration: none;
+    transition: all.6s ease;
+    -ms-transition: all.6s ease;
+    -o-transition: all.6s ease;
+    -moz-transition: all.6s ease;
+    -webkit-transition: all.6s ease;
+}
+
+a:hover {
+    color: gray;
+    text-decoration: none;
+    transition: all.6s ease;
+    -ms-transition: all.6s ease;
+    -o-transition: all.6s ease;
+    -moz-transition: all.6s ease;
+    -webkit-transition: all.6s ease;
+}
+
+#divOut {
+  font-family: 'Roboto Slab', serif;
+    color: white;
+    text-align: center;
+}
+#dirIn {
+  font-family: 'Roboto Slab', serif;
+    color: white;
+    text-align: left;
+}
+/*#colorchange {
+    color: white;
+    text-align: center;
+    font-size: 2.5em;
+    font-family: "Suez One", serif;
+}*/

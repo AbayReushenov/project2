@@ -1,0 +1,172 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Chapter 1: Understanding SQL and Relational Databases</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0008.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0010.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch01"></a>
+<h1 class="chapter-title"><span class="chapter-titlelabel">Chapter 1: </span>Understanding SQL and Relational Databases</h1><a name="32"></a><a name="IDX-1"></a>
+<p class="para">At the heart of almost every large-scale application, whether it be a Web application or a corporate intranet, is the database. The modern database has moved on a long way from the flat-file address-card style of database storage, and you now have the ability to store terabytes of information about customers, products, contacts, and so on. It's all very well storing all of this data in a central database, but simply storing data doesn't give you much in return if you can't find some way to organize, access, and work with this data. Structured Query Language (SQL) is a standardized language designed to access and manipulate data stored in relational databases and to work with the databases themselves.</p>
+<div class="highlights">
+<p class="first-para">This chapter explains what SQL is and how it works. You'll also be looking at some relational database theory because to be able to work confidently with SQL, you need to understand some of these core concepts.</p>
+</div>
+<div class="section">
+<h2 class="sect2-title">
+<a name="33"></a><a name="ch01lev1sec1"></a>What is SQL?</h2>
+<p class="first-para">SQL is a language that's used for accessing and manipulating databases and, more importantly for the programmer, the data that's contained in databases. SQL statements give you the power to manipulate all aspects of your database using code instead of visual tools.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">SQL is pronounced either "ess-kue-ell" or "see-kwell" depending on your preference. We go for the latter, so no complaints about us writing "a SQL statement" rather than "an SQL statement," please!</p>
+</td>
+</tr>
+</table>
+<p class="para">In essence, what you have is a "front end" that sends a SQL statement (or a set of SQL statements) to a "back-end" data store. For a programmer, this SQL statement will most commonly contain coded instructions to perform one or more of the following operations:</p>
+<a name="34"></a><a name="IDX-2"></a>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">Extracting specific data from the database</p>
+</li>
+<li class="listitem">
+<p class="first-para">Inserting new data into the database</p>
+</li>
+<li class="listitem">
+<p class="first-para">Modifying existing data</p>
+</li>
+<li class="listitem">
+<p class="first-para">Deleting data</p>
+</li>
+</ul>
+<p class="para">Many commercial vendors supply relational databases, including Microsoft (SQL Server and Access), Oracle Corporation (Oracle), and IBM (DB2). There are also several freely available open-source products such as MySQL and PostgresSQL. No matter what platform you're using, several features are common to all relational databases, whatever they contain. All data in these databases is held in <i class="emphasis">rows</i> (also known as <i class="emphasis">records</i>) that span the <i class="emphasis">columns</i> (<i class="emphasis">fields</i>) of a <i class="emphasis">table</i> within the database, and the values for each column are of a specified <i class="emphasis">data type</i>. Because the data is stored in a similar structure on different platforms, you can use similar techniques to access and manipulate the data. Furthermore, each of these platforms uses SQL as the universal language to implement these techniques. In other words, <i class="emphasis">SQL is the language that every relational database understands</i>.</p>
+<p class="para">What about your "front end"? Well, you have a variety of options here, too. For example, your front end might be one of the following:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<b class="bold">A</b> <b class="bold">Web page</b> that allows a customer to enter information into a Search box. Based on the data entered, a SQL statement will be constructed, sent to the back-end data store, and executed, and the specific data that the customer requested will be returned and displayed on the Web page.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">A</b> <b class="bold">business application</b> that allows employees to query a data store for information about employees, product sales, or any number of things.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">A</b> <b class="bold">simple SQL editing tool</b>, as provided by every relational database product, that allows you to execute SQL statements against a database on your own computer or a computer to which you're networked.</p>
+</li>
+</ul>
+<p class="para">And here you have the real beauty of SQL: Regardless of the language used to create the front end&#8212;be it ASP.NET, Java, Visual Basic, C#, or virtually any other language&#8212;SQL is the language that all of these front ends will use to communicate with a relational database.</p>
+<p class="para">In addition to all this, you can also use SQL to administer the relational database itself&#8212;for example, to create or remove new database storage structures or to access and modify the security settings for that database.</p>
+<a name="35"></a><a name="IDX-3"></a>
+<p class="para">The bottom line is that regardless of the language in which you program or the particular database in which you store your data, knowledge of SQL is an essential skill.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="36"></a><a name="ch01lev2sec1"></a>Introducing the SQL Standard</h3>
+<p class="first-para">SQL has quite a long history. It was first invented at IBM in 1974&#8211;75 and was used to communicate with mainframe databases. Later, in 1979, the first commercial relational database product that supported SQL was released by Oracle, and in 1986&#8211;87 the ANSI and ISO standards organizations worked on a SQL standard that was released two years later, known as <i class="emphasis">SQL-89</i>. This standard was updated in 1991 to a new version, SQL-92, and subsequently to another version, SQL-99 (also referred to as <I>SQL:1999 and SQL3</I>). This book concentrates on this SQL-99 standard.</p>
+<p class="para">The standard defines techniques for a variety of operations on relational databases and the data that they contain. Essentially, the SQL standard splits down into three key components:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<b class="bold">Data Manipulation Language (DML)</b>: This is the component of the language with which this book is most concerned. It provides four basic SQL statements:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">SELECT</span> statements that are used to read and extract data from the database. This portion of the language is often given a subheading all its own, namely Data Query Language (DQL); these SQL statements can correctly be referred to as <i class="emphasis">SQL queries</i>.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">INSERT</span> statements that are used to insert new rows of data into the database.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">UPDATE</span> statements that are used to modify existing rows of data.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">DELETE</span> statements that are used to remove rows of data from the database.</p>
+</li>
+</ul>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Data Definition Language (DDL)</b>: This is used to create, modify, or remove tables and other database objects. It includes such statements as <span class="fixed">CREATE TABLE</span>, <span class="fixed">ALTER TABLE</span>, <span class="fixed">DROP TABLE</span>, <span class="fixed">CREATE INDEX</span>, and so on. You'll investigate this component of the language in <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects."</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<b class="bold">Data Control Language (DCL)</b>: This is used to manage database security, manage which users have access to which tables and what data, and so on. You'll investigate this in <a href="LiB0062.html#720" target="_parent" class="chapterjump">Chapter 11</a>, "Users and Security."</p>
+</li>
+</ul>
+<a name="37"></a><a name="IDX-4"></a>
+<p class="last-para">The majority of this book is devoted to the DML component of SQL and more specifically to writing SQL queries.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="38"></a><a name="ch01lev2sec2"></a>How SQL Works</h3>
+<p class="first-para">As its name suggests, a large part of the Structured <i class="emphasis">Query</i> Language is dedicated to the process of <i class="emphasis">querying</i> a relational database. That is, you can use SQL to ask certain "questions" of the database and have the "answer" (a row or rows of data) returned. For example, say you have a database that stores information about a particular university and the courses it runs, the people who teach those courses, and so on. You might ask the question "Which courses are offered by the university?" A SQL query such as the following might do the trick:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Courses
+</pre>
+</div>
+<p class="para">What this query is basically saying in database-speak is "Give me a list of all of the information stored for all of the courses in the <span class="fixed">Courses</span> table." This query would work against any relational database as long as it contained a <span class="fixed">Courses </span>table. Now, the <span class="fixed">Courses</span> table might hold a variety of different information, and perhaps you're only interested in the name of the courses offered. Then you might modify your SQL query as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT CourseName FROM Courses
+</pre>
+</div>
+<p class="para">Now, this query would work against any relational database as long as it had a <span class="fixed">Courses</span> table that contained a column called <span class="fixed">CourseName</span> . What it's saying is "Give me only the names of all the courses in the <span class="fixed">Courses</span> table." In other words, give you all the rows stored in the database but only return the values stored in the <span class="fixed">CourseName</span> column. Any other information stored in the table, such as the number of credits required to pass each course (perhaps stored in a <span class="fixed">Credits</span> column) would be ignored. Finally, suppose you wanted to see data from all of the columns in the <span class="fixed">Courses</span> table but only for <span class="fixed">Chemistry</span> courses:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * FROM Courses WHERE CourseName = 'Chemistry'
+</pre>
+</div>
+<p class="para">We won't go any further now, but we hope you can see that, in some circumstances, a line of SQL can often look much the same as a line of English. Of course, there's a bit more to it than that, and complex operations will require far more complex SQL code! Like any language, you have a lot of syntax and usage information to learn, but SQL does have one important advantage: Once you get used to it, the syntax is simple indeed and can often be interpreted even by people who have never seen it before.</p>
+<a name="39"></a><a name="IDX-5"></a>
+<p class="last-para">One important point to take home from this discussion is that your SQL statements merely define which data you want to retrieve. You don't specify <i class="emphasis">how</i> your database should go about retrieving them. SQL is a declarative language, not a procedural language (such as Java, Visual Basic, and so on). You just specify what you want to do in SQL and let your Relational Database Management System (RDBMS) decide the best way to actually do it.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="40"></a><a name="ch01lev2sec3"></a>Introducing Relational Database Management Systems</h3>
+<p class="first-para">The term <i class="emphasis">database</i> is often confused with "the software that makes data storage possible." For example, you've probably heard SQL Server, Access, and Oracle referred to as <i class="emphasis">databases</i>. More accurately, they should be referred to as <i class="emphasis">Relational</i> <i class="emphasis">Database Management Systems</i> (RDBMSs). They're applications that are responsible for the storage of data as well as providing an interface that can be used to access the database(s) they contain. Typically, as well as some kind of user interface, RDBMSs include an Application Programming Interface (API) that can be used by other applications to access data.</p>
+<p class="para">Each RDBMS will be capable of maintaining a large number of individual databases (in other words, the data storage constructs and the actual data).</p>
+<p class="para">One crucial part of RDBMSs is the <i class="emphasis">database engine</i>. This part of an RDBMS is responsible for accessing data, as opposed to other parts that may relate to manipulating database manipulation more abstractly, dealing with user input, displaying results, and so on. As such, when you programmatically access databases stored by RDBMSs, you're really using the database engine of the RDBMS via the API. It's the database engine that decides how best to carry out the instructions contained in your SQL statements.</p>
+<p class="para">Often you'll use an additional layer of abstraction between your applications and the database engine, that is called a <i class="emphasis">data provider</i>. A data provider is usually a service available to all code running on a computer that mediates between your applications and the database engine you're using, making it easier to execute queries. In some cases this can be a great advantage because swapping between databases can be as simple as using a different provider (one for SQL Server instead of one for Oracle, for example). However, this isn't always the case because there may be fundamental differences to overcome with such a migration.</p>
+<p class="para">Different RDBMSs are optimized in different ways, and they provide a variety of functionality depending on their purpose. More powerful (and therefore more expensive) RDBMSs will provide better support for concurrency (coping with multiple users accessing data at the same time), provide more simultaneous connections, provide better performance, provide stronger security, provide more versatile backup and failsafe procedures, allow transactions (where single operations may involve several database accesses, and that operation is only successful if all accesses complete), and generally just be a little more robust.</p>
+<a name="41"></a><a name="IDX-6"></a>
+<p class="last-para">Luckily, mastering the basic use of databases is a bit like learning to drive a car. Unless you learn on an automatic before switching to a manual, you'll be able to drive most vehicles. You might not have the in-car stereo you're used to, but you'll get by. The main reason for all this is that pretty much all RDBMSs that are currently available support SQL, which is of course what this book is all about. You only need to learn SQL once, and you should find that everything is fine regardless of the RDBMS you use.</p>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="42"></a><a name="ch01lev2sec4"></a>Introducing SQL Dialects</h3>
+<p class="first-para">The idea that you only need to learn SQL once pretty much holds true for all basic data manipulations. Nevertheless, you'll notice differences as you move from RDBMS to RDBMS. For example, you should note that although the current global standard for SQL is SQL-99, most RDBMSs only fully support the earlier standard, SQL-92. This means that certain parts of the SQL-99 standard may not be supported by your RDBMS. There are also subtle differences in the way the standard is implemented on each RDBMS. One minor difference is that MySQL, DB2, and Oracle require semicolons at the end of SQL statements, but SQL Server doesn't (however, including a semicolon at the end of a statement won't cause any negative effects in SQL Server). This book includes these characters at the end of every statement because omitting them would break the code on the other platforms.</p>
+<p class="para">Other times, it'll mean that the statement required to perform a certain task is written slightly differently, depending on the RDBMS. On these occasions, the code in this book may be presented more than once to highlight differences between database platforms.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">The downloadable code for this book includes separate directories containing SQL formatted for use in these different environments. You can access this code from the Downloads section of the Apress Web site (<a target="_top" class="url" href="http://www.apress.com"><i class="emphasis"><span class="fixed">http://www.apress.com</span></i></a>).</p>
+</td>
+</tr>
+</table>
+<p class="para">You may also find that your RDBMS provides additional statements and functions that allow you to do some complex calculation in SQL, which you would otherwise have had to do in another language (obviously, this helps a particular vendor market its own product). In general, this book covers these only where it's the only way (or only sensible way) to achieve a certain task for that RDBMS.</p>
+<a name="43"></a><a name="IDX-7"></a>
+<p class="para">Furthermore, you'll find that some of the RDBMSs provide a language all their own, which you can use to program on that particular platform. For example, Oracle provides the PL/SQL language, and SQL Server provides the Transact-SQL language. As you can probably tell from the names, these languages encapsulate SQL but at the same time provide procedural extensions to the language that allow you to perform more powerful data operations. You can "wrap" your SQL code in these languages, which can perform any related business logic required to make sure that the data manipulation conforms to your particular rules. You can then store this code in the database as a distinct programming unit. Examples of such programming units are <i class="emphasis">stored procedures</i> and triggers, which are covered in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapters 9</a> and <a href="LiB0083.html#859" target="_parent" class="chapterjump">13</a>, respectively.</p>
+<p class="para">Obviously in these cases, the code is RDBMS specific and must be presented separately for each RDBMS&#8212;though MySQL and Access don't support stored procedures or triggers.</p>
+<p class="last-para">To fully understand how SQL works, you need to look at how relational databases work, so now you'll take a step back from SQL for a moment and explore relational databases in a bit more detail.</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0008.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0010.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

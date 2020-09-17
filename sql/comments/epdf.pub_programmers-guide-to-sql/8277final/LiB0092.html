@@ -1,0 +1,163 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Adding Sample Data</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0091.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0093.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch14"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="943"></a><a name="ch14lev1sec3"></a>Adding Sample Data</h2><p class="first-para">Now, the good news (which is probably old news for you) is that the commands to insert new rows are identical for the databases covered in this book. In the following sections, you'll add some test values to the tables you created.</p>
+<p class="para">There's one catch, though: You don't need to (and in some cases you aren't allowed to) specify values for the ID columns because you want them to autonumber themselves. Although when adding new rows to the tables these values should receive consecutive values, starting with one, this isn't always guaranteed by the database (especially with Oracle because of the way sequences work).</p>
+<p class="para">In these examples, the ID columns always started with one and are incremented by one. However, if this isn't the same on your system, you'll need to manually specify the values on the foreign key columns. So be careful when <a name="944"></a><a name="IDX-403"></a>adding rows to the <span class="fixed">Category</span> and <span class="fixed">ProductCategory</span> tables because these are the tables on which the <span class="fixed">FOREIGN KEY</span> constraints are defined.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">If you want to delete all the rows from a table and reset the auto-increment ID, you should truncate the table, as described in <a href="LiB0071.html#780" target="_parent" class="chapterjump">Chapter 12</a>, "Working with Database Objects" (which works just like dropping and re-creating the table). Simply deleting the rows will not reset the auto-increment values.</p>
+</td>
+</tr>
+</table>
+<p class="para">If the values you try to insert aren't valid, the database will not accept them because of the referential integrity you established using the foreign keys.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="945"></a><a name="ch14lev2sec5"></a>Adding Departments</h3>
+<p class="first-para">Let's now insert some values into the <span class="fixed">Department</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Department (Name, Description)
+   VALUES ('Full Costumes', 'We have the best costumes on the internet!');
+INSERT INTO Department (Name, Description)
+   VALUES ('Costume Accessories', 'Accessories and fun items for you.');
+INSERT INTO Department (Name, Description)
+   VALUES ('Jokes and Tricks', 'Funny or frightening, but all harmless!');
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="caution">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Caution </td><td valign="top" class="admon-body">
+<p class="first-para">Always remember to <i class="emphasis"><span class="fixed">COMMIT</span></i> the transaction after adding, updating, or deleting table rows if you're working in automatic-transactions mode. This is the default mode for Oracle and DB2. For more information, refer to <a href="LiB0056.html#633" target="_parent" class="chapterjump">Chapter 10</a>, "Transactions."</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="946"></a><a name="ch14lev2sec6"></a>Adding Categories</h3>
+<p class="first-para">In this example, let's assume that the automatically created departments have the IDs <span class="fixed">1</span>, <span class="fixed">2</span>, and <span class="fixed">3</span>. If they have different IDs, you'll need to specify different values for the <span class="fixed">DepartmentID</span> column when adding the categories:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Category (DepartmentID, Name, Description)
+   VALUES (1, 'Exotic Costumes', 'Sweet costumes for the party girl:');
+INSERT INTO Category (DepartmentID, Name, Description)
+   VALUES (1, 'Scary Costumes', 'Scary costumes for maximum chills:');<a name="947"></a><a name="IDX-404"></a>
+INSERT INTO Category (DepartmentID, Name, Description)
+   VALUES (2, 'Masks', 'Items for the master of disguise:');
+INSERT INTO Category (DepartmentID, Name, Description)
+   VALUES (3, 'Sweet Stuff', 'Raise a smile wherever you go!');
+INSERT INTO Category (DepartmentID, Name, Description)
+   VALUES (3, 'Scary Stuff', 'Scary accessories for the practical joker:');
+</pre>
+</div>
+<p class="para">The new categories should have IDs from <span class="fixed">1</span> to <span class="fixed">5</span>. Test to see that you can't reference a nonexistent <span class="fixed">DepartmentID</span>. For example, the following query will fail if there isn't any department with the ID of <span class="fixed">99</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Category (DepartmentID, Name, Description)
+   VALUES (99, 'Scary Stuff', 'Scary accessories for the practical joker:');
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="948"></a><a name="ch14lev2sec7"></a>Adding Products</h3>
+<p class="first-para">Here are the commands that add a few new products to your database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Beast Mask',
+        'Red-eyed and open-mouthed scary mask guaranteed to scare!',
+        5.99, '20214.jpg', 1, 0);
+
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Cleopatra Kit',
+        'Full of Eastern promise. Includes headband, necklace and bracelet.',
+        14.99, '20247.jpg', 0, 0);
+
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Horned Devil Mask',
+        'Full devil mask with horns. The perfect Halloween disguise!',
+        5.99, '97023.jpg', 0, 1);
+
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Miss Santa',
+        'A stunning red-sequinned Santa dress. Includes dress, belt, cape,
+        hat and boot covers. A perfect present.!',
+        49.99, '20393.jpg', 0, 1);<a name="949"></a><a name="IDX-405"></a>
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Vampire Disguise',
+        'Vampire Set consisting of wicked wig, fangs, and fake blood.',
+        9.99, '325.jpg', 1, 0);
+
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Sequinned Devil Horns',
+        'Shiny red horns for the little devil inside you!',
+        3.75, '20017.jpg', 0, 0);
+
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Devil Horn Boppers',
+        'These red glitter boppers are guaranteed to attract attention.
+        They will soon be under your spell!',
+        2.50, '21355.jpg', 1, 0);
+
+INSERT INTO Product (Name, Description, Price, ImagePath,
+                       OnCatalogPromotion, OnDepartmentPromotion)
+VALUES ('Bug Eyed Glasses',
+        'Bug-eyed glasses to astound and amuse.',
+        2.75, '98413.jpg', 0, 1);
+</pre>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="950"></a><a name="ch14lev2sec8"></a>Connecting Products and Categories</h3>
+<p class="first-para">Finally, you add values into the <span class="fixed">ProductCategory</span> table, which establishes connections between the existing products and categories. We assume the categories and products inserted earlier received consecutive ID values:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (1,3);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (2,1);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (2,3);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (3,3);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (4,1);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (5,2);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (6,3);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (6,4);<a name="951"></a><a name="IDX-406"></a>
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (7,4);
+INSERT INTO ProductCategory (ProductID, CategoryID) VALUES (8,5);
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0091.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0093.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

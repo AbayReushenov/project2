@@ -1,0 +1,131 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Working with MySQL Security</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0068.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0070.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch11"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="774"></a><a name="ch11lev1sec7"></a>Working with MySQL Security</h2><p class="first-para">MySQL security isn't as involved as SQL Server, Oracle, or DB2 security. MySQL doesn't support roles, and it has a limited range of security options that can be set. You'll take a brief look at them here&#8212;please consult the MySQL online documentation for complete and more recent information.</p>
+<p class="para">MySQL user rights are stored in a series of security data tables known as <i class="emphasis">grant tables</i>, which are automatically created when MySQL is installed.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">The grant tables are kept in a database called <i class="emphasis"><span class="fixed">mysql</span></i>. When MySQL is installed, the <i class="emphasis"><span class="fixed">mysql</span></i> and <i class="emphasis"><span class="fixed">test</span></i> tables are created automatically.</p>
+</td>
+</tr>
+</table>
+<p class="para">There are a total of six grant tables: <span class="fixed">user</span>, <span class="fixed">tables_priv</span>, <span class="fixed">columns_priv</span>, <span class="fixed">db</span>, <span class="fixed">func</span>, and <span class="fixed">host</span>. Each table serves a different purpose and can be manually updated in <a name="775"></a><a name="IDX-325"></a>order to grant user privileges or add and remove users. You should consult the MySQL documentation for a description of each grant table.</p>
+<p class="para">It's unlikely that somebody would want to modify these tables by hand. If you don't believe me, here's an <span class="fixed">INSERT</span> command that adds a new user named <span class="fixed">Alice@localhost</span> with the password <span class="fixed">simplepass</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+USE mysql
+INSERT INTO user VALUES('localhost','Alice',PASSWORD('simplepass'),'Y','Y',
+       'Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y');
+FLUSH PRIVILEGES;
+</pre>
+</div>
+<p class="para">This adds a new user named <span class="fixed">Alice@localhost</span> to the database system.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="note">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Note </td><td valign="top" class="admon-body">
+<p class="first-para">MySQL stores security information for user/host combinations, but the <i class="emphasis"><span class="fixed">localhost</span></i> is allowed to be void. To this regard, <i class="emphasis"><span class="fixed">Alice@localhost</span></i> will be regarded as a different user than Alice.</p>
+</td>
+</tr>
+</table>
+<p class="para">The <span class="fixed">'Y'</span> fields in this statement relate to the available privileges, but rather than learn what each one stands for, in just a moment you'll learn how to set the same privileges with a simpler method: using the <span class="fixed">GRANT</span> command. Before you move on, if you look at this <span class="fixed">INSERT</span> command, you can clearly see that passwords aren't stored in clear text. Instead, the password is encrypted with the <span class="fixed">PASSWORD</span> function and stored in an encrypted form. Each time the user attempts to log in, the entered password is encrypted again using the same algorithm, and the result is compared to the value in the database. This way, somebody gaining access to the database (or even database administrators) can't obtain the password by reading the <span class="fixed">user</span> table (the encryption process used by <span class="fixed">PASSWORD</span> isn't reversible).</p>
+<p class="para">Note that the <span class="fixed">FLUSH PRIVILEGES</span> command is required after any change to the grant tables because although these are loaded when MySQL starts, they aren't reloaded automatically when security information changes.</p>
+<p class="para">Okay, so it's pretty obvious that you won't be adding users by inserting records into the <span class="fixed">user</span> table. The alternative to this is, as we said before, the <span class="fixed">GRANT</span> command, which is much simpler. <span class="fixed">GRANT</span> is primarily used to accord privileges to users, but if the user getting the privileges doesn't exist, the user is automatically created.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Unlike SQL Server, Oracle, and DB2, MySQL doesn't ship with a visual administrative interface. However, there are plenty of third-party visual interfaces that allow you to administer MySQL security, for example, the MySQL Control Center, available from <a target="_top" class="url" href="http://www.mysql.com/products/mysqlcc/"><i class="emphasis"><span class="fixed">http://www.mysql.com/products/mysqlcc/</span></i></a>.</p>
+</td>
+</tr>
+</table>
+<a name="776"></a><a name="IDX-326"></a>
+<p class="para">The syntax of <span class="fixed">GRANT</span> is similar to what you've seen with SQL Server or Oracle. One interesting feature is that it also allows you to set the user's password:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT &lt;<i class="emphasis">privilege type</i>&gt; ON &lt;<i class="emphasis">resource</i>&gt; TO &lt;<i class="emphasis">username</i>&gt; [IDENTIFIED BY &lt;<i class="emphasis">passwd</i>&gt;];
+</pre>
+</div>
+<p class="para">A <span class="fixed">FLUSH PRIVILEGES</span> call is still required, even when granting privileges using <span class="fixed">GRANT</span> or revoking privileges with <span class="fixed">REVOKE</span>. This tells MySQL to read again security information from its data tables.</p>
+<p class="para">In order to accord <span class="fixed">SELECT</span> permissions for all the tables in the <span class="fixed">InstantUniversity</span> database to <span class="fixed">Alice@localhost</span>, you would type the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT ON InstantUniversity.*
+TO Alice@localhost IDENTIFIED BY 'simplepassword';
+FLUSH PRIVILEGES;
+</pre>
+</div>
+<p class="para">MySQL also supports the <span class="fixed">WITH GRANT</span> option, which allows the grantees to pass along the rights they receive:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT SELECT ON InstantUniversity.*
+TO Alice@localhost IDENTIFIED BY 'simplepassword' WITH GRANT OPTION;
+</pre>
+</div>
+<p class="para">Note the notation used to express all the tables in the test database: <span class="fixed">InstantUniversity.*</span>. You can also grant privileges on all databases and all their tables using the <span class="fixed">*.*</span> wildcard. To grant all possible privileges (including to grant privileges to other users) to <span class="fixed">Alice@localhost</span> , you use the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT ALL ON *.* TO Alice@localhost;
+</pre>
+</div>
+<p class="para">The following command gives <span class="fixed">INSERT</span> privileges to the <span class="fixed">Friend</span> table of the <span class="fixed">Test</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+GRANT INSERT ON InstantUniversity.Student TO Alice@localhost;
+</pre>
+</div>
+<p class="para">To revoke user rights, you use&#8212;as you've probably guessed already&#8212;the <span class="fixed">REVOKE</span> command. <span class="fixed">REVOKE</span> works just like <span class="fixed">GRANT</span> and has a similar syntax, except you use <span class="fixed">FROM</span> instead of <span class="fixed">TO</span>. The following example revokes from <span class="fixed">Alice@localhost</span> the rights to drop the <span class="fixed">Friend</span> table in <span class="fixed">Test</span> database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE DROP ON InstantUniversity.Student FROM Alice@localhost;
+</pre>
+</div>
+<p class="para">To revoke from <span class="fixed">Alice@localhost</span> the rights to drop any objects from <span class="fixed">InstantUniversity</span>, you use this command:</p>
+<a name="777"></a><a name="IDX-327"></a>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE DROP ON InstantUniversity.* FROM Alice@localhost;
+</pre>
+</div>
+<p class="para">If you want to revoke the rights to drop any database and any object from any database, you use the following command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+REVOKE DROP ON *.* FROM Alice@localhost;
+</pre>
+</div>
+<p class="para">Although <span class="fixed">GRANT</span> can be used to create user accounts, <span class="fixed">REVOKE</span> doesn't delete user accounts. The only way to remove MySQL accounts is manually delete the user from the <span class="fixed">user</span> table. Here's an example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM mysql.user WHERE user='Alice' AND host='localhost';
+</pre>
+</div>
+<p class="para">Notice that you prefixed the <span class="fixed">user</span> table with the database in which it resides. This is required only if <span class="fixed">mysql</span> isn't the currently selected database.</p>
+<p class="para">Finally, if you want to see which privileges a particular user has in the system, you use the <span class="fixed">SHOW GRANTS FOR</span> command. Here's an example:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SHOW GRANTS FOR Alice@localhost;
+</pre>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0068.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0070.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

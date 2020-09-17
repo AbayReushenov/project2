@@ -1,0 +1,473 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Updating Catalog Information</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0093.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0095.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch14"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="1012"></a><a name="ch14lev1sec5"></a>Updating Catalog Information</h2><p class="first-para">In this section, you'll look at some of the most common operations that insert, update, or delete catalog records. We won't attempt to list all queries that would be required in a complete solution because many of them are similar.</p>
+<p class="para">In this case study, you're more interested in the statements themselves, rather than the way they're packaged: In most cases, where possible, the statements should be saved as stored procedures into the database. This is a good practice that keeps the code clean and also brings some other benefits, as you learned in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures." We'll first present the statements and then show how to package them as SQL Server, Oracle, and DB2 stored procedures.</p>
+<p class="para">Almost any command that updates information has input parameters, which define how to update, insert, or delete catalog information. When presenting the statements without including them in stored procedures, we'll replace the input parameters with general identifiers, such as <span class="fixed">&lt;&lt;ProductID&gt;&gt;</span> or <span class="fixed">&lt;&lt;DepartmentName&gt;&gt;</span>.</p>
+<p class="para">These should be replaced by stored procedure parameters if you're using stored procedures or by values if you're executing the commands directly on the database.</p>
+<p class="para">These will be most useful for MySQL users because MySQL doesn't support stored procedures. With Access queries, the stored procedure parameters aren't separately declared; instead they're used directly in the statements, written between square brackets. For more information, see <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>, "Using Stored Procedures."</p>
+<p class="para">Let's start with something simple....</p>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1013"></a><a name="ch14lev3sec15"></a>Updating a Department</h4>
+<p class="first-para">When you want to modify or delete a single record, you always identify it by its primary key. This ensures that you only affect a single record or no records at all. For example, the following is a typical command that updates the name of the department with an ID of <span class="fixed">1</span>:</p>
+<a name="1014"></a><a name="IDX-433"></a>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Department
+SET Name = 'Weird Stuff'
+WHERE DepartmentID = 1;
+</pre>
+</div>
+<p class="para">As you can see, you don't attempt to change the department's ID because you have no reason to do that. Moreover, changing the value of an ID column might break the referential integrity, established through foreign keys, with existing categories.</p>
+<p class="para">A command that updates a department's information looks like this if you're executing the command directly in the database:</p>
+<div class="informalexample">
+<pre class="literallayout">
+UPDATE Department
+SET Name = &lt;&lt;DepartmentName&gt;&gt;,
+    Description = &lt;&lt;DepartmentDescription&gt;&gt;
+WHERE DepartmentID = &lt;&lt;DepartmentID&gt;&gt;;
+</pre>
+</div>
+<p class="para">Packaged as a SQL Server stored procedure, the query looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE UpdateDepartment
+(@DepartmentID int,
+@DepartmentName varchar(50),
+@DepartmentDescription varchar(1000))
+
+AS
+UPDATE Department
+SET Name = @DepartmentName,
+    Description = @DepartmentDescription
+WHERE DepartmentID = @DepartmentID;
+</pre>
+</div>
+<p class="para">The same procedure looks like this for Oracle:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE UpdateDepartment
+(DeptID IN integer,
+DepartmentName IN varchar2,
+DepartmentDescription IN varchar2)
+
+AS
+  BEGIN
+    UPDATE Department
+    SET Name = DepartmentName,
+        Description = DepartmentDescription
+    WHERE DepartmentID = DeptID;
+  END;
+/
+<a name="1015"></a><a name="IDX-434"></a>
+
+</pre>
+</div>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">Remember to use the <i class="emphasis"><span class="fixed">SHOW ERRORS</span></i> command, which comes in handy when writing stored procedures in SQL*Plus.</p>
+</td>
+</tr>
+</table>
+<p class="para">And the DB2 equivalent is as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DB2ADMIN.UpdateDepartment
+(i_DepartmentID INT,
+ i_DepartmentName VARCHAR(50),
+ i_DepartmentDescription VARCHAR(1000))
+
+P1: BEGIN
+    UPDATE Department
+    SET Name = i_DepartmentName,
+        Description = i_DepartmentDescription
+    WHERE DepartmentID = i_DepartmentID;
+END P1
+</pre>
+</div>
+<p class="para">Once you have stored a stored procedure, you can execute it using the <span class="fixed">EXECUTE</span> command. Let's look at how you can call <span class="fixed">UpdateDepartment</span> inside a transaction and then roll back the transaction: This allows you to test that the stored procedure works okay, without damaging the existing department data. (<a href="LiB0056.html#633" target="_parent" class="chapterjump">Chapter 10</a>, "Transactions," covered transactions.)</p>
+<p class="para">Here's the SQL Server version of the code:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN TRANSACTION
+EXECUTE UpdateDepartment 1, 'Strange new name',
+                              'Strange new description'
+SELECT * FROM Department
+ROLLBACK TRANSACTION;
+</pre>
+</div>
+<p class="para">The same script looks a bit different with Oracle:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXECUTE UpdateDepartment (1, 'Strange new name',
+                               'Strange new description');
+SELECT * FROM Department;
+ROLLBACK WORK;
+</pre>
+</div>
+<p class="para">The DB2 version is similar to the Oracle syntax, except that you use the <span class="fixed">CALL</span> keyword instead of <span class="fixed">EXECUTE</span>:</p>
+<a name="1016"></a><a name="IDX-435"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CALL UpdateDepartment (1, 'Strange new name',
+                            'Strange new description');
+SELECT * FROM Department;
+ROLLBACK WORK;
+</pre>
+</div>
+<p class="last-para">In all cases, you rolled back the changes, so none of your amendments were actually applied. However, you've verified that the procedure works as expected.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1017"></a><a name="ch14lev3sec16"></a>Adding a New Category</h4>
+<p class="first-para">The SQL query that adds a new category is simple, and the way you package it as a stored procedure is just as in the previous example. The query looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Category (DepartmentID, Name, Description)
+VALUES (&lt;&lt;DepartmentID&gt;&gt;, &lt;&lt;CategoryName&gt;&gt;,
+        &lt;&lt;CategoryDescription&gt;&gt;);
+</pre>
+</div>
+<p class="last-para">Because <span class="fixed">CategoryID</span> is an autonumbered field, you don't specify values for it when inserting new rows into <span class="fixed">Category</span>.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1018"></a><a name="ch14lev3sec17"></a>Deleting a Department</h4>
+<p class="first-para">When deleting departments, you're faced a new issue: The department you want to delete might have categories associated with it, so trying to delete it can break the referential integrity rules.</p>
+<p class="para">So how do you deal with this problem? How do you make sure you don't generate any database exceptions? Well, the answer relates to how the application is architected.</p>
+<p class="para">For example, you might simply want not to avoid database exceptions and handle the errors within the application's code. So, you might simply remove the department, without caring if you break any existing integrity constraints:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Department
+WHERE DepartmentID = &lt;&lt;DepartmentID&gt;&gt;;
+</pre>
+</div>
+<p class="para">This would be a perfectly fine stored procedure if the application were meant to handle the database errors itself. In this scenario, you rely on the database to throw an error if you attempt to delete a department that has any related categories and on the software application to catch these errors and respond accordingly.</p>
+<a name="1019"></a><a name="IDX-436"></a>
+<p class="para">If you want to avoid any errors, you need to test if there are any categories that belong to the department that you're trying to delete. So, you first issue a SQL command that tests if any related categories exist, like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT Name FROM Category
+WHERE DepartmentID = &lt;&lt;DepartmentID&gt;&gt;;
+</pre>
+</div>
+<p class="para">If no rows are returned, you can delete the department:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Department
+WHERE DepartmentID = &lt;&lt;DepartmentID&gt;&gt;;
+</pre>
+</div>
+<p class="para">You can package these two commands as a SQL Server stored procedure; here we've used <span class="fixed">NOT EXISTS</span>, but you could very well use other techniques, such as using <span class="fixed">COUNT</span> to see how many categories belong to that department:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DeleteDepartment
+(@DepartmentID int)
+AS
+IF NOT EXISTS
+    (SELECT Name FROM Category WHERE DepartmentID = @DepartmentID)
+DELETE FROM Department
+WHERE DepartmentID = @DepartmentID;
+</pre>
+</div>
+<p class="para">Let's now see the Oracle version of the <span class="fixed">DeleteDepartment</span> stored procedure. Notice that <span class="fixed">NOT EXISTS</span> is used in a slightly different manner here:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DeleteDepartment
+(DeptID IN integer)
+AS
+  BEGIN
+    DELETE FROM Department
+    WHERE DepartmentID = DeptID
+    AND NOT EXISTS (SELECT Name FROM Category WHERE DepartmentID = DeptID);
+  END;
+/
+</pre>
+</div>
+<p class="para">Finally, you have the following for DB2:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DB2ADMIN.DeleteDepartment
+(i_DepartmentID INT)
+P1: BEGIN<a name="1020"></a><a name="IDX-437"></a>
+   IF NOT EXISTS (SELECT Name FROM Category
+                   WHERE DepartmentID = i_DepartmentID)
+   THEN
+     DELETE FROM Department
+     WHERE DepartmentID = i_DepartmentID;
+   END IF;
+END P1
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1021"></a><a name="ch14lev3sec18"></a>Assigning a Product to a Category</h4>
+<p class="first-para">To assign a product to a category, you need to execute a simple <span class="fixed">INSERT</span> command that inserts a pair of rows into the <span class="fixed">ProductCategory</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO ProductCategory (ProductID, CategoryID)
+VALUES (&lt;&lt;ProductID&gt;&gt;, &lt;&lt;CategoryID&gt;&gt;);
+</pre>
+</div>
+<p class="para">Let's see the SQL Server procedure that does the same thing:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE AssignProductToCategory
+(@ProductID int, @CategoryID int)
+AS
+
+INSERT INTO ProductCategory (ProductID, CategoryID)
+VALUES (@ProductID, @CategoryID)
+RETURN;
+</pre>
+</div>
+<p class="para">Its Oracle version looks like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE AssignProductToCategory
+(ProdID IN integer,
+ CategID IN integer)
+
+AS
+  BEGIN
+    INSERT INTO ProductCategory (ProductID, CategoryID)
+    VALUES (ProdID, CategID);
+  END;
+/
+</pre>
+</div>
+<p class="para">And the DB2 version looks like this:</p>
+<a name="1022"></a><a name="IDX-438"></a>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DB2ADMIN.AssignProductToCategory
+(i_ProductID INT,
+ i_CategoryID INT)
+P1: BEGIN
+   INSERT INTO ProductCategory (ProductID, CategoryID)
+   VALUES (i_ProductID, i_CategoryID);
+END P1
+</pre>
+</div>
+<p class="last-para">These stored procedures assume that the supplied <span class="fixed">CategoryID</span> and <span class="fixed">ProductID</span> values are valid. However, you can use the techniques you saw in the previous example to verify this.</p>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1023"></a><a name="ch14lev3sec19"></a>Creating a New Product and Automatically Assigning it to a Category</h4>
+<p class="first-para">This isn't a difficult task, but it's got a catch. There are basically two operations that you need to perform: adding a new product to the <span class="fixed">Product</span> table and then associating this product with the appropriate category by adding a record into <span class="fixed">ProductCategory</span>.</p>
+<p class="para">The catch is that product IDs are automatically generated by the database (because you designed them this way), so you need a way to find these IDs.</p>
+<p class="para">The first of the two operations is a simple <span class="fixed">INSERT</span> into the <span class="fixed">Product</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Product (... fields ...)
+VALUES (... values ...)
+</pre>
+</div>
+<p class="para">The second operation that you need to perform is an <span class="fixed">INSERT</span> into <span class="fixed">ProductCategory</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO ProductCategory (ProductID, CategoryID)
+VALUES (&lt;&lt;ProductID&gt;&gt;, &lt;&lt;CategoryID&gt;&gt;);
+</pre>
+</div>
+<p class="para">Let's see these two operations as a SQL Server stored procedure:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE CreateProductToCategory
+(@CategoryID int,
+ @ProductName varchar(50),
+ @ProductDescription varchar(1000),
+ @ProductPrice money,
+ @ProductImage varchar(50),
+ @OnDepartmentPromotion bit,
+ @OnCatalogPromotion bit)
+AS<a name="1024"></a><a name="IDX-439"></a>
+DECLARE @ProductID int
+
+INSERT INTO Product (Name, Description, Price,
+                       ImagePath, OnDepartmentPromotion, OnCatalogPromotion)
+VALUES (@ProductName, @ProductDescription, CONVERT(money,@ProductPrice),
+         @ProductImage, @OnDepartmentPromotion, @OnCatalogPromotion)
+
+SELECT @ProductID = @@Identity
+
+INSERT INTO ProductCategory (ProductID, CategoryID)
+VALUES <b class="bold">(@ProductID</b>, @CategoryID)
+RETURN;
+</pre>
+</div>
+<p class="para">With SQL Server, you use the <span class="fixed">@@Identity</span> system variable, which returns the last-generated ID. You need to save its value to a local variable (<span class="fixed">@ProductID</span> in this case) immediately after you issue the <span class="fixed">INSERT</span> command because SQL Server resets its value automatically.</p>
+<p class="para">With Oracle, you use sequences to automatically generate ID values&#8212;the sequence that generates the value is the one that can tell you what the current value is. With the <span class="fixed">DepartmentIDSeq</span> sequence, you call <span class="fixed">DepartmentIDSeq.NextVal</span> to get the next value of the sequence. To get the current value, you call <span class="fixed">DepartmentID.CurrVal</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE CreateProductToCategory
+(CategoryID integer,
+ ProductName IN varchar2,
+ ProductDescription IN varchar2)
+AS
+BEGIN
+  INSERT INTO Product (Name, Description)
+  VALUES (ProductName, ProductDescription);
+
+  INSERT INTO ProductCategory (ProductID, CategoryID)
+  VALUES (<b class="bold">ProductID.CurrVal</b>, CategoryID);
+END;
+/
+</pre>
+</div>
+<p class="para">The DB2 version of this procedure looks as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DB2ADMIN.CreateProductToCategory
+(i_CategoryID INT,
+ i_ProductName VARCHAR(50),
+ i_ProductDescription VARCHAR(1000),<a name="1025"></a><a name="IDX-440"></a>
+ i_ProductPrice DECIMAL(7,2),
+ i_ProductImage VARCHAR(50),
+ i_OnDepartmentPromotion SMALLINT,
+ i_OnCatalogPromotion SMALLINT)
+
+P1: BEGIN
+   DECLARE pid INT;
+   INSERT INTO Product
+               (Name, Description, Price, ImagePath,
+                OnDepartmentPromotion, OnCatalogPromotion)
+   VALUES (i_ProductName, i_ProductDescription,
+            i_ProductPrice, i_ProductImage,
+            i_OnDepartmentPromotion, i_OnCatalogPromotion);
+
+   SET pid = IDENTITY_VAL_LOCAL();
+
+   INSERT INTO ProductCategory (ProductID, CategoryID)
+   VALUES (<b class="bold">pid</b>, i_CategoryID);
+
+END P1
+</pre>
+</div>
+<p class="para">Because DB2 supports autonumbered fields, you can use the <span class="fixed">IDENTITY_VAL_LOCAL()</span> function to retrieve the next available ID and assign it to your new product.</p>
+<p class="para">We can't provide a similar example with MySQL because it doesn't support stored procedures, but it does have something similar to SQL Server's <span class="fixed">@@Identity</span>&#8212;it's the <span class="fixed">LAST_INSERT_ID()</span> function, which also returns the last automatically generated value. You can display its value like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT LAST_INSERT_ID();
+</pre>
+</div>
+<p class="para">After inserting a product into the <span class="fixed">Product</span> table in MySQL, you can populate <span class="fixed">ProductCategory</span> like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO ProductCategory (ProductID, CategoryID)
+VALUES (<b class="bold">LAST_INSERT_ID()</b>, &lt;&lt;CategoryID&gt;&gt;);
+</pre>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="1026"></a><a name="ch14lev3sec20"></a>Removing a Product</h4>
+<p class="first-para">Imagine that you want to remove a product from the database. The problem you have is that the product can belong to a number of categories, and you need to remove the <span class="fixed">ProductCategory</span> entries before removing the product.</p>
+<a name="1027"></a><a name="IDX-441"></a>
+<p class="para">You want to create a stored procedure or script with the following functionality: You provide as parameters a product ID and a category ID. The script will first remove the product from the category by deleting a <span class="fixed">ProductCategory</span> record. Then, if no more categories are left for this product, the product is removed from the <span class="fixed">Product</span> table as well. In other words, you make sure there are no products that don't have an associated category: As soon as you detach the product from its last category, the product is removed altogether.</p>
+<p class="para">This functionality is simple to implement as a number of separated SQL statements. First, you delete the product from the mentioned category:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM ProductCategory
+WHERE CategoryID=&lt;&lt;CategoryID&gt;&gt; AND ProductID=&lt;&lt;ProductID&gt;&gt;;
+</pre>
+</div>
+<p class="para">Second, you count how many categories are associated with the product:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT COUNT(*) FROM ProductCategory
+WHERE ProductID=&lt;&lt;ProductID&gt;&gt;;
+</pre>
+</div>
+<p class="para">If you get a value higher than zero, you leave the product alone. Otherwise, you remove the product from the <span class="fixed">Product</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+DELETE FROM Product where ProductID=&lt;&lt;ProductID&gt;&gt;;
+</pre>
+</div>
+<p class="para">Okay, the theory is simple. Let's see how to put it in practice in a SQL Server procedure:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE RemoveProduct
+(@ProductID int, @CategoryID int)
+AS
+
+DELETE FROM ProductCategory
+WHERE CategoryID=@CategoryID AND ProductID=@ProductID
+
+IF (SELECT COUNT(*) FROM ProductCategory
+                     WHERE ProductID=@ProductID) = 0
+    DELETE FROM Product WHERE ProductID=@ProductID;
+</pre>
+</div>
+<p class="para">Here's one implementation of the same procedure in Oracle:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE OR REPLACE PROCEDURE RemoveProduct
+(ProdID int, CategID int)
+AS<a name="1028"></a><a name="IDX-442"></a>
+BEGIN
+  DECLARE
+    CategoriesCount integer;
+  BEGIN
+    DELETE FROM ProductCategory
+    WHERE CategoryID = CategID AND ProductID = ProdID;
+
+    SELECT COUNT(*) INTO CategoriesCount FROM ProductCategory
+      WHERE ProductID = ProdID;
+
+    IF CategoriesCount = 0 THEN
+      DELETE FROM Product WHERE ProductID = ProdID;
+    END IF;
+  END;
+END;
+/
+</pre>
+</div>
+<p class="para">Finally, let's take a quick look at the DB2 equivalent:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE PROCEDURE DB2ADMIN.RemoveProduct
+(i_ProductID INT,
+ i_CategoryID INT)
+
+P1: BEGIN
+   DELETE FROM ProductCategory
+   WHERE CategoryID = i_CategoryID AND
+          ProductID = i_ProductID;
+   IF (SELECT COUNT(*) FROM ProductCategory
+       WHERE ProductID = i_ProductID) = 0
+   THEN
+       DELETE FROM Product WHERE ProductID = i_ProductID;
+   END IF;
+END P1
+</pre>
+</div>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0093.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0095.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

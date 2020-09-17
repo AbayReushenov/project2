@@ -1,0 +1,65 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Copying Tables</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0073.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0075.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch12"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="806"></a><a name="ch12lev1sec3"></a>Copying Tables</h2><p class="first-para">Another useful way to create a new table in a database is to simply copy the structure of an existing table. The way you do this varies from relational database to relational database.</p>
+<p class="para">In Oracle, the following statement would create a new table called <span class="fixed">My_Friends</span>, which would be an exact copy (with data) of the structure (columns and data types) of the <span class="fixed">Friend</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE My_Friends AS SELECT * FROM Friend;
+<a name="807"></a><a name="IDX-340"></a>
+</pre>
+</div>
+<p class="para">Note, however, that this doesn't copy any constraint definitions (primary keys and so on). This is one of the reasons why it's often recommended that you create only your basic columns and data types using the <span class="fixed">CREATE TABLE</span> statement and then add all other constraints using the <span class="fixed">ALTER TABLE</span> command. You can then simply apply your <span class="fixed">ALTER TABLE</span> scripts to any tables copied in this manner, rather than having to go back through and add all the constraints again manually. If you want to copy only the table structure, with no data, then simply specify a <span class="fixed">WHERE</span> clause that can never evaluate to true:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE My_Friends AS SELECT * FROM Friend
+WHERE 1=0;
+</pre>
+</div>
+<p class="para">In DB2, the syntax is similar:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE My_Friends AS
+ (SELECT * FROM Friend) DEFINITION ONLY;
+</pre>
+</div>
+<p class="para">Here, you use the <span class="fixed">DEFINITION ONLY</span> keywords to ensure that you copy only the table structure.</p>
+<p class="para">Again, in MySQL, the syntax is similar:</p>
+<div class="informalexample">
+<pre class="literallayout">
+CREATE TABLE My_Friends SELECT * FROM Friend
+WHERE 1=0;
+</pre>
+</div>
+<p class="para">You should note that, for some reason, MySQL converts <span class="fixed">VARCHAR</span> data types to <span class="fixed">CHAR</span> during this process.</p>
+<p class="para">Finally, in SQL Server, you do things somewhat differently:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SELECT * INTO My_Friends FROM Friend
+WHERE 1=0;
+</pre>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0073.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0075.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

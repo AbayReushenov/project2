@@ -1,0 +1,113 @@
+  <head>
+    <title>Writing Quiz</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+      p.norma {
+        color:darkbrown;
+        font-size:14pt;
+        text-align:left;"
+      }
+      h2.normaZ {
+        font-size:12pt;
+        text-align: left;
+      }
+    </style>
+
+  <meta name="description" content="Writing quiz">
+  <meta name="keywords" content="Writing,quiz,projects,education,">
+  <meta name="author" content="Abay Reushenov">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="script.js"></script>
+  </head>
+
+<body>
+  <form name="FormaW">
+   
+          <div id="tota">
+            <h1>Q U I Z</h1>
+          </div>
+          
+          <div id="divOut">
+          <dir id="dirInImg">
+            <img id="left_img" src="2quiz.png" width=20%  height=auto ;>
+              <div>
+                  <p class="norma">Welcome to quiz!</p>
+                  <p class="norma">What is your name?</p>
+                  First Name: <input type="text" name="name2" size="10"  placeholder = "Type here.."><br><br>
+                  Surname:    <input type="text" name="surname2" size="10"  placeholder = "Type here..">
+            </div>
+          </dir>
+          </div>
+        
+          <div id="divOut">
+          <dir id="dirIn">
+            <img src="quiz22.jpg" width=20% height=auto ; >
+              <p class="norma">Is tweeting the same as writing?</p>
+                    <input type="radio" name="ans1" value="Writing">Tweeting is the act of publicizing and therefore writing<br>
+                    <input type="radio" name="ans1" value="Gaming">Tweeting is gaming<br>
+                    <input type="radio" name="ans1" value="Selling">Tweeting is a tool of selling and career building.<br>
+                    <input type="radio" name="ans1" value="Talking">Tweeting is talking<br>
+                    <input type="radio" name="ans1" value="Antisocial">Twitting is an antisocial tool to manipulate public opinion<br>
+          </dir>
+          </div>
+          
+          <div id="divOut">
+          <dir id="dirIn">
+            <img src="india.jpg" width=100% height=auto ; >
+              <p class="norma">What genres are popular in India?</p>
+                    <input type="radio" name="ans2" value="1">Horror fiction<br>
+                    <input type="radio" name="ans2" value="2">Philosophical fiction<br>
+                    <input type="radio" name="ans2" value="3">Crime fiction<br>
+                    <input type="radio" name="ans2" value="4">Romance<br>
+                    <input type="radio" name="ans2" value="5">Mythological fiction<br>
+          </dir>
+          </div>
+
+          <div id="divOut">
+          <dir id="dirIn">
+                <img src="china5.jpg" width=100% height=auto ; >
+                <p class="norma" >Estimate royalty income Guo Jingming in 2011:</p>
+                <p > On a scale from 1 to 5 (in <strong>million</strong> US dollars)</p>
+                  Answer (step 0.02): <input id="Royalty" type="number" name="rating" min="1" max="5" step=".02" placeholder = "Type here..">
+          </dir>
+          </div>
+          
+          
+          <div id="divOut">
+          <dir id="dirInImg">
+                   <img id="left_img" src="russia66.jpg" width=30% height=auto ; >
+            <div>
+                  <p class="norma" >Russia<br>The Big Book Prize received</p>
+                  <input type="radio" name="ans4" value="A">Zuleikha<br>
+                  <input type="radio" name="ans4" value="B">Suppose you decide to open your eyes<br>
+                  <input type="radio" name="ans4" value="Z">Zuleikha opens her eyes<br>
+                  <input type="radio" name="ans4" value="G">Guzel Yakhina<br>                 
+            </div>
+          </dir>
+          </div>
+          
+          <div id="divOut">
+          <dir id="dirInImg">
+            <img id="left_img" src="iquiz.jpg" width=30% height=auto >
+                    <div>
+                    <p class="norma">What to do before writing?</p>
+                    <input type="radio" name="ans5" value="1">Create your own defined writing style<br>
+                    <input type="radio" name="ans5" value="2">Start your writer’s block<br>
+                    <input type="radio" name="ans5" value="3">Improve your brand storytelling<br>
+                    <input type="radio" name="ans5" value="4">Write plan<br>
+                    <input type="radio" name="ans5" value="5">Take an online course<br>
+                    </div>
+          </dir>
+          </div>          
+          
+          <br>
+          <button type="button" onclick="checkAnswers()">Check quiz data</button>
+          <h2 class="normaZ" >To return to the main page click here <a href="index.html">"Writing"</a></h2>
+          <br>
+          <button onclick="finishFunction()">Finish</button>
+          <br>
+          <hr>
+  </form>
+</body>
+</html>

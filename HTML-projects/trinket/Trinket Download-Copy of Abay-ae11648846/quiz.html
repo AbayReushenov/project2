@@ -1,0 +1,95 @@
+  <head>
+    <title>Climate Quiz</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+      p.norma {
+        color:darkblue;
+        background-color:#b8e6eb;
+        font-size:14pt;
+        text-align:left;"
+      }
+      h2.normaZ {
+        color:blue;
+        font-size:12pt;
+        text-align: left;
+      }
+    </style>
+
+  <meta name="description" content="Climate Change">
+  <meta name="keywords" content="Climate Change,projects,education,">
+  <meta name="author" content="Abay Reushenov">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="script.js"></script>
+  </head>
+
+<body style="background-color:powderblue;">
+  <form name="LastFormaForQuiza">
+   
+          <div id="tota">
+            <h1>Climate Quiz</h1>
+          </div>
+          
+          <div id="MyDiv_for_Quiz_Question1">
+          <dir id="NewStyle">
+            <p class="norma">Take a quiz to see how you are in html, css and javascript..<br>
+            Oops..sorry.<br>
+            Take a quiz to see how you are in <strong>Climate change!</strong>
+            </p>
+            <img src="Seahorse_ocean_pollution.jpg" width="400" hight="300">
+            <br>
+            <br>
+          </dir>
+          </div>
+          
+          <div id="MyDiv_for_Quiz_Question1">
+          <dir id="NewStyle">
+                <p class="norma">What is your fullname?</p>
+                First Name: <input type="text" name="name2" size="25"  placeholder = "Type here.."> <br><br>
+                Surname:    <input type="text" name="surname2" size="25"  placeholder = "Type here..">
+                
+          
+          </dir>
+          </div>
+          
+          <div id="MyDiv_for_Quiz_Question1">
+          <dir id="NewStyle">
+              <p class="norma">What event led to a sharp change in human impact on nature?</p>
+                    <input type="radio" name="answerq1" value="French revolution">French revolution<br>
+                    <input type="radio" name="answerq1" value="Industrial revolution">Industrial revolution<br>
+                    <input type="radio" name="answerq1" value="China's Rural Reform">China's Rural Reform<br>
+                    <input type="radio" name="answerq1" value="Information revolution">Information revolution<br>
+          </dir>
+          </div>
+          
+          <div id="MyDiv_for_Quiz_Question1">
+          <dir id="NewStyle">
+                <p class="norma" >Estimate carbon emissions in 2018</p>
+                <p > On a scale from 10 to 50 (in <strong>billion</strong> metric tons of carbon dioxide) </p>
+                  Answer (step 0.5): <input id="TypeHere" type="number" name="rating" min="10" max="50" step=".5" placeholder = "Type here..">
+          </dir>
+          </div>
+          
+          
+          <div id="MyDiv_for_Quiz_Question1">
+          <dir id="NewStyle">
+                  <p class="norma" >Would be increase income in the coal industry over the next 10 years?</p>
+                  <input type="radio" name="radiobaton" value="increase by between 27 percent and 87 percent">increase by between <strong>27 percent and 87 percent</strong><br>
+                  <input type="radio" name="radiobaton" value="increase by between 44 percent and 97 percent">increase by between <strong>44 percent and 97 percent</strong><br>
+                  <input type="radio" name="radiobaton" value="fall by 26 percent to 138 percent">fall by <strong>26 percent to 138 percent</strong><br>
+                  <input type="radio" name="radiobaton" value="fall by 56 percent to 201 percent">fall by <strong>56 percent to 201 percent</strong><br>
+          </dir>
+          </div>
+          <br>
+          <button type="button" onclick="checkAnswers()">Check quiz data</button>
+          <h2 class="normaZ" >To return to the main page click here <a href="index.html">"Climate change"</a></h2>
+          <br>
+          <button onclick="finishFunction()">Finish</button>
+          <br>
+          <hr>
+   
+ 
+      <div id="total"></div>
+ </form>
+</body>
+</html>

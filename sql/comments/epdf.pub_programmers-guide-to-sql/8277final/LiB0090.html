@@ -1,0 +1,123 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Setting up the Catalog</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0089.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0091.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch14"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="918"></a><a name="ch14lev1sec1"></a>Setting up the Catalog</h2><a name="919"></a><a name="IDX-390"></a>
+<p class="para">Before you even start to think about data tables or any database-specific tasks, you need to clearly understand what you want to achieve. The way you design the product catalog and its data structures depends (as usual) on the client's requirements. For this case study, we'll cheat a little bit and suppose the client wants such a product catalog that allows just enough (but not too many) features to explore in this chapter.</p>
+<p class="para">So, what kind of product catalog does your client want? Well, the requirements for the structure of the product catalog are simple enough:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">The product catalog needs to store information about products, product categories, and departments.</p>
+</li>
+<li class="listitem">
+<p class="first-para">Products, categories, and departments have names and descriptions.</p>
+</li>
+<li class="listitem">
+<p class="first-para">A product can be on promotion for the entire catalog or only for the departments to which it belongs.</p>
+</li>
+</ul>
+<p class="para">The relationships between products, categories, and departments are as follows:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">A product can belong to at least one category.</p>
+</li>
+<li class="listitem">
+<p class="first-para">A category can contain zero or more products.</p>
+</li>
+<li class="listitem">
+<p class="first-para">A category always belongs to a department.</p>
+</li>
+</ul>
+<p class="para">For example, your store will have a Full Costumes department, which will contain a number of categories, such as Exotic Costumes and Scary Costumes. The product catalog will contain products such as Cleopatra Kit and Vampire Disguise. If you were to build an e-commerce store based on your database, the information in these tables might be used to generate a product catalog looking something like <a class="internaljump" href="#ch14fig01">Figure 14-1</a>.</p>
+<div class="figure">
+<a name="920"></a><a name="ch14fig01"></a><span class="figuremediaobject"><a href="images/fig407%5F01%5F0%2Ejpg" NAME="IMG_36" target="_parent"><img src="images/fig407_01.jpg" height="270" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 14-1: </span>The e-commerce store</span>
+</div>
+<a name="921"></a><a name="IDX-391"></a>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">
+<a class="internaljump" href="#ch14fig01">Figure 14-1</a> shows the e-commerce store created in <I>Beginning ASP.NET E-Commerce</I>, Second Edition (Apress, 2003).</p>
+</td>
+</tr>
+</table>
+<p class="para">You can see the list of departments listed in the left side of the page. Underneath, you can see the list of categories that belong to the currently selected department (which in this case is Jokes and Tricks). The rest of the page is filled with products.</p>
+<p class="para">When a department is selected, the page is filled with the products that are on promotion for that department, and its list of categories also appears. When a category is then selected, the page is populated with all the products that belong to that category.</p>
+<p class="para">You know a product can also be on catalog promotion. Such a product will be listed in the front page of the site.</p>
+<p class="para">To store this information, you'll need at least three data tables: a <span class="fixed">Department</span> table, a <span class="fixed">Category</span> table, and a <span class="fixed">Product</span> table. To decide how to implement these tables and their relationships, let's first try to visualize them using some simple diagrams.</p>
+<a name="922"></a><a name="IDX-392"></a>
+<p class="para">We decided earlier that a department can contain multiple categories, but a category always belongs to a single department. This is a one-to-many relationship, and it can be imagined as in <a class="internaljump" href="#ch14fig02">Figure 14-2</a> (<i class="emphasis">one</i> department, <i class="emphasis">many</i> categories).</p>
+<div class="figure">
+<a name="923"></a><a name="ch14fig02"></a><span class="figuremediaobject"><a href="images/fig408%5F01%5F0%2Ejpg" NAME="IMG_37" target="_parent"><img src="images/fig408_01.jpg" height="200" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 14-2: </span>The relationship between the <i class="emphasis"><span class="fixed">Department</span></i> and <i class="emphasis"><span class="fixed">Category</span></i> tables</span>
+</div>
+<p class="para">Remember that you implement one-to-many relationships by adding a <span class="fixed">FOREIGN KEY</span> constraint to the table in the <i class="emphasis">many</i> side of the relationship, which references the primary key of the other table. In this case, you'd implement the relationship like in <a class="internaljump" href="#ch14fig03">Figure 14-3</a>.</p>
+<div class="figure">
+<a name="924"></a><a name="ch14fig03"></a><span class="figuremediaobject"><a href="images/fig408%5F02%5F0%2Ejpg" NAME="IMG_38" target="_parent"><img src="images/fig408_02.jpg" height="84" width="274" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 14-3: </span>Implementing the one-to-many relationship</span>
+</div>
+<p class="para">Both the <span class="fixed">Department</span> and <span class="fixed">Category</span> tables contain two properties: <span class="fixed">Name</span> and <span class="fixed">Description</span>. For both tables, <span class="fixed">Name</span> is obligatory, and <span class="fixed">Description</span> accepts <span class="fixed">NULL</span>s. The <span class="fixed">Category</span> table also contains a column named <span class="fixed">DepartmentID</span>, which references the <span class="fixed">DepartmentID</span> column in <span class="fixed">Department</span>.</p>
+<a name="925"></a><a name="IDX-393"></a>
+<p class="para">Between products and categories, you have a different kind of relationship because a product can belong to (relate to) many categories, and also a category can contain (relate to) many products. <a class="internaljump" href="#ch14fig04">Figure 14-4</a> represents how categories and products are related.</p>
+<div class="figure">
+<a name="926"></a><a name="ch14fig04"></a><span class="figuremediaobject"><a href="images/fig409%5F01%5F0%2Ejpg" NAME="IMG_39" target="_parent"><img src="images/fig409_01.jpg" height="284" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 14-4: </span>The relationship between the <i class="emphasis"><span class="fixed">Category</span></i> and <i class="emphasis"><span class="fixed">Product</span></i> tables</span>
+</div>
+<p class="para">Yep, this looks like a many-to-many relationship. You'll recall that many-to-many relationships are physically implemented using a third table, called a <b class="bold"><i class="emphasis">junction</i></b> table (often referred to as a <i class="emphasis">mapping table</i>). In this case, the junction table will be named <span class="fixed">ProductCategory</span>.</p>
+<p class="para">Let's take a look at the complete database diagram now. Notice the two one-to-many relationships between the junction table (<span class="fixed">ProductCategory</span>) and the <span class="fixed">Category</span> and <span class="fixed">Product</span> tables in <a class="internaljump" href="#ch14fig05">Figure 14-5</a>.</p>
+<div class="figure">
+<a name="927"></a><a name="ch14fig05"></a><span class="figuremediaobject"><a href="images/fig410%5F01%5F0%2Ejpg" NAME="IMG_40" target="_parent"><img src="images/fig410_01.jpg" height="194" width="350" alt="Click To expand" border="0"></a></span>
+<br style="line-height: 1">
+<span class="figure-title"><span class="figure-titlelabel">Figure 14-5: </span>The four database tables</span>
+</div>
+<a name="928"></a><a name="IDX-394"></a>
+<p class="para">
+<span class="fixed">ProductCategory</span> has a primary key made from two fields, <span class="fixed">ProductID</span> and <span class="fixed">CategoryID</span> (remember that you can't have more than one primary key in a table!). Each record of this table will associate a product with a category. Because the <span class="fixed">ProductID</span>/<span class="fixed">CategoryID</span> pair forms the primary key, you're not allowed to have identical entries in this table. In other words, each row in this table uniquely associates one product with one category.</p>
+<p class="para">The <span class="fixed">Product</span> table has more fields than the other tables. The following summarizes each of the fields in the table:</p>
+<ul class="itemizedlist">
+<li class="first-listitem">
+<p class="first-para">
+<span class="fixed">Price</span>: This field stores the price of the product.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">ImagePath</span>: This field stores the hard disk location (usually a relative path) of a file containing the product's image. This solution is often used instead of storing the image directly into the database because of performance issues. Databases are generally not optimized for storing large binary data.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">OnCatalogPromotion</span>: This field stores a binary value (zero or one), specifying if the product is in promotion for the entire catalog.</p>
+</li>
+<li class="listitem">
+<p class="first-para">
+<span class="fixed">OnDepartmentPromotion</span>: This field is similar to <span class="fixed">OnCatalogPromotion</span>, but it specifies if the product is on promotion for the departments that contain it.</p>
+</li>
+</ul>
+<p class="last-para">Using fields such as <span class="fixed">OnCatalogPromotion</span> and <span class="fixed">OnDepartmentPromotion</span> is one of the ways of tracking which products are featured on a site and where they're featured. For example, in an e-commerce Web site, on the front page of the site <a name="929"></a><a name="IDX-395"></a>you'd see the products that have the <span class="fixed">OnCatalogPromotion</span> bit set to one. When the visitor is selecting one of the departments, only the products that have the <span class="fixed">OnDepartmentPromotion</span> bit set to one appear. Finally, when a category is selected from one of the departments, all the products in that category are listed.</p>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0089.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0091.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>

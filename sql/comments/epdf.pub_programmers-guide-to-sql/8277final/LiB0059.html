@@ -1,0 +1,427 @@
+<html>
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<head>
+<title>Transactions at Work</title>
+<link rel="STYLESHEET" type="text/css" href="images/xpolecat.css">
+<link rel="STYLESHEET" type="text/css" href="images/ie.content.css">
+</head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0058.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0060.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+<br>
+<div class="chapter">
+<a name="ch10"></a>
+<div class="section">
+<h2 class="first-section-title"><a name="658"></a><a name="ch10lev1sec3"></a>Transactions at Work</h2><p class="first-para">Here, we'll provide a closer look at how transactions are supported by the database products you've been investigating so far.</p>
+<div class="section">
+<h3 class="sect3-title">
+<a name="659"></a><a name="ch10lev2sec4"></a>SQL Server</h3>
+<p class="first-para">SQL Server works by default in autocommit mode, with each SQL command treated as a separate transaction, unless you use <span class="fixed">BEGIN TRANSACTION</span> to start a multistatement transaction.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">You can set SQL Server to work with implicit transactions (by turning off autocommit mode) by using <i class="emphasis"><span class="fixed">SET IMPLICIT_TRANSACTIONS ON</span></i>. When working in implicit transactions mode, SQL Server assumes the <i class="emphasis"><span class="fixed">BEGIN TRANSACTION</span></i> command before the first SQL query is issued. In the following examples, we assume you'll work with the default transactions mode of SQL Server, which requires you to manually start multistatement transactions with <i class="emphasis"><span class="fixed">BEGIN TRANSACTION</span></i>.</p>
+</td>
+</tr>
+</table>
+<p class="para">The statements that deal with transactions in SQL Server are as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN TRANSACTION [&lt;transaction name&gt;]
+COMMIT TRANSACTION [&lt;transaction name&gt;]
+ROLLBACK TRANSACTION [&lt;transaction name&gt;|&lt;savepoint name&gt;]
+SAVE TRANSACTION &lt;savepoint name&gt;
+</pre>
+</div>
+<p class="para">The <span class="fixed">TRANSACTION</span> keyword can be optionally replaced by its shorter form, <span class="fixed">TRAN</span>.</p>
+<p class="para">
+<span class="fixed">BEGIN</span>, <span class="fixed">COMMIT</span>, and <span class="fixed">ROLLBACK</span> receive an optional transaction name. Using names for transactions doesn't bring any new functionality, but it can help for <a name="660"></a><a name="IDX-276"></a>readability if you use suggestive names, especially in stored procedures or batches, that have more transactions.</p>
+<p class="para">If <span class="fixed">ROLLBACK</span> doesn't have a parameter or if the parameter specifies a transaction name, the whole transaction is rolled back. If a savepoint name is received instead, the transaction is rolled back to the specified savepoint.</p>
+<p class="para">Note that after rolling back to a savepoint, the transaction is still active. It still needs a final <span class="fixed">ROLLBACK</span> or <span class="fixed">COMMIT</span>, with either no parameter or with the transaction's name as a parameter to finalize the transaction.</p>
+<div class="example">
+<span class="example-title">SQL SERVER TRANSACTIONS AND SAVEPOINTS</span><a name="661"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">In this example, you'll see a simple SQL Server transaction. In this transaction, you'll add two new students to the <span class="fixed">Student</span> table from the <span class="fixed">InstantUniversity</span> database. However, the second <span class="fixed">INSERT</span> operation is rolled back using a savepoint. Finally, the transaction is committed:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN TRANSACTION MyTransaction;
+INSERT INTO Student (StudentID, Name) VALUES (98, 'Good Student');
+SAVE TRANSACTION BeforeAddingBadStudent;
+INSERT INTO Student (StudentID, Name) VALUES (99, 'Bad Student');
+ROLLBACK TRANSACTION BeforeAddingBadStudent;
+COMMIT TRANSACTION MyTransaction;
+SELECT * FROM Student;
+</pre>
+</div>
+<p class="para">The example starts by declaring the new transaction with this well-known command:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN TRANSACTION MyTransaction
+</pre>
+</div>
+<p class="para">Then you add <span class="fixed">Good Student</span> to the <span class="fixed">Student</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Student (StudentID, Name) VALUES (98, 'Good Student')
+</pre>
+</div>
+<p class="para">Then you add yet another student to the table. However, the operation is rolled back using the <span class="fixed">BeforeAddingBadStudent</span> savepoint:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SAVE TRANSACTION BeforeAddingBadStudent
+INSERT INTO Student (StudentID, Name) VALUES (99, 'Bad Student')
+ROLLBACK TRANSACTION BeforeAddingBadStudent
+</pre>
+</div>
+<p class="para">Practically, this piece of code actually does nothing because the changes are annulled. Also, after rolling back to a savepoint, the transaction is still active, so <a name="662"></a><a name="IDX-277"></a>you still have the power to commit it or roll it back completely. In the end, you commit the transaction and display the contents of the <span class="fixed">Employee</span> table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+COMMIT TRANSACTION MyTransaction
+SELECT * FROM Student
+</pre>
+</div>
+<p class="last-para">If you had rolled back the transaction instead of committing it, the changes done by both <span class="fixed">INSERT</span> statements would have been void, and the <span class="fixed">Student</span> table would have ended up being just as it was before starting the transaction.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="663"></a><a name="ch10lev3sec7"></a>SQL Server Transactions and Error Handling</h4>
+<p class="first-para">The first example was interesting enough, but it didn't show how to roll back the whole transaction in case something bad happens in any of the queries (that was the whole point after all, right?).</p>
+<p class="para">Let's see how to do that in another example.</p>
+<div class="example">
+<span class="example-title">SQL SERVER TRANSACTIONS WITH ERROR HANDLING</span><a name="664"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">In this example, you'll insert a number of rows into the <span class="fixed">Student</span> table as part of a transaction, and after each insert, you'll check whether an error occurred. If it did, you'll roll back the transaction. If all the inserts succeed, you commit the transaction. In both cases, you display a message saying whether the transaction was committed or rolled back:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN TRANSACTION MyTransaction
+
+INSERT INTO Student (StudentID, Name) VALUES (101, 'Dave')
+IF @@ERROR != 0
+BEGIN
+   ROLLBACK TRANSACTION MyTransaction
+   PRINT 'Cannot insert Dave! Transaction rolled back.'
+   RETURN
+END<a name="665"></a><a name="IDX-278"></a>
+INSERT INTO Student (StudentID, Name) VALUES (102, 'Claire')
+IF @@ERROR != 0
+BEGIN
+   ROLLBACK TRANSACTION MyTransaction
+   PRINT 'Cannot insert Claire! Transaction rolled back.'
+   RETURN
+END
+
+INSERT INTO Student (StudentID, Name) VALUES (103, 'Anne')
+IF @@ERROR != 0
+BEGIN
+   ROLLBACK TRANSACTION MyTransaction
+   PRINT 'Cannot insert Anne! Transaction rolled back.'
+   RETURN
+END
+
+COMMIT TRANSACTION MyTransaction
+IF @@ERROR != 0
+   PRINT 'Could not COMMIT transaction'
+ELSE
+   PRINT 'Transaction committed.'
+</pre>
+</div>
+<p class="para">This example looks a bit different from the previous one. The batch of statements tries to insert three records to the <span class="fixed">Student</span> table. If any of the <span class="fixed">INSERT</span> statements fail, you roll back the transaction, display a message on the screen, and stop the execution.</p>
+<p class="para">You achieve this by verifying the <span class="fixed">@@ERROR</span> system variable after each statement that could generate an error:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Student (StudentID, Name) VALUES (101, 'Dave')
+IF @@ERROR != 0
+BEGIN
+   ROLLBACK TRANSACTION MyTransaction
+   PRINT 'Cannot insert Dave! Transaction rolled back.'
+   RETURN
+END
+</pre>
+</div>
+<p class="para">The <span class="fixed">@@ERROR</span> system variable is automatically updated after each SQL query, so it is necessary to test it each time you do something to the database. Another important thing to note is that you call <span class="fixed">RETURN</span> after rolling back the transaction. This wouldn't be necessary if you had rolled back to a savepoint, but if you roll back the entire transaction, the execution should stop; otherwise, the following SQL statements would mistakenly assume that they're part of a transaction and call <span class="fixed">ROLLBACK</span> or <span class="fixed">COMMIT</span> at certain points.</p>
+<a name="666"></a><a name="IDX-279"></a>
+<p class="para">You can also test the outcome of the <span class="fixed">COMMIT</span> command. This way you deal with the case where there's a problem and the transaction can't be committed. The most likely reason for this is if you already finalized the transaction (say, rolled back the transaction when an <span class="fixed">INSERT</span> failed without calling <span class="fixed">RETURN</span> after <span class="fixed">ROLLBACK</span>). This is a great debugging technique because it provides feedback about the transaction's output, but once you're confident that the SQL script is well constructed, you can omit this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+COMMIT TRANSACTION MyTransaction
+IF @@ERROR != 0
+   PRINT 'Could not COMMIT transaction'
+ELSE
+   PRINT 'Transaction committed.'
+</pre>
+</div>
+<p class="para">The first time the batch is executed, the output should read as follows:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Transaction committed.
+</pre>
+</div>
+<p class="para">However, if you now execute the batch again, the transaction will be rolled back because you can't insert two rows with the same primary key value into a table:</p>
+<div class="informalexample">
+<pre class="literallayout">
+   Violation of PRIMARY KEY constraint PK__Student__59063A47'.
+
+   Cannot insert duplicate key in object 'Student'.
+   The statement has been terminated.
+   Cannot insert Dave! Transaction rolled back.
+</pre>
+</div>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="667"></a><a name="ch10lev2sec5"></a>Oracle</h3>
+<p class="first-para">Oracle transactions work by default in automatic-transactions mode. In other words, it starts a new multistatement transaction with the first SQL query you type. This mode is used by default in DB2 as well, and it's the mode used in these examples.</p>
+<a name="668"></a><a name="IDX-280"></a>
+<p class="para">
+<span class="fixed">COMMIT</span> and <span class="fixed">ROLLBACK</span> are still your best friends when working in automatic-transactions mode. You create savepoints using the <span class="fixed">SAVEPOINT</span> command, and if you want to roll back to a savepoint, you must use <span class="fixed">ROLLBACK TO &lt;<i class="emphasis">savepoint name</i>&gt;</span>.</p>
+<div class="example">
+<span class="example-title">ORACLE TRANSACTIONS AND SAVEPOINTS</span><a name="669"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">To start a new transaction, you just need to start executing SQL queries. In this example, you'll add two new students to the <span class="fixed">Student</span> table. However, the second <span class="fixed">INSERT</span> operation is rolled back using a savepoint. Finally, you commit the transaction:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Student (StudentID, Name) VALUES (98, 'Good Student');
+SAVEPOINT BeforeAddingBadStudent;
+INSERT INTO Student (StudentID, Name) VALUES (99, 'Bad Student');
+ROLLBACK TO BeforeAddingBadStudent;
+COMMIT;
+</pre>
+</div>
+<p class="last-para">You added two new students to the <span class="fixed">Student</span> table. However, before adding the second one, you created a savepoint&#8212;which was then used as a point to which you rolled back the transaction. Right now, if you type <span class="fixed">SELECT * FROM Student</span>, in addition to the original rows, you'll see a single new row, containing <span class="fixed">Good Student</span>.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="section">
+<h4 class="sect4-title">
+<a name="670"></a><a name="ch10lev3sec8"></a>Oracle Transactions and Exception Handling</h4>
+<p class="first-para">Oracle has a robust and powerful exception handling system, which proves to be helpful when dealing with real-world transactions. When an error occurs in your code, the transaction needs to be rolled back, and the other SQL statements shouldn't execute anymore.</p>
+<p class="para">You saw in the SQL Server example that one way to deal with this is to check the outcome of each SQL statement and deal with them separately. Oracle has another way of dealing with this.</p>
+<a name="671"></a><a name="IDX-281"></a>
+<div class="example">
+<span class="example-title">ORACLE TRANSACTIONS AND EXCEPTION HANDLING</span><a name="672"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">In this example, you'll try to insert three rows into the <span class="fixed">Student</span> table. One of the inserts will be rolled back using a savepoint. If any exceptions are raised in the process, you roll back the whole transaction and bring the <span class="fixed">Student</span> table back to its original state.</p>
+<p class="para">Here's the piece of code that does this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN
+
+   INSERT INTO Student (StudentID, Name) VALUES (101, 'Dave');
+   INSERT INTO Student (StudentID, Name) VALUES (102, 'Claire');
+
+   SAVEPOINT BeforeAddingAnne;
+   INSERT INTO Student (StudentID, Name) VALUES (103, 'Anne');
+   ROLLBACK TO BeforeAddingAnne;
+
+   COMMIT;
+
+EXCEPTION
+   WHEN OTHERS
+      THEN ROLLBACK;
+END;
+/
+</pre>
+</div>
+<p class="para">After typing the batch, you can save it using <span class="fixed">SAVE</span>:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SAVE exception
+</pre>
+</div>
+<p class="para">Once the procedure is saved to a file, you can call it like this:</p>
+<div class="informalexample">
+<pre class="literallayout">
+@exception
+</pre>
+</div>
+<p class="para">If any of the SQL queries in the <span class="fixed">BEGIN</span> block generates an error, the execution is passed to the <span class="fixed">EXCEPTION</span> block:</p>
+<div class="informalexample">
+<pre class="literallayout">
+EXCEPTION
+   WHEN OTHERS
+      THEN ROLLBACK;
+<a name="673"></a><a name="IDX-282"></a>
+</pre>
+</div>
+<p class="para">You can handle separately many different kinds of predefined exceptions, and you can also define and raise your own exceptions. Also, if you have nested <span class="fixed">BEGIN</span> blocks or stored procedures, the unhandled exceptions propagate vertically. In this case, you have used the <span class="fixed">WHEN OTHERS</span> option, which handles all exceptions. There you use <span class="fixed">ROLLBACK</span> to roll back the transaction. You can learn more about Oracle exception handling in <a href="LiB0049.html#493" target="_parent" class="chapterjump">Chapter 9</a>.</p>
+<p class="para">The procedure you wrote would end up adding two rows into the <span class="fixed">Student</span> table, as long as no errors are generated inside the script. If an error does occur, everything is brought back to the original state. If, for example, you already have a student with a <span class="fixed">StudentID</span> of <span class="fixed">102</span> before executing the script, an error will be generated when trying to add Claire, and the transaction is rolled back (so not even Dave will end up being in the <span class="fixed">Student</span> table).</p>
+<p class="last-para">After you've run this code once, each subsequent time you execute <span class="fixed">@exception</span>, the transaction will be rolled back.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="674"></a><a name="ch10lev2sec6"></a>DB2</h3>
+<p class="first-para">DB2 supports the <span class="fixed">COMMIT</span>, <span class="fixed">ROLLBACK</span>, and <span class="fixed">SAVEPOINT</span> commands. Like Oracle, DB2 works in automatic-transactions mode by default.</p>
+<p class="para">To switch between automatic-transactions mode and autocommit mode, you need to alter the Command Center options, as shown earlier in this chapter. For the purpose of this example, clear the Automatically Commit SQL Statements checkbox. So, let's look at an example.</p>
+<div class="example">
+<span class="example-title">DB2 TRANSACTIONS</span><a name="675"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">In this example, you'll add two new students to the <span class="fixed">Student</span> table&#8212;a good student and a bad student. You reverse the addition of the bad student by using a savepoint:</p>
+<div class="informalexample">
+<pre class="literallayout">
+INSERT INTO Student (StudentID, Name) VALUES (98, 'Good Student');
+SAVEPOINT BeforeAddingBadStudent ON ROLLBACK RETAIN CURSORS;
+INSERT INTO Student (StudentID, Name) VALUES (99, 'Bad Student');
+ROLLBACK TO SAVEPOINT BeforeAddingBadStudent;
+COMMIT;
+<a name="676"></a><a name="IDX-283"></a>
+</pre>
+</div>
+<p class="para">Notice the way you create the savepoint:</p>
+<div class="informalexample">
+<pre class="literallayout">
+SAVEPOINT BeforeAddingBadStudent ON ROLLBACK RETAIN CURSORS;
+</pre>
+</div>
+<p class="last-para">The <span class="fixed">ON ROLLBACK RETAIN CURSORS</span> statement ensures that your code will continue to execute from the point where the rollback was called after the rollback has been performed.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="677"></a><a name="ch10lev2sec7"></a>MySQL</h3>
+<p class="first-para">MySQL does have support for transactions, but only if you know how to create your data tables. Yes, this sounds a bit weird, but it's true.</p>
+<p class="para">The MySQL engine supports more internal data storage formats for its data tables. When creating a new data table with <span class="fixed">CREATE TABLE</span>, the default table type is used, which is <span class="fixed">MyISAM</span>. This table type is pretty basic and doesn't support features such as transactions or the capability to enforce referential integrity through foreign keys, but it's the fastest one available for MySQL.</p>
+<p class="para">In total, MySQL supports at least five table types: <span class="fixed">MyISAM</span>, <span class="fixed">HEAP</span>, <span class="fixed">ISAM</span>, <span class="fixed">BDB</span>, and <span class="fixed">InnoDB</span>. For detailed information about each table type supported by MySQL, please visit <a target="_top" class="url" href="http://www.mysql.com/doc/en/Table_types.html"><span class="fixed">http://www.mysql.com/doc/en/Table_types.html</span></a>.</p>
+<table border="0" cellspacing="0" cellpadding="0" class="tip">
+<tr>
+<td valign="top" class="admon-check"></td><td valign="top" class="admon-title">Tip </td><td valign="top" class="admon-body">
+<p class="first-para">MySQL documentation recommends using the default table type, <i class="emphasis"><span class="fixed">MyISAM</span></i>, if transactions aren't required because it works much faster without the overhead of keeping a transaction log.</p>
+</td>
+</tr>
+</table>
+<p class="para">The important fact to understand, for the purposes of this chapter, is that <span class="fixed">BDB</span> and <span class="fixed">InnoDB</span> are the only types that support transactions. <span class="fixed">InnoDB</span> fully supports the ACID properties, and as such, we'll be using this table type here. You can learn more about this table type at <a target="_top" class="url" href="http://www.mysql.com/doc/en/InnoDB.html"><span class="fixed">http://www.mysql.com/doc/en/InnoDB.html</span></a>.</p>
+<p class="para">By default, MySQL works in autocommit mode (like SQL Server does). Each update on the database is committed immediately, without the need to call <span class="fixed">COMMIT</span>. To explicitly start a multistatement transaction, you use <span class="fixed">BEGIN</span>, and you finish the transaction with either <span class="fixed">COMMIT</span> or <span class="fixed">ROLLBACK</span>. MySQL doesn't support savepoints.</p>
+<p class="para">For transaction-safe tables (<span class="fixed">BDB</span> and <span class="fixed">InnoDB</span>), you can also instruct MySQL to work in non-autocommit mode (just like Oracle works by default) using <span class="fixed">SET AUTOCOMMIT=0</span>.</p>
+<a name="678"></a><a name="IDX-284"></a>
+<div class="example">
+<span class="example-title">MYSQL TRANSACTIONS</span><a name="679"></a>
+<div class="formalbody">
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="Start example" border="0"></b></font></td>
+</tr>
+</table>
+<p class="first-para">Let's look at a simple example with MySQL transactions. Start a new transaction with <span class="fixed">BEGIN</span>, add two new students to the <span class="fixed">Student</span> table, and then roll back the transaction. Open a new MySQL console, open the <span class="fixed">InstantUniversity</span> database, and type the following:</p>
+<div class="informalexample">
+<pre class="literallayout">
+BEGIN;
+
+INSERT INTO Student (StudentID, Name) VALUES (98, 'Anne');
+INSERT INTO Student (StudentID, Name) VALUES (99, 'Julian');
+
+ROLLBACK;
+</pre>
+</div>
+<p class="last-para">Now, read the <span class="fixed">Student</span> table, and you'll see that it has no new rows&#8212;the transaction was successfully rolled back.</p>
+<table class="BlueLine" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td bgcolor="000080" class="bluecell"><font size="2" face="Arial" color="010100"><b><img src="_.gif" width="1" height="2" alt="End example" border="0"></b></font></td>
+</tr>
+</table>
+<table class="BlankSpace" border="0" cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td height="16"></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="section">
+<h3 class="sect3-title">
+<a name="680"></a><a name="ch10lev2sec8"></a>Access</h3>
+<p class="first-para">This is really simple: Microsoft Access doesn't support transactions, so there's not a lot to discuss here!</p>
+</div>
+</div>
+</div><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr><td><div STYLE="MARGIN-LEFT: 0.15in;"><a href="toc.html"><img src="images/teamlib.gif" width="62" height="15" border="0" align="absmiddle"  alt="Team LiB"></a></div></td>
+<td align="right"><div STYLE="MARGIN-LEFT: 0.15in;">
+<a href="LiB0058.html"><img src="images/previous.gif" width="62" height="15" border="0" align="absmiddle" alt="Previous Section"></a>
+<a href="LiB0060.html"><img src="images/next.gif" width="41" height="15" border="0" align="absmiddle" alt="Next Section"></a>
+</div></td></tr></table>
+</body></html>
