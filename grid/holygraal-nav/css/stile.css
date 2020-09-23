@@ -1,0 +1,63 @@
+body {
+    display: grid;
+    grid-template-columns: 10em auto 10em;
+    grid-gap: 5px;
+    grid-template-areas: 
+        "nav header header"
+        "nav  middle right"
+        "nav footer right";
+    grid-template-rows: 60px 1fr 60px;
+    grid-template-columns: 20% 1fr 15%;
+    grid-gap: 10px;
+    height: 100vh;
+    margin: 0;
+}
+
+#area-header {
+  grid-area: header;
+}
+#area-footer {
+  grid-area: footer;
+}
+#area-nav {
+  grid-area: nav;
+}
+#area-right {
+  grid-area: right;
+}
+#area-middle {
+  grid-area: middle;
+  height: 200px"
+}
+
+
+ div {
+  border: 2px solid rgb(233,171,88);
+  border-radius: 5px;
+  background-color: rgba(233,171,88,.5);
+  padding: 1em;
+  color: #d9480f;
+}
+
+
+/* @media all and (max-width: 575px) {
+  body { 
+    display: block;
+ }
+}  */
+
+/* Stack the layout on small devices/viewports.*/
+
+@media all and (max-width: 575px) {
+  body { 
+    grid-template-areas: 
+    
+    "header"
+    "nav" 
+    "right" 
+    "middle"
+    "footer";
+    grid-template-rows: 60px 60px 60px 3fr 60px;  
+    grid-template-columns: 1fr;
+ }
+}

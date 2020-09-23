@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 2px solid black;
+        }
+
+        #red {
+            background: red;
+        }
+
+        #noname {
+            left: 600px;
+            width: 400px;
+            height: 400px;
+            background: rgba(177, 170, 138, 0.7);
+        }
+    </style>
+</head>
+
+
+<body>
+    <div id="red" class="dropme"></div>
+
+    <div id="noname"></div>
+    <script>
+let para = document.querySelector('.dropme');
+document.addEventListener("drop", moveAt);
+function moveAt(event) {
+    para.style.top = event.clientY - 75 + "px";
+    para.style.left = event.clientX - 75 + "px";
+    console.log(para.style.top ,  para.style.left )
+}
+
+    </script>
+</body>
+
+</html>

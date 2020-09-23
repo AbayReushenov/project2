@@ -1,0 +1,152 @@
+body {
+    display: grid;
+    grid-template-columns: 10em auto 10em;
+    grid-gap: 5px;
+    grid-template-areas: 
+        "nav header header"
+        "nav  middle right"
+        "nav footer right";
+    grid-template-rows: 60px 1fr 60px;
+    grid-template-columns: 20% 1fr 15%;
+    grid-gap: 10px;
+    height: 100vh;
+    margin: 0;
+}
+
+#area-header {
+  grid-area: header;
+}
+#area-footer {
+  grid-area: footer;
+}
+#area-nav {
+  grid-area: nav;
+}
+#area-right {
+  grid-area: right;
+}
+#area-middle {
+  grid-area: middle;
+  height: 200px"
+}
+.container {
+  grid: 100px 300px / 3fr 1fr;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 200px 200px 200px;
+  grid-template-rows: 100px;
+  grid-gap: 20px;
+  transition: all 1s;
+}
+
+.grid--full {
+  grid-template-columns: 300px 300px 300px;
+  grid-template-rows: 200px;
+  grid-gap: 10px;
+}
+
+button {
+  background-color: #123456;
+  color: #ffffff;
+  margin: 2rem 0;
+  padding: 1.4rem;
+  border: none;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+}
+
+dt {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+div {
+  border: 2px solid rgb(233,171,88);
+  border-radius: 5px;
+  background-color: rgba(233,171,88,.5);
+  padding: 1em;
+  color: #d9480f;
+}
+.box{
+    grid-template-columns: 100px 50px 100px;
+    grid-template-rows: 80px auto 80px; 
+    column-gap: 10px;
+    row-gap: 15px;
+  }
+
+
+.myForm {
+  display: grid;
+  grid-template-columns: [labels] auto [controls] 1fr;
+  grid-auto-flow: row;
+  grid-gap: .8em;
+  background: beige;
+  padding: 1.2em;
+}
+.myForm > label  {
+  grid-column: labels;
+  grid-row: auto;
+}
+.myForm > input,
+.myForm > textarea {
+  grid-column: controls;
+  grid-row: auto;
+}
+.myForm > button {
+  grid-column: span 2;
+} 
+
+
+/* @media all and (max-width: 575px) {
+  body { 
+    display: block;
+ }
+}  */
+
+/* Stack the layout on small devices/viewports.*/
+
+@media all and (max-width: 575px) {
+  body { 
+    grid-template-areas: 
+    
+    "header"
+    "nav" 
+    "right" 
+    "middle"
+    "footer";
+    grid-template-rows: 60px 60px 60px 3fr 60px;  
+    grid-template-columns: 1fr;
+ }
+}
+
+.box {
+  border: 2px solid #ffa94d;
+  border-radius: 5px;
+  background-color: #ffd8a8;
+  padding: 1em;
+  color: #d9480f;
+}
+.box1 {
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.wrapper12 {
+   border: 2px solid #f76707;
+   border-radius: 5px;
+   background-color: #fff4e6;
+}
+
+.nested {
+   border: 2px solid #ffec99;
+   border-radius: 5px;
+   background-color: #fff9db;
+   padding: 1em;
+}

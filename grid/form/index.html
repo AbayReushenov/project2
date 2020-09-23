@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <link rel="stylesheet" href="./css/stile.css">
+</head>
+
+<body>
+
+    <div id="area-header">The header</div>
+    <div id="area-footer">The footer</div>
+    <div id="area-nav">Nav</div>
+    <div id="area-middle container">
+        <h1>12. BOX Грид-контейнер</h1>
+ <div class="wrapper12 wrapperbase">
+    <div class=" box1">
+        <div class="nested">a</div>
+        <div class="nested">b</div>
+        <div class="nested">c</div>
+     </div>
+     <div class="box box2">Two</div>
+     <div class="box box3">Three</div>
+     <div class="box box4">Four</div>
+     <div class="box box5">Five</div>
+ </div>
+
+        <form class="myForm">
+            <label for="customer_name">Name </label>
+            <input type="text" name="customer_name" id="customer_name" required>
+            <label for="email_address">Email </label>
+            <input type="email" name="email_address" id="email_address">
+            <label for="comments">Comments</label>
+            <textarea name="comments" id="comments" maxlength="500"></textarea>
+            <button>Submit</button>
+        </form>
+
+        <p>Check <a href="https://codepen.io/matuzo/post/animating-css-grid-layout-properties">this post</a> for more
+            details</p>
+
+        <button class="js-button">Animate</button>
+
+        <div class="grid js-grid">
+            <article class="item">
+                <h2>Element 1</h2>
+            </article>
+            <article class="item">
+                <h2>Element 2</h2>
+            </article>
+            <article class="item">
+                <h2>Element 3</h2>
+            </article>
+            <article class="item">
+                <h2>Element 4</h2>
+            </article>
+            <article class="item">
+                <h2>Element 5</h2>
+            </article>
+            <article class="item">
+                <h2>Element 6</h2>
+            </article>
+            <article class="item">
+                <h2>Element 7</h2>
+            </article>
+            <article class="item">
+                <h2>Element 8</h2>
+            </article>
+            <article class="item">
+                <h2>Element 9</h2>
+            </article>
+            <article class="item">
+                <h2>Element 10</h2>
+            </article>
+            <article class="item">
+                <h2>Element 11</h2>
+            </article>
+            <article class="item">
+                <h2>Element 12</h2>
+            </article>
+        </div>
+
+
+    </div>
+    <div id="area-right">The right</div>
+    <script src="./js/script.js"></script>
+</body>
+
+</html>

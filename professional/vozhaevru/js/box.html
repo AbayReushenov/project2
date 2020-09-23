@@ -1,0 +1,39 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>17_09_2020</title>
+    <style>
+      #block{
+        width:150px;
+        height:150px;
+        border:2px solid black;
+        background:green;
+        position:absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="block"></div>
+    <script>
+      let block = document.getElementById("block");
+      block.onmousedown = function(event) {
+        console.log(event);
+        block.style.top = event.clientY-75+"px";
+        block.style.left= event.clientX-75+"px";
+        
+        function moveAt(abr){
+          block.style.top = abr.clientY-75+"px";
+          block.style.left= abr.clientX-75+"px";
+        }
+        
+        document.addEventListener("mousemove",moveAt);
+        
+        document.onmouseup = function(){
+            document.removeEventListener("mousemove",moveAt);
+        }
+      }
+    </script>
+  </body>
+</html>

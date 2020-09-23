@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Layout 1</title>
+    <link rel="stylesheet" href="./css/stile.css">
+</head>
+<body>
+    <header>
+        <h1>Базовый пример</h1>
+    </header>
+    <div class="wrapper wrapperbase">
+        <div class="one">One
+            <hr>
+            display: grid;<br>
+  grid-template-columns: repeat(3, 1fr);<br>
+  grid-gap: 10px;<br>
+  grid-auto-rows: minmax(100px, auto);
+  <hr>
+  .one {<br>
+
+    grid-column: 1 / 3;<br>
+    grid-row: 1;<br>
+  }<hr>
+  If two <grid-line> values are given<br>
+     they are separated by "/".<br>
+      The grid-column-start longhand<br>
+      is set to the value before the slash,<br>
+      and the grid-column-end longhand is set<br>
+      to the value after the slash.
+        </div>
+        <div class="two">Two
+            <hr>
+            сетка  состоящая из трех колонок, в которой минимальная ширина элементов строки установлена в "100px", <br>
+            а максимальная в "auto". <br>
+            Grid-элементы располагаются в сетке линейно.
+            <hr>
+            .two { 
+                grid-column: 2 / 4;<br>
+                grid-row: 1 / 3;
+              }
+
+        </div>
+        <div class="three">
+        Three
+        <hr>
+        сетка  состоящая из трех колонок, в которой минимальная ширина элементов строки установлена в "100px", а максимальная в "auto". Grid-элементы располагаются в сетке линейно.
+        <hr>
+        .three {
+            grid-column: 1;<br>
+            grid-row: 2 / 5;
+          }
+        
+        </div>
+        <div class="four">
+            Four
+            <hr>
+            .four {
+                grid-column: 3;<br>
+                grid-row: 3;
+              }
+        </div>
+        <div class="five">
+            Five
+            <hr>
+            .five {
+                grid-column: 2;<br>
+                grid-row: 4;
+              }
+        </div>
+        <div class="six">
+            Six
+            <hr>
+            .six {
+                grid-column: 3;<br>
+                grid-row: 4;
+              }
+        </div>
+      </div>
+<hr>
+<h2>Вариант 1</h2>
+<div class="wrapper1 wrapperbase">
+    <div>One
+        <hr>
+        .wrapper1 {<br>
+            max-width: 940px;<br>
+            margin: 0 auto;<br>
+            display: grid;<br>
+            grid-gap: 2px;<br>
+        }
+
+    </div>
+    <div>Two</div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+ <hr>
+ <h1>Вариант 2: Единица измерения 200px</h1>
+ <div class="wrapper2 wrapperbase">
+    <div>
+        One<hr>
+        определяем ряды и столбцы в нашей сетке при помощи свойств grid-template-columns и grid-template-rows
+    </div>
+    <div>
+        Two<hr>
+        .wrapper {<br>
+            display: grid;<br>
+            grid-template-columns: 200px 200px 200px;<br>
+          }
+    </div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+ <hr>
+ <h1>Вариант 3: Единица измерения fr</h1>
+ <div class="wrapper3 wrapperbase">
+    <div>
+        One<hr>
+        определяем ряды и столбцы в нашей сетке при помощи свойств grid-template-columns и grid-template-rows
+    </div>
+    <div>
+        Two<hr>
+        .wrapper {<br>
+            display: grid;<br>
+            grid-template-columns: 1fr 1fr 1fr;<br>
+          }
+    </div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+ <hr>
+ <h1>Вариант 4: Единица измерения fr( 2 1 1 )</h1>
+ <div class="wrapper4 wrapperbase">
+    <div>
+        One<hr>
+    </div>
+    <div>
+        Two<hr>
+        .wrapper {<br>
+            display: grid;<br>
+            grid-template-columns: 2fr 1fr 1fr;<br>
+          }
+    </div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+ <hr>
+ <h1>Вариант 5: Единица измерения px + fr( 500px 1fr 2fr )</h1>
+ <div class="wrapper5 wrapperbase">
+    <div>
+        One<hr>
+    </div>
+    <div>
+        Two<hr>
+        .wrapper {<br>
+            display: grid;<br>
+            grid-template-columns: 500px 1fr 2fr;<br>
+          }
+    </div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+ <hr>
+ <h1>Вариант 6: repeat</h1>
+ <div class="wrapper6 wrapperbase">
+    <div>
+        One<hr>
+    </div>
+    <div>
+        Two<hr>
+        . {<br>
+            display: grid;<br>
+            grid-template-columns: repeat(3, 1fr);<br>
+          }
+    </div>
+    <div>Three<hr> Или
+          {<br>
+            display: grid;<br>
+            grid-template-columns: 1fr 1fr 1fr;<br>
+          }
+    </div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+ <h1>Вариант 7: repeat(px zfr px)</h1>
+ <div class="wrapper7 wrapperbase">
+    <div>One</div>
+    <div>Two</div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+    <div>Six</div>
+    <div>Seven</div>
+    <div>Eitght</div>
+    <div>Nine</div>
+    <div>Ten</div>
+    <div>Eleven</div>
+ </div>
+
+ <h1>Вариант 8: Неявный grid :<br>
+    display: grid;<br>
+    grid-template-columns: repeat(3, 1fr);<br>
+    grid-auto-rows: 200px</h1>
+ <div class="wrapper8 wrapperbase">
+    <div>
+        One<br>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sit deleniti tempora maxime. Quo ratione debitis reprehenderit quisquam vero dolorum laudantium quaerat aspernatur! Aspernatur maxime odio assumenda iste omnis molestias libero!
+    
+    </div>
+    <div>
+        Two<br>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed quibusdam maiores iure corrupti eius suscipit nulla, sapiente dolorem sit. Eum reiciendis impedit sit facere aliquam ab molestiae placeat ullam sequi.
+        Incidunt at minus mollitia adipisci modi, similique aspernatur magnam sed repellat facilis voluptatibus distinctio a ipsum blanditiis eum in quod aperiam repudiandae. Illum vero libero ea quis quas. Nostrum, doloremque.
+        Incidunt at minus mollitia adipisci modi, similique aspernatur magnam sed repellat facilis voluptatibus distinctio a ipsum blanditiis eum in quod aperiam repudiandae. Illum vero libero ea quis quas. Nostrum, doloremque.
+    </div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+
+ <h1>Вариант 9: Масштабирование треков и minmax():<br>
+    display: grid;<br>
+    grid-template-columns: repeat(3, 1fr);<br>
+    grid-auto-rows: minmax(100px, auto)</h1>
+ <div class="wrapper9 wrapperbase">
+    <div>One</div>
+    <div>
+        Two<br>
+        <p>I have some more content in.</p>
+        <p>This makes me taller than 100 pixels.</p>
+    </div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+ </div>
+
+ <h1>Вариант 10: start, end</h1>
+ <h4>    display: grid; <br>
+    grid-template-columns: repeat(3, 1fr); <br>
+    grid-auto-rows: 100px;</h4>
+ <div class="wrapper10 wrapperbase ">
+    <div class="box10-1">One<hr>
+        column-start: 1; 
+            column-end: 4; <br>
+            row-start: 1; 
+            row-end: 3;
+
+    </div>
+    <div class="box10-2">Two<hr>
+        .column-start: 1; <br>
+        row-start: 3; 
+        row-end: 5;
+    </div>
+    <div class="box10-3">Three</div>
+    <div class="box10-4">Four</div>
+    <div class="box10-5">Five</div>
+ </div>
+<hr>
+<h1>11. Gutters</h1>
+<div class="wrapper11 wrapperbase">
+    <div>
+        One<hr>
+        .wrapper11 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-column-gap: 10px;
+            grid-row-gap: 1em;
+         }
+    </div>
+    <div>Two</div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five</div>
+</div>
+
+<hr>
+<h1>12. BOX Грид-контейнер</h1>
+ <div class="wrapper12 wrapperbase">
+    <div class="box box1">
+        <div class="nested">a
+            <p>.box1 {<br>
+                grid-column-start: 1;<br>
+                grid-column-end: 4;<br>
+                grid-row-start: 1;<br>
+                grid-row-end: 3;<br>
+                display: grid;<br>
+                grid-template-columns: repeat(3, 1fr);<br>
+             }</p>
+        </div>
+        <div class="nested">b</div>
+        <div class="nested">c</div>
+     </div>
+     <div class="box box2">Two</div>
+     <div class="box box3">Three</div>
+     <div class="box box4">Four</div>
+     <div class="box box5">Five</div>
+ </div>
+
+ <hr>
+<h1>13. wrapper грид-контейнер</h1>
+ <div class="wrapper13 wrapperbase">
+    <div class="box13-1">
+        <div class="nested">a</div>
+        <div class="nested">b</div>
+        <div class="nested">c</div>
+     </div>
+     <div class="box13-2">Two</div>
+     <div class="box13">Three</div>
+     <div class="box13">Four</div>
+     <div class="box13">Five</div>
+ </div>
+
+ <hr>
+ <h1>14. z-index</h1>
+ <div class="wrapper14">
+    <div class="box14 box14-1">One: z-index: 2;<hr>
+    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Placeat impedit unde libero tempora eos ducimus voluptates saepe beatae provident recusandae ut, similique perspiciatis commodi error tempore cum. Atque, a enim.
+    Sint possimus officia ipsum, veritatis debitis quis cum asperiores? Obcaecati eum praesentium quod nemo nihil ex error optio dolor quos deleniti at amet iusto dicta inventore, iure impedit magni repellendus.
+    Natus autem aliquid iusto aut iure maiores voluptatem! Ipsum atque, commodi aperiam asperiores dignissimos quisquam incidunt, eius reprehenderit deleniti dolore dicta! Animi quae ipsam laboriosam, fugit enim nihil dolore ab!
+    Numquam eligendi culpa, doloremque blanditiis excepturi quae voluptas veritatis dolores, optio earum voluptatum similique velit perspiciatis! Veritatis obcaecati nulla quam, earum neque suscipit laborum ad ullam optio dolorem odit tenetur.
+    Soluta sequi animi numquam amet, doloremque velit maxime facilis magnam odio ratione dolor saepe placeat quo, tempore ipsa molestias nulla aliquam modi! Nemo quo nisi dignissimos ullam in dolorum aspernatur!
+    </div>
+    <div class="box14 box14-2">
+        Two: z-index: 1;<hr>
+        Two: z-index: 1;<br>
+        Two: z-index: 1;<br>
+        Two: z-index: 1;<br>
+        Two: z-index: 1;<br>
+        Two: z-index: 1;<br>
+        Two: z-index: 1;<br>
+
+    </div>
+    <div class="box14 box14-3">Three</div>
+    <div class="box14 box14-4">Four</div>
+    <div class="box14 box14-5">Five</div>
+ </div>
+
+    <script src="./js/script"></script>
+</body>
+</html>

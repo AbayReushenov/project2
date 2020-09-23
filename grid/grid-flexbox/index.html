@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Flexbox</title>
+    <link rel="stylesheet" href="./css/stile.css">
+</head>
+<body>
+    <header>
+        <h1>Flexbox</h1>
+        <h3>display: flex;<br>
+            flex-wrap: wrap;=> нет места? => следующая строка<br> 
+            flex: 1 1 200px; => base = 200 pixels
+
+        </h3>
+    </header>
+    <div class="flex">
+        <div class="one">One</div>
+        <div class="two">Two</div>
+        <div class="three">Three</div>
+        <div class="four">Four</div>
+        <div class="five"> Five<hr>
+            во flex-контейнере распределение свободного пространства действует в рамках всей строки.
+        </div>
+      </div>
+<hr>
+
+ <h1>Grid</h1>
+   <h4>display: grid;<br>
+    grid-template-columns: repeat(3, 1fr)</h4>
+ <div class="grid base">
+    <div>One</div>
+    <div>Two</div>
+    <div>Three</div>
+    <div>Four</div>
+    <div>Five<br>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Est nulla aliquam vel cupiditate et libero. Inventore quaerat quos ab fugiat nobis voluptatum harum ad, id aspernatur ipsam natus voluptates minima!</div>
+ </div>
+
+
+ <hr>
+ <h1>Flex - 2</h1>
+ <div class="flex2 base">
+    <div class="box1">One</div>
+    <div class="box2">Two</div>
+    <div class="box3">Three</div>
+ </div>
+ <hr>
+ <h1>Grid- 2</h1>
+ <div class="grid2 base">
+    <div class="box1">One</div>
+    <div class="box2">Two</div>
+    <div class="box3">Three</div>
+ </div>
+
+ <h1>Grid - 3</h1>
+ <h4>grid-template-columns: repeat(auto-fill, 200px)</h4>
+ <div class="grid3 base">
+    <div>One</div>
+    <div>Two</div>
+    <div>Three</div>
+ </div>
+
+ <h1>Grid - 4</h1>
+ <h4>grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)</h4>
+ <div class="grid4 base">
+    <div>One</div>
+    <div>Two</div>
+    <div>Three</div>
+ </div>
+
+<h1>Grid - 5</h1> 
+<h4> position: relative: relative(element: absolute))</h4>
+<div class="grid5 base">
+    <div class="box1">One</div>
+    <div class="box2">Two</div>
+    <div class="box3">
+     Этот блок абсолютно позиционирован. 
+ В нашем примере грид-контейнер является контейнерным блоком, поэтому значения сдвига абсолютного позиционирования отсчитываются от внешнего края той области, в которой размещен элемент.
+    </div>
+    <div class="box4">Four</div>
+ </div>
+    <script src="./js/script"></script>
+</body>
+</html>
