@@ -85,8 +85,8 @@ function getCoffee(coffeeName, cost) {
     let audio = new Audio("audio/get_coffee.mp3").play();
     audio.play();
   } else {
-    displayInfo.innerText = "Сумма недостаточна";
-    }
+    displayInfo.innerText = "Сумма недостаточна  ☹️";
+  }
 }
 
 function getChange(num, isRecursion = false) {
@@ -120,13 +120,10 @@ function currentTime() {
   var hour = date.getHours();
   var min = date.getMinutes();
   var sec = date.getSeconds();
-  var midday = "AM";
-  midday = (hour >= 12) ? "PM" : "AM"; /* assigning AM/PM */
-  hour = (hour == 0) ? 12 : ((hour > 12) ? (hour - 12) : hour); /* assigning hour in 12-hour format */
   hour = updateTime(hour);
   min = updateTime(min);
   sec = updateTime(sec);
-  document.getElementById("clock").innerText = hour + " : " + min + " : " + sec + " " + midday; /* adding time to the div */
+  document.getElementById("clock").innerText = hour + " : " + min + " : " + sec;
   var t = setTimeout(currentTime, 1000); /* setting timer */
 }
 
