@@ -1,0 +1,9 @@
+.footer {
+    grid-area: f;
+    background-color:salmon;
+}
+
+.footer img {
+    width: 20px;
+}
+
