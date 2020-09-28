@@ -12,7 +12,7 @@ npm install babel-cli babel-core --save-dev
 npm install babel-preset-es2015 --save-dev
 npm run babel
 
-babel src/app.js --out-file=public/scripts/app.js --presets=env,react -watch
+babel src/app.js --out-file=public/scripts/app.js --presets=env,react --watch
 
 
 
