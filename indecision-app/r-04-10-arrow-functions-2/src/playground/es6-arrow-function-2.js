@@ -1,12 +1,12 @@
 // arguments object - no longer bound with arrow functions
 
 const add = (a, b) => {
-//console.log(arguments);
+  // console.log(arguments);
   return a + b;
 };
-console.log(add(635, 1, 1001));
+console.log(add(55, 1, 1001));
 
-// // this keyword - no longer bound
+// this keyword - no longer bound
 
 const user = {
   name: 'Andrew',
@@ -17,7 +17,7 @@ const user = {
 };
 console.log(user.printPlacesLived());
 
-// // Challenge area
+// Challenge area
 
 const multiplier = {
   numbers: [10, 20, 30],
