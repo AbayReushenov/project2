@@ -42,7 +42,7 @@
         }
 
         .myForm>button {
-            grid-column: span 1;
+            grid-column: span 2;
         }
 
         .myButton {
@@ -68,7 +68,7 @@
 
         .myButton:active {
             position: relative;
-            top: 1px;
+            top: 2px;
         }
     </style>
 </head>
@@ -76,14 +76,30 @@
 <body>
     <div>
         <h1>Форма авторизации</h1>
-        <form class="myForm">
-            <label for="login">Логин </label>
-            <input type="email" name="email_address" id="email_address">
-            <label for="exampleInputPassword1">Пароль</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Пароль">
-            <button class="myButton">Отправить</button>
+        <form class="myForm" onsubmit="sendForm(this); return false;">
+            <label for="email">Логин </label>
+            <input name="email" type="email" id="email" placeholder="Введите логин ">
+            <span id="info" style="color:white"></span>
+            <label for="password1">Пароль</label>
+            <input name="pass" type="password" class="form-control" id="password1" placeholder="Введите пароль">
+            <button type="submit" class="myButton">Отправить</button>
         </form>
     </div>
+
+    <script>
+        async function sendForm(form){
+          info.innerHTML = '';
+          let response = await fetch("php/auth_obr.php",{
+            method: "POST",
+            body: new FormData(form)
+          });
+          let result = await response.text();
+          if(result=="success")
+            location.href = "lk.php";
+          else
+            info.innerHTML = `Логин или пароль введён неверно!`;
+        }
+      </script>
 </body>
 
 </html>

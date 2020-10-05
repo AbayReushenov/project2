@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форма авторизации</title>
+    <title>Форма регистрации</title>
     <style>
         body {
             background: #58181c;
@@ -42,7 +42,7 @@
         }
 
         .myForm>button {
-            grid-column: span 1;
+            grid-column: span 2;
         }
 
         .myButton {
@@ -76,18 +76,38 @@
 <body>
     <div>
         <h1>Форма регистрации</h1>
-        <form class="myForm">
-            <label for="customer_name">Имя</label>
-            <input type="text" name="customer_name" id="customer_name" required>
-            <label for="customer_lastname">Фамилия</label>
-            <input type="text" name="customer_lastname" id="customer_lastname" required>
-            <label for="email_address">Email </label>
-            <input type="email" name="email_address" id="email_address">
-            <label for="exampleInputPassword1">Пароль</label>
-            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Пароль">
-            <button class="myButton">Отправить</button>
+        <form onsubmit="sendForm(this); return false;" class="myForm">
+            <label for="name">Имя</label>
+            <input name="name" type="text" id="name" placeholder="Введите имя" required>
+            <label for="lastname">Фамилия</label>
+            <input name="lastname" type="text" id="lastname" placeholder="Введите фамилию" required>
+            <label for="email">Email </label>
+            <input name="email" type="email" id="email" placeholder='Введите "email"' required>
+            <spam id="info" style="color:red;"></spam>
+            <label for="password1">Пароль</label>
+            <input name="pass" type="password" class="form-control" id="password1" placeholder="Введите пароль"
+                required>
+            <button type='submit' class="myButton">Зарегистрироваться</button>
         </form>
     </div>
+    <script>
+        async function sendForm(form) {
+            info.innerHTML = '';
+            let formData = new FormData(form);
+            let response = await fetch("php/reg_obr.php", {
+                method: "POST",
+                body: formData
+            });
+            let result = await response.text();
+            if (result == "success") {
+                location.href = "auth.php";
+            } else if (result == "exist") {
+                info.innerText = `Такой пользователь уже есть!`;
+            } else {
+                console.log("Неизвестная ошибка");
+            }
+        }
+    </script>
 </body>
 
 </html>
