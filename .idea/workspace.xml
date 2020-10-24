@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="74936e36-4b1c-4fc3-991e-9bd6744dad4a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app" beforeDir="false" afterPath="$PROJECT_DIR$/109/react-resto-app" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/public/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/actions/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/app-header/app-header.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/app-header/app-header.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/app-header/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/app-header/shopping-cart-solid.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/app/app.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/app/food-bg.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/app/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/cart-table/cart-table.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/cart-table/cart-table.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/cart-table/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/error-boundry/error-boundry.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/error-boundry/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/error/error.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/error/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/hoc/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/hoc/with-resto-service.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/menu-list-item/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/menu-list-item/menu-list-item.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/menu-list-item/menu-list-item.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/menu-list/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/menu-list/menu-list.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/menu-list/menu-list.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/pages/cart-page.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/pages/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/pages/main-page.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/resto-service-context/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/resto-service-context/resto-service-context.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/spinner/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/components/spinner/spinner.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/db.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/index.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/reducers/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/services/resto-service.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/src/store.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/109/react-resto-app/yarn.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/work - tipa dostup s raboty/hello" beforeDir="false" afterPath="$PROJECT_DIR$/work - tipa dostup s raboty/hello" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1jHCtRKOM4WljVR2t4CdcUNDoDQ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="74936e36-4b1c-4fc3-991e-9bd6744dad4a" name="Default Changelist" comment="" />
+      <created>1603451844427</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1603451844427</updated>
+      <workItem from="1603451845757" duration="381000" />
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="584" y="434" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1603452032093">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="584" y="434" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1080@0.0.1920.1080" timestamp="1603452032093" />
+  </component>
+</project>
